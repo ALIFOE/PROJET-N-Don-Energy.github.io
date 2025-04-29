@@ -7,79 +7,40 @@ use Illuminate\Http\Request;
 
 class MessageController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
-        //
+        $messages = Message::orderBy('created_at', 'desc')->paginate(10);
+        return view('messages.index', compact('messages'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Message  $message
-     * @return \Illuminate\Http\Response
-     */
     public function show(Message $message)
     {
-        //
+        return view('messages.show', compact('message'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Message  $message
-     * @return \Illuminate\Http\Response
-     */
     public function edit(Message $message)
     {
-        //
+        return view('messages.edit', compact('message'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Message  $message
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, Message $message)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'message' => 'required|string'
+        ]);
+
+        $message->update($validated);
+
+        return redirect()->route('messages.index')
+            ->with('success', 'Message mis à jour avec succès.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Message  $message
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(Message $message)
     {
-        //
+        $message->delete();
+        return redirect()->route('messages.index')
+            ->with('success', 'Message supprimé avec succès.');
     }
 }

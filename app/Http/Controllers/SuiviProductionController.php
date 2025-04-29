@@ -7,6 +7,7 @@ use App\Models\ProductionData;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class SuiviProductionController extends Controller
 {
@@ -67,7 +68,7 @@ class SuiviProductionController extends Controller
     public function getData()
     {
         $user = Auth::user();
-        $installation = Installation::where('utilisateur_id', $user->id)->first();
+        $installation = Installation::where('user_id', $user->id)->first();
 
         if (!$installation) {
             return response()->json([
@@ -131,5 +132,125 @@ class SuiviProductionController extends Controller
             'temperature' => $temperature,
             'batteryLevels' => $batteryLevels
         ]);
+    }
+
+    public function exportPDF()
+    {
+        $user = Auth::user();
+        $installation = Installation::where('user_id', $user->id)->first();
+
+        if (!$installation) {
+            return back()->with('error', 'Aucune installation trouvée');
+        }
+
+        // Définir la période pour les données (dernières 24 heures)
+        $endDate = Carbon::now();
+        $startDate = $endDate->copy()->subHours(24);
+
+        // Récupérer les données
+        $realData = ProductionData::where('installation_id', $installation->id)
+            ->whereBetween('timestamp', [$startDate, $endDate])
+            ->orderBy('timestamp')
+            ->get();
+
+        if ($realData->isEmpty()) {
+            $simulatedData = $this->generateSimulatedData($startDate, $endDate);
+            $data = collect($simulatedData)->map(function ($item, $timestamp) {
+                return [
+                    'timestamp' => $timestamp,
+                    'power' => $item['power'],
+                    'irradiance' => $item['irradiance'],
+                    'temperature' => $item['temperature']
+                ];
+            });
+        } else {
+            $data = $realData;
+        }
+
+        $pdf = Pdf::loadView('pdf.suivi-production', [
+            'data' => $data,
+            'installation' => $installation,
+            'startDate' => $startDate,
+            'endDate' => $endDate
+        ]);
+
+        return $pdf->download('suivi-production-' . now()->format('Y-m-d') . '.pdf');
+    }
+
+    public function exportCSV()
+    {
+        $user = Auth::user();
+        $installation = Installation::where('user_id', $user->id)->first();
+
+        if (!$installation) {
+            return back()->with('error', 'Aucune installation trouvée');
+        }
+
+        // Définir la période pour les données (dernières 24 heures)
+        $endDate = Carbon::now();
+        $startDate = $endDate->copy()->subHours(24);
+
+        // Récupérer les données
+        $realData = ProductionData::where('installation_id', $installation->id)
+            ->whereBetween('timestamp', [$startDate, $endDate])
+            ->orderBy('timestamp')
+            ->get();
+
+        if ($realData->isEmpty()) {
+            $simulatedData = $this->generateSimulatedData($startDate, $endDate);
+            $data = collect($simulatedData)->map(function ($item, $timestamp) {
+                return [
+                    'timestamp' => $timestamp,
+                    'puissance' => $item['power'],
+                    'irradiance' => $item['irradiance'],
+                    'temperature' => $item['temperature']
+                ];
+            });
+        } else {
+            $data = $realData->map(function ($item) {
+                return [
+                    'timestamp' => $item->timestamp,
+                    'puissance' => $item->current_power,
+                    'irradiance' => $item->irradiance,
+                    'temperature' => $item->temperature
+                ];
+            });
+        }
+
+        // Générer le nom du fichier CSV
+        $filename = 'suivi-production-' . now()->format('Y-m-d') . '.csv';
+
+        // Créer la réponse CSV
+        $headers = [
+            "Content-type" => "text/csv",
+            "Content-Disposition" => "attachment; filename=$filename",
+            "Pragma" => "no-cache",
+            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
+            "Expires" => "0"
+        ];
+
+        $callback = function() use ($data) {
+            $file = fopen('php://output', 'w');
+            
+            // Ajouter l'en-tête UTF-8 BOM pour la compatibilité Excel
+            fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
+            
+            // En-têtes des colonnes
+            fputcsv($file, ['Date et Heure', 'Puissance (kW)', 'Irradiance (W/m²)', 'Température (°C)']);
+
+            // Données
+            foreach ($data as $row) {
+                fputcsv($file, [
+                    Carbon::parse($row['timestamp'])->format('d/m/Y H:i:s'),
+                    number_format($row['puissance'], 2),
+                    round($row['irradiance']),
+                    number_format($row['temperature'], 1)
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 }

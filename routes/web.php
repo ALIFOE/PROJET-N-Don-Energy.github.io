@@ -21,6 +21,7 @@ use App\Http\Controllers\RapportController;
 use App\Http\Controllers\MeteoController;
 use App\Http\Controllers\RegionalPerformanceController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\MessageController;
 
 // Routes publiques
 Route::get('/', function () {
@@ -181,5 +182,7 @@ Route::middleware(['auth', 'role:technicien'])->name('technicien.')->prefix('tec
     Route::post('/onduleurs/{onduleur}/reset-connection', [App\Http\Controllers\Technicien\OnduleurController::class, 'resetConnection'])->name('onduleurs.reset-connection');
     Route::delete('/onduleurs/{onduleur}', [App\Http\Controllers\Technicien\OnduleurController::class, 'destroy'])->name('onduleurs.destroy');
 });
+
+Route::resource('messages', MessageController::class);
 
 require __DIR__.'/auth.php';
