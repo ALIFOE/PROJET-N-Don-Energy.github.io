@@ -1,0 +1,390 @@
+/* Styles généraux */
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f8f9fa;
+}
+
+/* Conteneurs et mise en page */
+.container {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.max-w-7xl {
+    max-width: 80rem;
+}
+
+.mx-auto {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.px-6 {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+}
+
+.py-3 {
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+}
+
+.py-12 {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+}
+
+.sm\:px-6 {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+}
+
+.lg\:px-8 {
+    padding-left: 2rem;
+    padding-right: 2rem;
+}
+
+/* Flexbox et Grid */
+.flex {
+    display: flex;
+}
+
+.grid {
+    display: grid;
+}
+
+.grid-cols-1 {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+
+.md\:grid-cols-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.gap-8 {
+    gap: 2rem;
+}
+
+.items-center {
+    align-items: center;
+}
+
+.justify-between {
+    justify-content: space-between;
+}
+
+.space-x-10 > * + * {
+    margin-left: 2.5rem;
+}
+
+.space-y-3 > * + * {
+    margin-top: 0.75rem;
+}
+
+/* Navigation */
+.bg-white {
+    background-color: white;
+}
+
+.border-b {
+    border-bottom-width: 1px;
+}
+
+.border-gray-100 {
+    border-color: rgb(243 244 246);
+}
+
+.navbar-link {
+    color: #1f2937;
+    transition: all 0.3s ease;
+    position: relative;
+    padding-bottom: 0.25rem;
+    font-size: 0.875rem;
+    /* font-weight: 600; */
+}
+
+.navbar-link:hover {
+    color: #1e88e5;
+}
+
+.navbar-link.active {
+    color: #1e88e5;
+}
+
+.navbar-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: #1e88e5;
+}
+
+/* Boutons */
+.btn-primary {
+    background-color: #1e88e5;
+    color: white;
+    padding: 0.5rem 1.5rem;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: #0d47a1;
+}
+
+/* Cartes de prix */
+.pricing-card {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    transition: all 0.3s ease;
+    border: 1px solid #e5e7eb;
+}
+
+.pricing-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.pricing-card.popular {
+    border: 2px solid #1e88e5;
+    transform: scale(1.05);
+}
+
+.pricing-features li {
+    margin-bottom: 0.5rem;
+    color: #4b5563;
+}
+
+.pricing-features i {
+    color: #10b981;
+    margin-right: 0.5rem;
+}
+
+.price-tag {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #1e88e5;
+}
+
+.popular-badge {
+    background: #1e88e5;
+    color: white;
+    padding: 0.25rem 1rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    display: inline-block;
+    margin-bottom: 1rem;
+}
+
+/* Texte et typographie */
+.text-center {
+    text-align: center;
+}
+
+.text-left {
+    text-align: left;
+}
+
+.text-2xl {
+    font-size: 1.5rem;
+    line-height: 2rem;
+}
+
+.text-3xl {
+    font-size: 1.875rem;
+    line-height: 2.25rem;
+}
+
+.font-bold {
+    font-weight: 700;
+}
+
+.text-gray-600 {
+    color: rgb(75 85 99);
+}
+
+.text-gray-800 {
+    color: rgb(31 41 55);
+}
+
+.text-gray-900 {
+    color: rgb(17 24 39);
+}
+
+/* Utilitaires */
+.hidden {
+    display: none;
+}
+
+.block {
+    display: block;
+}
+
+.inline-block {
+    display: inline-block;
+}
+
+.overflow-hidden {
+    overflow: hidden;
+}
+
+.shadow-sm {
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+}
+
+.rounded-lg {
+    border-radius: 0.5rem;
+}
+
+.sm\:rounded-lg {
+    border-radius: 0.5rem;
+}
+
+.mt-2 {
+    margin-top: 0.5rem;
+}
+
+.mt-4 {
+    margin-top: 1rem;
+}
+
+.mt-6 {
+    margin-top: 1.5rem;
+}
+
+.mt-12 {
+    margin-top: 3rem;
+}
+
+.mb-6 {
+    margin-bottom: 1.5rem;
+}
+
+.mb-8 {
+    margin-bottom: 2rem;
+}
+
+.mr-2 {
+    margin-right: 0.5rem;
+}
+
+.mr-4 {
+    margin-right: 1rem;
+}
+
+/* Responsive */
+@media (min-width: 768px) {
+    .md\:flex {
+        display: flex;
+    }
+    
+    .md\:hidden {
+        display: none;
+    }
+    
+    .md\:grid-cols-3 {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+/* Gradients et effets */
+.solar-gradient {
+    background: linear-gradient(135deg, #1e88e5 0%, #0d47a1 100%);
+}
+
+/* Transitions */
+.transition {
+    transition-property: all;
+}
+
+.duration-300 {
+    transition-duration: 300ms;
+}
+
+/* Hover */
+.hover\:bg-blue-700:hover {
+    background-color: #1d4ed8;
+}
+
+.hover\:bg-gray-100:hover {
+    background-color: rgb(243 244 246);
+}
+
+/* Styles pour la page de suivi de production */
+.production-card {
+    transition: all 0.3s ease;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.production-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.tab {
+    transition: all 0.3s ease;
+}
+
+.tab.active {
+    background-color: #1e88e5;
+    color: white;
+}
+
+.tab:hover:not(.active) {
+    background-color: #e2e8f0;
+}
+
+.chart-container {
+    position: relative;
+    height: 400px;
+    width: 100%;
+}
+
+/* Animation de chargement pour les données */
+@keyframes pulse {
+    0% { opacity: 0.6; }
+    50% { opacity: 1; }
+    100% { opacity: 0.6; }
+}
+
+.loading {
+    animation: pulse 1.5s infinite;
+}
+
+/* Styles des indicateurs */
+.indicator {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    background-color: white;
+    margin-bottom: 1rem;
+}
+
+.indicator-icon {
+    font-size: 1.5rem;
+    margin-right: 1rem;
+}
+
+.indicator-value {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1e88e5;
+}
+
+/* Styles responsive */
+@media (max-width: 768px) {
+    .grid-cols-3 {
+        grid-template-columns: 1fr;
+    }
+    
+    .chart-container {
+        height: 300px;
+    }
+}
