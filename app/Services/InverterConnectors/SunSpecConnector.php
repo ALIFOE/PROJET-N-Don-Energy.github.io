@@ -2,43 +2,40 @@
 
 namespace App\Services\InverterConnectors;
 
-use Exception;
-use ModbusTcpClient\Composer\Read\ReadRegistersBuilder;
 use ModbusTcpClient\Network\BinaryStreamConnection;
+use ModbusTcpClient\Network\BinaryStreamConnectionBuilder;
+use ModbusTcpClient\Packet\ModbusFunction\ReadHoldingRegistersRequest;
+use ModbusTcpClient\Packet\ModbusFunction\ReadHoldingRegistersResponse;
+use Exception;
 
 class SunSpecConnector extends BaseInverterConnector
 {
     protected $client;
-    protected $baseRegister = 40000; // Registre de base SunSpec
+    protected $host;
+    protected $port;
+    protected $baseRegister = 40000;
     protected $models = [];
-    
+
     public function connect(): bool
     {
         try {
             $this->host = $this->config['host'] ?? $this->inverter->ip_address;
             $this->port = $this->config['port'] ?? $this->inverter->port;
             
-            $this->client = new BinaryStreamConnection([
-                'host' => $this->host,
-                'port' => $this->port,
-                'timeoutSec' => 5
-            ]);
-            
-            // Vérifier la signature SunSpec
+            $this->client = (new BinaryStreamConnectionBuilder())
+                ->setHost($this->host)
+                ->setPort($this->port)
+                ->setTimeoutSec(5)
+                ->build();
+
             if (!$this->verifySunSpecSignature()) {
-                throw new Exception("Signature SunSpec non trouvée");
+                throw new Exception("Signature SunSpec invalide");
             }
-            
-            // Lire les modèles disponibles
+
             $this->models = $this->discoverModels();
-            
-            $this->connected = true;
-            $this->logger->info("Connecté à l'onduleur SunSpec: {$this->host}:{$this->port}");
             return true;
         } catch (Exception $e) {
-            $this->logger->error("Erreur de connexion SunSpec: " . $e->getMessage());
-            $this->connected = false;
-            return false;
+            throw new Exception("Erreur de connexion à l'onduleur: " . $e->getMessage());
         }
     }
 
@@ -120,14 +117,36 @@ class SunSpecConnector extends BaseInverterConnector
 
     protected function verifySunSpecSignature(): bool
     {
-        $builder = new ReadRegistersBuilder();
-        $builder->readHoldingRegisters(1, $this->baseRegister, 2);
+        $request = new ReadHoldingRegistersRequest($this->baseRegister, 2, 1);
+        $response = $this->client->sendAndReceive($request);
+        if (!$response instanceof ReadHoldingRegistersResponse) {
+            return false;
+        }
         
-        $response = $builder->build()->sendTo($this->client);
-        $values = $response[0]->getData();
-        
-        $signature = pack('n*', $values[0], $values[1]);
+        $values = $response->getWords();
+        $signature = pack('n*', (int)$values[0], (int)$values[1]);
         return $signature === "SunS";
+    }
+
+    protected function readModel(int $modelId): array
+    {
+        if (!isset($this->models[$modelId])) {
+            throw new Exception("Modèle SunSpec $modelId non supporté par cet onduleur");
+        }
+        
+        $model = $this->models[$modelId];
+        $request = new ReadHoldingRegistersRequest($model['start'], $model['length'], 1);
+        $response = $this->client->sendAndReceive($request);
+        if (!$response instanceof ReadHoldingRegistersResponse) {
+            throw new Exception("Réponse Modbus invalide");
+        }
+        
+        $words = $response->getWords();
+        $values = [];
+        foreach ($words as $index => $word) {
+            $values[$index] = (int)$word;
+        }
+        return $values;
     }
 
     protected function discoverModels(): array
@@ -137,18 +156,19 @@ class SunSpecConnector extends BaseInverterConnector
         
         while (true) {
             try {
-                $builder = new ReadRegistersBuilder();
-                $builder->readHoldingRegisters(1, $offset, 2);
-                
-                $response = $builder->build()->sendTo($this->client);
-                $values = $response[0]->getData();
-                
-                if ($values[0] === 0xFFFF) {
+                $request = new ReadHoldingRegistersRequest($offset, 2, 1);
+                $response = $this->client->sendAndReceive($request);
+                if (!$response instanceof ReadHoldingRegistersResponse) {
                     break;
                 }
                 
-                $modelId = $values[0];
-                $length = $values[1];
+                $words = $response->getWords();
+                $modelId = (int)$words[0];
+                $length = (int)$words[1];
+                
+                if ($modelId === 0xFFFF) {
+                    break;
+                }
                 
                 $models[$modelId] = [
                     'start' => $offset,
@@ -162,20 +182,6 @@ class SunSpecConnector extends BaseInverterConnector
         }
         
         return $models;
-    }
-
-    protected function readModel(int $modelId): array
-    {
-        if (!isset($this->models[$modelId])) {
-            throw new Exception("Modèle SunSpec $modelId non supporté par cet onduleur");
-        }
-        
-        $model = $this->models[$modelId];
-        $builder = new ReadRegistersBuilder();
-        $builder->readHoldingRegisters(1, $model['start'], $model['length']);
-        
-        $response = $builder->build()->sendTo($this->client);
-        return $response[0]->getData();
     }
 
     protected function scaleValue($value, $scaleFactor): float

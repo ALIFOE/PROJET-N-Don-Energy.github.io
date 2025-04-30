@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder
             ProductSeeder::class,
             MaintenanceTaskSeeder::class,
             DonneeMeteoSeeder::class,
+            FormationsTableSeeder::class,
         ]);
     }
 }

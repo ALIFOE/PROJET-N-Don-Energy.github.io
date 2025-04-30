@@ -2,219 +2,349 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Inverter;
+use App\Services\Inverters\InverterManager;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Http\JsonResponse;
+use App\Models\InverterHistory;
+use App\Models\InverterSchedule;
+use Carbon\Carbon;
 
 class InverterController extends Controller
 {
-    public function scanNetwork(Request $request)
+    private $inverterManager;
+
+    public function __construct(InverterManager $inverterManager)
+    {
+        $this->inverterManager = $inverterManager;
+    }
+
+    public function getStatus(Request $request, string $inverterName = null): JsonResponse
     {
         try {
-            $inverters = [];
-            $network = $this->getLocalNetwork();
+            $inverter = $this->inverterManager->connect($inverterName ?? $this->inverterManager->getDefaultConnection());
             
-            foreach ($network as $ip) {
-                // Test des ports communs pour les onduleurs
-                $ports = [502, 503, 504, 505]; // Ports Modbus TCP communs
-                
-                foreach ($ports as $port) {
-                    if ($this->isPortOpen($ip, $port)) {
-                        try {
-                            // Tentative de connexion et lecture des informations
-                            $deviceInfo = $this->readDeviceInfo($ip, $port);
-                            
-                            if ($deviceInfo) {
-                                $inverters[] = [
-                                    'ip' => $ip,
-                                    'port' => $port,
-                                    'brand' => $deviceInfo['brand'],
-                                    'model' => $deviceInfo['model'],
-                                    'serial_number' => $deviceInfo['serial_number']
-                                ];
-                            }
-                        } catch (\Exception $e) {
-                            Log::debug("Erreur de connexion à {$ip}:{$port} - " . $e->getMessage());
-                            continue;
-                        }
-                    }
-                }
-            }
-            
-            return response()->json($inverters);
-            
+            return response()->json([
+                'status' => 'success',
+                'data' => [
+                    'currentPower' => $inverter->getCurrentPower(),
+                    'dailyEnergy' => $inverter->getDailyEnergy(),
+                    'totalEnergy' => $inverter->getTotalEnergy(),
+                    'status' => $inverter->getStatus(),
+                    'alarms' => $inverter->getAlarms(),
+                    'deviceInfo' => $inverter->getDeviceInfo()
+                ]
+            ]);
         } catch (\Exception $e) {
-            Log::error("Erreur lors du scan du réseau: " . $e->getMessage());
-            return response()->json(['error' => 'Erreur lors du scan du réseau'], 500);
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ], 500);
         }
     }
 
-    public function connect(Request $request)
+    public function getSupportedInverters(): JsonResponse
+    {
+        return response()->json([
+            'status' => 'success',
+            'data' => [
+                'default' => $this->inverterManager->getDefaultConnection(),
+                'supported' => $this->inverterManager->supportedInverters()
+            ]
+        ]);
+    }
+
+    public function getAlarms(Request $request, string $inverterName = null): JsonResponse
+    {
+        try {
+            $inverter = $this->inverterManager->connect($inverterName ?? $this->inverterManager->getDefaultConnection());
+            
+            return response()->json([
+                'status' => 'success',
+                'data' => $inverter->getAlarms()
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function getDeviceInfo(Request $request, string $inverterName = null): JsonResponse
+    {
+        try {
+            $inverter = $this->inverterManager->connect($inverterName ?? $this->inverterManager->getDefaultConnection());
+            
+            return response()->json([
+                'status' => 'success',
+                'data' => $inverter->getDeviceInfo()
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function getHistory(Request $request, string $inverterName, string $period): JsonResponse
+    {
+        try {
+            $inverter = $this->inverterManager->connect($inverterName);
+            $now = Carbon::now();
+            
+            $startDate = match($period) {
+                'daily' => $now->startOfDay(),
+                'weekly' => $now->startOfWeek(),
+                'monthly' => $now->startOfMonth(),
+                'yearly' => $now->startOfYear(),
+            };
+
+            $history = InverterHistory::where('inverter_name', $inverterName)
+                ->where('timestamp', '>=', $startDate)
+                ->orderBy('timestamp', 'asc')
+                ->get();
+
+            return response()->json([
+                'status' => 'success',
+                'data' => [
+                    'period' => $period,
+                    'start_date' => $startDate->toISOString(),
+                    'end_date' => $now->toISOString(),
+                    'measurements' => $history
+                ]
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function getEfficiency(Request $request, string $inverterName): JsonResponse
+    {
+        try {
+            $inverter = $this->inverterManager->connect($inverterName);
+            
+            $efficiency = [
+                'current' => $inverter->getCurrentEfficiency(),
+                'daily_average' => $inverter->getDailyAverageEfficiency(),
+                'monthly_average' => $inverter->getMonthlyAverageEfficiency(),
+                'factors' => $inverter->getEfficiencyFactors()
+            ];
+
+            return response()->json([
+                'status' => 'success',
+                'data' => $efficiency
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function updateConfiguration(Request $request, string $inverterName): JsonResponse
+    {
+        try {
+            $inverter = $this->inverterManager->connect($inverterName);
+            
+            $validated = $request->validate([
+                'settings' => 'required|array',
+                'settings.*' => 'required|string'
+            ]);
+
+            $result = $inverter->updateConfiguration($validated['settings']);
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Configuration mise à jour avec succès',
+                'data' => $result
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function updateFirmware(Request $request, string $inverterName): JsonResponse
+    {
+        try {
+            $inverter = $this->inverterManager->connect($inverterName);
+            
+            $validated = $request->validate([
+                'firmware_file' => 'required|file',
+                'version' => 'required|string'
+            ]);
+
+            $result = $inverter->updateFirmware(
+                $validated['firmware_file']->getRealPath(),
+                $validated['version']
+            );
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Mise à jour du firmware initiée',
+                'data' => $result
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function controlProduction(Request $request, string $inverterName): JsonResponse
+    {
+        try {
+            $inverter = $this->inverterManager->connect($inverterName);
+            
+            $validated = $request->validate([
+                'action' => 'required|string|in:start,stop,restart',
+                'power_limit' => 'nullable|numeric|min:0|max:100'
+            ]);
+
+            $result = $inverter->controlProduction(
+                $validated['action'],
+                $validated['power_limit'] ?? null
+            );
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Commande envoyée avec succès',
+                'data' => $result
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function getSchedule(Request $request, string $inverterName): JsonResponse
+    {
+        try {
+            $schedule = InverterSchedule::where('inverter_name', $inverterName)
+                ->orderBy('start_time')
+                ->get();
+
+            return response()->json([
+                'status' => 'success',
+                'data' => $schedule
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function updateSchedule(Request $request, string $inverterName): JsonResponse
     {
         try {
             $validated = $request->validate([
-                'brand' => 'required|string',
-                'model' => 'required|string',
-                'ip_address' => 'required|ip',
-                'port' => 'required|integer',
-                'username' => 'required|string',
-                'password' => 'required|string'
+                'schedules' => 'required|array',
+                'schedules.*.start_time' => 'required|date_format:H:i',
+                'schedules.*.end_time' => 'required|date_format:H:i',
+                'schedules.*.power_limit' => 'required|numeric|min:0|max:100',
+                'schedules.*.days' => 'required|array',
+                'schedules.*.days.*' => 'required|integer|min:0|max:6'
             ]);
 
-            $inverter = new Inverter();
-            $inverter->brand = $validated['brand'];
-            $inverter->model = $validated['model'];
-            $inverter->ip_address = $validated['ip_address'];
-            $inverter->port = $validated['port'];
-            $inverter->username = $validated['username'];
-            $inverter->password = $validated['password'];
-            $inverter->status = 'connecting';
-            $inverter->user_id = auth()->id();
-            $inverter->save();
-
-            // Tester la connexion
-            if ($this->testConnection($inverter)) {
-                $inverter->status = 'connected';
-                $inverter->save();
-                return response()->json(['success' => true, 'message' => 'Onduleur connecté avec succès']);
-            } else {
-                $inverter->delete();
-                return response()->json(['success' => false, 'message' => 'Impossible de se connecter à l\'onduleur'], 400);
+            InverterSchedule::where('inverter_name', $inverterName)->delete();
+            
+            foreach ($validated['schedules'] as $schedule) {
+                InverterSchedule::create([
+                    'inverter_name' => $inverterName,
+                    'start_time' => $schedule['start_time'],
+                    'end_time' => $schedule['end_time'],
+                    'power_limit' => $schedule['power_limit'],
+                    'days' => $schedule['days']
+                ]);
             }
 
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Planning mis à jour avec succès'
+            ]);
         } catch (\Exception $e) {
-            Log::error("Erreur lors de la connexion de l'onduleur: " . $e->getMessage());
-            return response()->json(['success' => false, 'message' => 'Erreur lors de la connexion'], 500);
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ], 500);
         }
     }
 
-    private function getLocalNetwork()
-    {
-        $network = [];
-        $ip = $_SERVER['SERVER_ADDR'];
-        $subnet = substr($ip, 0, strrpos($ip, '.') + 1);
-        
-        // Scanner les 255 adresses IP possibles
-        for ($i = 1; $i < 255; $i++) {
-            $network[] = $subnet . $i;
-        }
-        
-        return $network;
-    }
-
-    private function isPortOpen($ip, $port)
-    {
-        $connection = @fsockopen($ip, $port, $errno, $errstr, 1);
-        if ($connection) {
-            fclose($connection);
-            return true;
-        }
-        return false;
-    }
-
-    private function readDeviceInfo($ip, $port)
+    public function getDiagnostics(Request $request, string $inverterName): JsonResponse
     {
         try {
-            $socket = @fsockopen($ip, $port, $errno, $errstr, 1);
-            if (!$socket) {
-                return null;
-            }
-
-            // Envoi d'une requête Modbus TCP simple pour lire les informations de l'appareil
-            $request = $this->createModbusRequest(0x01, 0x03, 0x0000, 0x000A);
-            fwrite($socket, $request);
+            $inverter = $this->inverterManager->connect($inverterName);
             
-            // Lecture de la réponse
-            $response = fread($socket, 1024);
-            fclose($socket);
+            $diagnostics = $inverter->runDiagnostics();
 
-            if (strlen($response) > 0) {
-                // Analyse de la réponse pour identifier la marque et le modèle
-                return $this->parseDeviceInfo($response);
-            }
-
-            return null;
+            return response()->json([
+                'status' => 'success',
+                'data' => $diagnostics
+            ]);
         } catch (\Exception $e) {
-            Log::debug("Erreur lors de la lecture des informations: " . $e->getMessage());
-            return null;
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ], 500);
         }
     }
 
-    private function createModbusRequest($unitId, $functionCode, $startAddress, $quantity)
-    {
-        $transactionId = rand(0, 65535);
-        $length = 6;
-        
-        $request = pack('n*', 
-            $transactionId,    // Transaction ID
-            0x0000,           // Protocol ID
-            $length,          // Length
-            $unitId,          // Unit ID
-            $functionCode,    // Function Code
-            $startAddress,    // Start Address
-            $quantity         // Quantity
-        );
-        
-        return $request;
-    }
-
-    private function parseDeviceInfo($response)
-    {
-        // Analyse de la réponse pour identifier la marque et le modèle
-        // Cette partie doit être adaptée selon les protocoles spécifiques des différents fabricants
-        $data = unpack('n*', $response);
-        
-        // Exemple de logique d'identification basée sur les données reçues
-        $deviceInfo = [
-            'brand' => $this->identifyBrand($data),
-            'model' => $this->identifyModel($data),
-            'serial_number' => $this->extractSerialNumber($data)
-        ];
-        
-        return $deviceInfo;
-    }
-
-    private function identifyBrand($data)
-    {
-        // Logique d'identification de la marque basée sur les données lues
-        // À adapter selon les protocoles spécifiques
-        return 'sma'; // Exemple
-    }
-
-    private function identifyModel($data)
-    {
-        // Logique d'identification du modèle basée sur les données lues
-        // À adapter selon les protocoles spécifiques
-        return 'sunny-boy-5.0'; // Exemple
-    }
-
-    private function extractSerialNumber($data)
-    {
-        // Logique d'extraction du numéro de série
-        // À adapter selon les protocoles spécifiques
-        return implode('', array_map('chr', $data));
-    }
-
-    private function testConnection($inverter)
+    public function resetDevice(Request $request, string $inverterName): JsonResponse
     {
         try {
-            $socket = @fsockopen($inverter->ip_address, $inverter->port, $errno, $errstr, 1);
-            if (!$socket) {
-                return false;
-            }
+            $validated = $request->validate([
+                'type' => 'required|string|in:soft,hard,factory'
+            ]);
 
-            // Envoi d'une requête de test simple
-            $request = $this->createModbusRequest(0x01, 0x03, 0x0000, 0x0001);
-            fwrite($socket, $request);
-            
-            // Lecture de la réponse
-            $response = fread($socket, 1024);
-            fclose($socket);
+            $inverter = $this->inverterManager->connect($inverterName);
+            $result = $inverter->reset($validated['type']);
 
-            return strlen($response) > 0;
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Réinitialisation effectuée avec succès',
+                'data' => $result
+            ]);
         } catch (\Exception $e) {
-            Log::error("Erreur de test de connexion: " . $e->getMessage());
-            return false;
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ], 500);
         }
     }
-} 
+
+    public function getMaintenanceInfo(Request $request, string $inverterName): JsonResponse
+    {
+        try {
+            $inverter = $this->inverterManager->connect($inverterName);
+            
+            $maintenanceInfo = [
+                'last_maintenance' => $inverter->getLastMaintenanceDate(),
+                'next_maintenance' => $inverter->getNextMaintenanceDate(),
+                'maintenance_history' => $inverter->getMaintenanceHistory(),
+                'recommended_actions' => $inverter->getRecommendedMaintenanceActions()
+            ];
+
+            return response()->json([
+                'status' => 'success',
+                'data' => $maintenanceInfo
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+}

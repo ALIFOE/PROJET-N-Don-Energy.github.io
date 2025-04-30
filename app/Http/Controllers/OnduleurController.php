@@ -5,6 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Onduleur;
 use App\Models\InverterData;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Http\JsonResponse;
+use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Log;
 
 class OnduleurController extends Controller
 {
@@ -13,7 +18,7 @@ class OnduleurController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(): View
     {
         $onduleurs = Onduleur::orderBy('created_at', 'desc')->get();
         return view('onduleurs.index', compact('onduleurs'));
@@ -24,7 +29,7 @@ class OnduleurController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(): View
     {
         return view('onduleurs.create'); // Assurez-vous que cette vue existe
     }
@@ -35,7 +40,7 @@ class OnduleurController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $validatedData = $request->validate([
             'user_id' => 'required|exists:users,id',
@@ -83,7 +88,7 @@ class OnduleurController extends Controller
                 ->with('success', 'Onduleur ajouté avec succès');
 
         } catch (\Exception $e) {
-            \Illuminate\Support\Facades\Log::error("Erreur lors de l'ajout de l'onduleur: " . $e->getMessage());
+            Log::error("Erreur lors de l'ajout d'un onduleur: " . $e->getMessage());
             return redirect()->back()
                 ->withInput()
                 ->with('error', "Une erreur est survenue lors de l'ajout de l'onduleur");
@@ -96,9 +101,9 @@ class OnduleurController extends Controller
      * @param  \App\Models\Onduleur  $onduleur
      * @return \Illuminate\Http\Response
      */
-    public function show(Onduleur $onduleur)
+    public function show(Onduleur $onduleur): View
     {
-        //
+        return view('onduleurs.show', compact('onduleur'));
     }
 
     /**
@@ -107,7 +112,7 @@ class OnduleurController extends Controller
      * @param  \App\Models\Onduleur  $onduleur
      * @return \Illuminate\Http\Response
      */
-    public function edit(Onduleur $onduleur)
+    public function edit(Onduleur $onduleur): View
     {
         return view('onduleurs.edit', compact('onduleur'));
     }
@@ -119,7 +124,7 @@ class OnduleurController extends Controller
      * @param  \App\Models\Onduleur  $onduleur
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Onduleur $onduleur)
+    public function update(Request $request, Onduleur $onduleur): RedirectResponse
     {
         $validatedData = $request->validate([
             'modele' => 'required|string|max:255',
@@ -139,7 +144,7 @@ class OnduleurController extends Controller
      * @param  \App\Models\Onduleur  $onduleur
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Onduleur $onduleur)
+    public function destroy(Onduleur $onduleur): RedirectResponse
     {
         $onduleur->delete();
 
@@ -153,13 +158,12 @@ class OnduleurController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function toggleConnection($id)
+    public function toggleConnection(Onduleur $onduleur): RedirectResponse
     {
-        $onduleur = Onduleur::findOrFail($id);
+        $status = $onduleur->est_connecte ? 'déconnecté' : 'connecté';
         $onduleur->est_connecte = !$onduleur->est_connecte;
         $onduleur->save();
 
-        $status = $onduleur->est_connecte ? 'connecté' : 'déconnecté';
         return back()->with('success', "L'onduleur a été $status avec succès");
     }
 
@@ -169,16 +173,9 @@ class OnduleurController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function performance($id)
+    public function performance(Onduleur $onduleur): View
     {
-        $onduleur = Onduleur::findOrFail($id);
-        
-        // Récupérer les données de performance des dernières 24 heures
-        $donnees = InverterData::where('inverter_id', $onduleur->id)
-            ->where('created_at', '>=', now()->subHours(24))
-            ->orderBy('created_at')
-            ->get();
-
+        $donnees = $onduleur->donneesProduction()->latest()->take(24)->get();
         return view('onduleurs.performance', compact('onduleur', 'donnees'));
     }
 
@@ -226,7 +223,7 @@ class OnduleurController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function testConnection(Request $request)
+    public function testConnection(Request $request): JsonResponse
     {
         try {
             $validated = $request->validate([
@@ -235,27 +232,50 @@ class OnduleurController extends Controller
                 'protocol' => 'required|string|in:modbus_tcp,sunspec,rest_api'
             ]);
 
-            // Vérifier d'abord si le port est accessible
+            // Vérification initiale du port
             $connection = @fsockopen($validated['ip'], $validated['port'], $errno, $errstr, 3);
             
             if (!$connection) {
-                // Erreur spécifique pour le pare-feu
-                if ($errno == 10060 || $errno == 10061) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => "Le pare-feu bloque la connexion. Vérifiez que le port {$validated['port']} est ouvert.",
-                        'error_code' => $errno
-                    ]);
+                // Messages d'erreur spécifiques selon le type d'erreur
+                switch($errno) {
+                    case 10060: // Windows: WSAETIMEDOUT
+                    case 10061: // Windows: WSAECONNREFUSED
+                        return response()->json([
+                            'success' => false,
+                            'message' => "Le pare-feu bloque la connexion. Actions suggérées:\n" .
+                                        "1. Vérifiez que le port {$validated['port']} est ouvert\n" .
+                                        "2. Désactivez temporairement le pare-feu Windows pour test\n" .
+                                        "3. Ajoutez une règle dans le pare-feu pour autoriser les connexions entrantes sur ce port\n" .
+                                        "4. Vérifiez les paramètres de votre antivirus",
+                            'error_code' => $errno,
+                            'error_type' => 'firewall'
+                        ]);
+                    case 10065: // Windows: WSAEHOSTUNREACH
+                        return response()->json([
+                            'success' => false,
+                            'message' => "L'onduleur n'est pas accessible sur le réseau. Vérifiez:\n" .
+                                        "1. Que l'onduleur est sous tension\n" .
+                                        "2. Que l'onduleur est correctement connecté au réseau\n" .
+                                        "3. Que votre ordinateur est sur le même réseau que l'onduleur",
+                            'error_code' => $errno,
+                            'error_type' => 'network'
+                        ]);
+                    default:
+                        return response()->json([
+                            'success' => false,
+                            'message' => "Impossible d'établir la connexion: $errstr\n" .
+                                        "Veuillez vérifier:\n" .
+                                        "1. L'adresse IP et le port\n" .
+                                        "2. La connexion réseau\n" .
+                                        "3. Les paramètres de votre pare-feu",
+                            'error_code' => $errno,
+                            'error_type' => 'general'
+                        ]);
                 }
-                return response()->json([
-                    'success' => false,
-                    'message' => "Impossible d'établir la connexion: $errstr",
-                    'error_code' => $errno
-                ]);
             }
             fclose($connection);
 
-            // Créer un onduleur temporaire pour tester
+            // Créer un onduleur temporaire pour tester le protocole
             $inverter = new \App\Models\Inverter([
                 'ip_address' => $validated['ip'],
                 'port' => $validated['port'],
@@ -263,11 +283,12 @@ class OnduleurController extends Controller
                 'connection_config' => [
                     'host' => $validated['ip'],
                     'port' => $validated['port'],
-                    'timeout' => 5
+                    'timeout' => 5,
+                    'retries' => 3
                 ]
             ]);
 
-            // Tenter la connexion avec le protocole spécifique
+            // Test avec le protocole spécifique
             $connector = \App\Services\InverterConnectors\InverterConnectorFactory::create($inverter);
             $success = $connector->connect();
 
@@ -281,14 +302,19 @@ class OnduleurController extends Controller
 
             return response()->json([
                 'success' => false,
-                'message' => "La connexion a échoué. Vérifiez les paramètres et que le pare-feu autorise les connexions."
+                'message' => "La connexion a échoué. Veuillez:\n" .
+                            "1. Vérifier que l'onduleur supporte le protocole sélectionné\n" .
+                            "2. Vérifier que le pare-feu autorise les connexions\n" .
+                            "3. Vérifier que l'onduleur est configuré correctement",
+                'error_type' => 'protocol'
             ]);
 
         } catch (\Exception $e) {
-            \Illuminate\Support\Facades\Log::error("Erreur lors du test de connexion: " . $e->getMessage());
+            Log::error("Erreur lors du test de connexion: " . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => "Erreur de connexion: " . $e->getMessage()
+                'message' => "Erreur de connexion: " . $e->getMessage(),
+                'error_type' => 'exception'
             ], 500);
         }
     }

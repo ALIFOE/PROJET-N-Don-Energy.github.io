@@ -2,22 +2,20 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Formation extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
         'nom',
         'description',
         'duree',
+        'niveau',
         'prix',
         'statut'
     ];
 
-    // Relations
+    // Une formation peut avoir plusieurs inscriptions
     public function inscriptions()
     {
         return $this->hasMany(FormationInscription::class);

@@ -3,8 +3,10 @@
 namespace App\Services\InverterConnectors;
 
 use Exception;
-use ModbusTcpClient\Composer\Read\ReadRegistersBuilder;
+use ModbusTcpClient\Packet\ModbusFunction\ReadHoldingRegistersRequest;
+use ModbusTcpClient\Packet\ModbusFunction\ReadHoldingRegistersResponse;
 use ModbusTcpClient\Network\BinaryStreamConnection;
+use ModbusTcpClient\Network\BinaryStreamConnectionBuilder;
 
 class ModbusTcpConnector extends BaseInverterConnector
 {
@@ -13,34 +15,65 @@ class ModbusTcpConnector extends BaseInverterConnector
     protected $port;
     protected $unitId;
     protected $timeout;
+    protected $retries = 3;
 
     public function connect(): bool
     {
         try {
-            $this->host = $this->config['host'] ?? null;
+            $this->host = $this->config['host'] ?? $this->inverter->ip_address;
             $this->port = $this->config['port'] ?? 502;
             $this->unitId = $this->config['unit_id'] ?? 1;
-            $this->timeout = $this->config['timeout'] ?? 5;
+            $this->timeout = $this->config['timeout'] ?? 10;
 
             if (!$this->host) {
                 throw new Exception("Hôte Modbus TCP non configuré");
             }
 
-            // La connexion réelle est établie lors de l'envoi de la première requête
-            $this->client = BinaryStreamConnection::getBuilder()
+            if (!$this->testPort()) {
+                throw new Exception("Le port {$this->port} n'est pas accessible. Vérifiez votre pare-feu.");
+            }
+
+            $this->client = (new BinaryStreamConnectionBuilder())
                 ->setHost($this->host)
                 ->setPort($this->port)
                 ->setTimeoutSec($this->timeout)
+                ->setConnectTimeoutSec(5)
                 ->build();
 
-            $this->connected = true;
-            $this->logger->info("Connecté à l'onduleur via Modbus TCP: {$this->host}:{$this->port}");
-            return true;
+            // Test de la connexion avec une requête simple
+            $request = new ReadHoldingRegistersRequest(0, 1, $this->unitId);
+            $response = $this->client->sendAndReceive($request);
+            
+            if ($response instanceof ReadHoldingRegistersResponse) {
+                $this->connected = true;
+                $this->logger->info("Connecté à l'onduleur via Modbus TCP: {$this->host}:{$this->port}");
+                return true;
+            }
+            
+            throw new Exception("Échec du test de connexion Modbus TCP");
         } catch (Exception $e) {
             $this->logger->error("Erreur de connexion Modbus TCP: " . $e->getMessage());
             $this->connected = false;
-            return false;
+            throw $e;
         }
+    }
+
+    protected function testPort(): bool
+    {
+        for ($i = 0; $i < $this->retries; $i++) {
+            try {
+                $socket = @fsockopen($this->host, $this->port, $errno, $errstr, 2);
+                if ($socket) {
+                    fclose($socket);
+                    return true;
+                }
+                // Petite pause entre les tentatives
+                if ($i < $this->retries - 1) sleep(1);
+            } catch (\Exception $e) {
+                $this->logger->warning("Tentative " . ($i + 1) . "/" . $this->retries . " échouée : " . $e->getMessage());
+            }
+        }
+        return false;
     }
 
     public function disconnect(): bool
@@ -59,30 +92,31 @@ class ModbusTcpConnector extends BaseInverterConnector
         }
 
         try {
-            $builder = new ReadRegistersBuilder();
-            
-            // Registres standards pour les données en temps réel
-            $builder->readHoldingRegisters($this->unitId, 30001, 10);
-            
-            $responses = $builder->build()->sendTo($this->client);
-            $values = $responses[0]->getData();
-            
+            // Lecture des données via Modbus
+            $request = new ReadHoldingRegistersRequest(30001, 10, $this->unitId);
+            $response = $this->client->sendAndReceive($request);
+
+            if (!$response instanceof ReadHoldingRegistersResponse) {
+                throw new Exception("Réponse Modbus invalide");
+            }
+
+            $values = $response->getWords();
+            $rawValues = array_map(fn($word) => (int)$word, $values);
+
             $data = [
-                'power' => $this->convertValue($values[0], 1), // W
-                'daily_energy' => $this->convertValue($values[1], 10), // kWh
-                'total_energy' => $this->convertValue($values[2], 10), // kWh
-                'voltage_ac' => $this->convertValue($values[3], 10), // V
-                'current_ac' => $this->convertValue($values[4], 100), // A
-                'frequency' => $this->convertValue($values[5], 100), // Hz
-                'temperature' => $this->convertValue($values[6], 10), // °C
-                'status' => $this->getStatus($values[7])
+                'power' => $this->convertValue($rawValues[0], 1), // W
+                'daily_energy' => $this->convertValue($rawValues[1], 10), // kWh
+                'total_energy' => $this->convertValue($rawValues[2], 10), // kWh
+                'voltage_ac' => $this->convertValue($rawValues[3], 10), // V
+                'current_ac' => $this->convertValue($rawValues[4], 100), // A
+                'frequency' => $this->convertValue($rawValues[5], 100), // Hz
+                'temperature' => $this->convertValue($rawValues[6], 10), // °C
             ];
-            
-            $this->saveReading($data);
+
             return $data;
         } catch (Exception $e) {
-            $this->logger->error("Erreur lors de la lecture Modbus TCP: " . $e->getMessage());
-            return ['error' => $e->getMessage()];
+            $this->logger->error("Erreur lors de la lecture des données Modbus: " . $e->getMessage());
+            throw $e;
         }
     }
 
@@ -108,18 +142,22 @@ class ModbusTcpConnector extends BaseInverterConnector
         }
 
         try {
-            $builder = new ReadRegistersBuilder();
-            $builder->readHoldingRegisters($this->unitId, 40000, 10);
+            $request = new ReadHoldingRegistersRequest(40000, 10, $this->unitId);
+            $response = $this->client->sendAndReceive($request);
             
-            $responses = $builder->build()->sendTo($this->client);
-            $values = $responses[0]->getData();
+            if (!$response instanceof ReadHoldingRegistersResponse) {
+                throw new Exception("Réponse Modbus invalide");
+            }
+            
+            $values = $response->getWords();
+            $rawValues = array_map(fn($word) => (int)$word, $values);
             
             return [
                 'device_type' => 'Modbus TCP Device',
                 'vendor' => $this->inverter->manufacturer,
                 'model' => $this->inverter->model,
-                'serial' => $this->extractSerialNumber($values),
-                'firmware' => $this->extractFirmwareVersion($values),
+                'serial' => $this->extractSerialNumber($rawValues),
+                'firmware' => $this->extractFirmwareVersion($rawValues),
                 'connection' => "Modbus TCP {$this->host}:{$this->port}"
             ];
         } catch (Exception $e) {
@@ -130,7 +168,7 @@ class ModbusTcpConnector extends BaseInverterConnector
 
     protected function convertValue($value, float $factor): float
     {
-        if ($value === 0x8000) { // Valeur non implémentée
+        if ($value === null || $value === 0x8000) { // Valeur non implémentée
             return 0;
         }
         return $value / $factor;

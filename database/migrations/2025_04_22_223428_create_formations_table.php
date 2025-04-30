@@ -13,15 +13,16 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('formations', function (Blueprint $table) {
-            $table->id();
-            $table->string('nom');
-            $table->text('description')->nullable();
-            $table->string('duree')->nullable();
-            $table->string('niveau')->nullable();
-            $table->decimal('prix', 8, 2)->nullable();
-            $table->timestamps();
-        });
+        // Migration désactivée car remplacée par une version plus récente
+        // Schema::create('formations', function (Blueprint $table) {
+        //     $table->id();
+        //     $table->string('nom');
+        //     $table->text('description')->nullable();
+        //     $table->string('duree')->nullable();
+        //     $table->string('niveau')->nullable();
+        //     $table->decimal('prix', 8, 2)->nullable();
+        //     $table->timestamps();
+        // });
     }
 
     /**
@@ -31,6 +32,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('formations');
+        // Schema::dropIfExists('formations');
     }
 };

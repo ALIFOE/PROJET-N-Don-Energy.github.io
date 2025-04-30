@@ -30,6 +30,10 @@ Route::get('/', function () {
 
 // Routes protégées par authentification
 Route::middleware(['auth'])->group(function () {
+    Route::get('/systeme-intelligent', 'App\Http\Controllers\SystemeIntelligentController@index')
+        ->name('systeme-intelligent');
+});
+Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     
     // Routes pour les performances régionales
@@ -82,6 +86,13 @@ Route::middleware(['auth'])->group(function () {
     // Routes pour la configuration des onduleurs
     Route::get('/onduleur/config', [OnduleurConfigController::class, 'show'])->name('onduleur.config');
     Route::post('/onduleur/config', [OnduleurConfigController::class, 'save'])->name('onduleur.config.save');
+
+    // Routes pour les devis
+    Route::get('/devis/creer', [DevisController::class, 'create'])->name('devis.create');
+    Route::post('/devis', [DevisController::class, 'store'])->name('devis.store');
+    Route::get('/devis/{devis}/resultats', [DevisController::class, 'resultats'])->name('devis.resultats');
+    Route::get('/devis', [DevisController::class, 'index'])->name('devis.index');
+    Route::get('/devis/{devis}/download-pdf', [DevisController::class, 'downloadPdf'])->name('devis.download-pdf');
 });
 
 // Routes pour le blog
@@ -103,14 +114,10 @@ Route::get('/about', function () {
     return view('about');
 })->name('about');
 
-Route::get('/formation', function () {
-    return view('formation');
-})->name('formation');
-
-Route::get('/formation/inscription', function () {
-    $formations = \App\Models\Formation::all();
-    return view('inscription', compact('formations'));
-})->name('formation.inscription.page');
+// Routes pour les formations
+Route::get('/formation', [App\Http\Controllers\FormationController::class, 'index'])->name('formation');
+Route::get('/formation/inscription', [App\Http\Controllers\FormationController::class, 'show'])->name('formation.inscription.page');
+Route::post('/formation/inscription', [App\Http\Controllers\FormationController::class, 'inscription'])->name('formation.inscription');
 
 Route::get('/installation', function () {
     return view('installation');
@@ -154,19 +161,13 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/users/{user}', [App\Http\Controllers\Admin\UtilisateurController::class, 'show'])->name('users.show');
 });
 
-Route::get('/devis/create', [DevisController::class, 'create'])->name('devis.create');
-Route::post('/devis', [DevisController::class, 'store'])->name('devis.store');
-
 Route::get('/technician/form', [TechnicianController::class, 'showForm'])->name('technician.form');
 Route::post('/technician/form', [TechnicianController::class, 'submitForm'])->name('technician.form.submit');
 Route::post('/technician/submit', [TechnicianController::class, 'submit'])->name('technician.submit');
 
 Route::post('/formation/inscription', [App\Http\Controllers\FormationController::class, 'inscription'])->name('formation.inscription');
 
-Route::get('/inscription', function () {
-    $formations = \App\Models\Formation::all();
-    return view('inscription', compact('formations'));
-})->name('inscription');
+Route::get('/inscription', [App\Http\Controllers\FormationController::class, 'show'])->name('inscription');
 
 Route::get('/suivi-production', [SuiviProductionController::class, 'index'])->name('suivi-production');
 Route::get('/suivi-production/data', [SuiviProductionController::class, 'getData'])->name('suivi-production.data');

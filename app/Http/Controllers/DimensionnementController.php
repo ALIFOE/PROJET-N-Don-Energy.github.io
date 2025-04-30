@@ -56,12 +56,17 @@ class DimensionnementController extends Controller
         try {
             Log::info('Début de la création du dimensionnement', $request->validated());
             
-            $dimensionnement = new Dimensionnement($request->validated());
-            $dimensionnement->user_id = auth()->id();
-            $dimensionnement->statut = 'en_attente';
+            $validatedData = $request->validated();
+            $validatedData['user_id'] = auth()->id();
+            $validatedData['statut'] = 'en_attente';
             
             Log::info('Tentative de sauvegarde du dimensionnement');
-            $dimensionnement->save();
+            $dimensionnement = Dimensionnement::create($validatedData);
+            
+            if (!$dimensionnement) {
+                throw new \Exception('Échec de la création du dimensionnement');
+            }
+            
             Log::info('Dimensionnement sauvegardé avec succès', ['id' => $dimensionnement->id]);
 
             try {
@@ -73,6 +78,7 @@ class DimensionnementController extends Controller
                     'exception' => $mailException,
                     'email' => $request->email
                 ]);
+                // On continue même si l'email échoue
             }
 
             return redirect()
@@ -85,7 +91,7 @@ class DimensionnementController extends Controller
             ]);
             return back()
                 ->withInput()
-                ->with('error', 'Une erreur est survenue lors de l\'enregistrement de votre demande. Veuillez réessayer.');
+                ->withErrors(['error' => 'Une erreur est survenue lors de l\'enregistrement de votre demande. Veuillez réessayer.']);
         }
     }
 

@@ -2,11 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Devis;
+use App\Services\DevisAnalyzer;
 use Illuminate\Http\Request;
-use App\Models\LogActivite;
 
 class DevisController extends Controller
 {
+    private $devisAnalyzer;
+
+    public function __construct(DevisAnalyzer $devisAnalyzer)
+    {
+        $this->devisAnalyzer = $devisAnalyzer;
+    }
+
     public function create()
     {
         return view('devis.create');
@@ -14,32 +22,53 @@ class DevisController extends Controller
 
     public function store(Request $request)
     {
-        // Validez et traitez les données ici
         $validated = $request->validate([
             'nom' => 'required|string|max:255',
-            'email' => 'required|email',
-            'message' => 'required|string',
+            'prenom' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'telephone' => 'required|string|max:20',
+            'adresse' => 'required|string|max:255',
+            'type_batiment' => 'required|string',
+            'facture_mensuelle' => 'nullable|numeric',
+            'consommation_annuelle' => 'required|numeric',
+            'type_toiture' => 'required|string',
+            'orientation' => 'required|string',
+            'objectifs' => 'required|array',
+            'message' => 'nullable|string'
         ]);
 
-        // Logique pour enregistrer ou envoyer les données
+        // Analyse du devis
+        $analyse = $this->devisAnalyzer->analyserDevis($validated);
 
-        // Enregistrer une activité pour le client
-        // Vérifiez si l'utilisateur est authentifié avant de créer une activité
-        if (auth()->check()) {
-            LogActivite::create([
-                'user_id' => auth()->id(),
-                'action' => 'création',
-                'table' => 'devis',
-                'id_table' => '0', // ou l'ID du devis si vous l'avez créé
-                'description' => 'Un devis a été soumis avec succès.',
-                'ip_address' => request()->ip(),
-                'user_agent' => request()->userAgent()
-            ]);
-        } else {
-            // Gérer le cas où l'utilisateur n'est pas authentifié (facultatif)
-            return redirect()->route('login')->with('error', 'Vous devez être connecté pour soumettre un devis.');
-        }
+        // Sauvegarder le devis avec l'analyse
+        $devisData = array_merge($validated, ['analyse_technique' => json_encode($analyse)]);
+        $devis = Devis::create($devisData);
 
-        return redirect()->route('devis.create')->with('success', 'Votre demande a été envoyée avec succès.');
+        // Redirection vers la page de résultats
+        return redirect()->route('devis.resultats', $devis)
+            ->with('success', 'Votre demande de devis a été analysée avec succès.');
+    }
+
+    public function resultats(Devis $devis)
+    {
+        return view('devis.resultats', [
+            'devis' => $devis,
+            'analyse' => $devis->analyse_technique ?? []
+        ]);
+    }
+
+    public function downloadPdf(Devis $devis)
+    {
+        $analyseData = is_string($devis->analyse_technique) 
+            ? json_decode($devis->analyse_technique, true) 
+            : $devis->analyse_technique;
+
+        $pdf = app('dompdf.wrapper');
+        $pdf->loadView('devis.pdf', [
+            'devis' => $devis,
+            'analyseData' => $analyseData
+        ]);
+
+        return $pdf->download('resultats-analyse-' . $devis->id . '.pdf');
     }
 }

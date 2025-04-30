@@ -7,20 +7,32 @@ use App\Services\InverterConnectors\InverterConnectorFactory;
 use App\Models\Inverter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Artisan;
 
 class InverterApiController extends Controller
 {
     public function scan()
     {
         try {
-            // Exécuter la commande de scan
-            \Artisan::call('inverters:scan', [
+            // Log du début du scan
+            Log::info("Début du scan des onduleurs");
+
+            // Exécuter la commande de scan avec un timeout de 2 secondes
+            Artisan::call('inverters:scan', [
                 '--timeout' => 2
             ]);
 
             // Récupérer les résultats
-            $output = \Artisan::output();
-            Log::info("Résultat du scan: " . $output);
+            $output = Artisan::output();
+            Log::info("Résultat brut du scan: " . $output);
+
+            if (empty($output)) {
+                Log::warning("Le scan n'a produit aucune sortie");
+                return response()->json([
+                    'message' => 'Aucun résultat trouvé pendant le scan',
+                    'status' => 'empty'
+                ], 404);
+            }
 
             // Parser les résultats pour les renvoyer en JSON
             preg_match_all('/Port ouvert trouvé: (.*?)\n.*?Onduleur trouvé.*?avec le protocole (.*?)\n.*?Onduleur enregistré: ID #(\d+)/s', 
@@ -43,10 +55,26 @@ class InverterApiController extends Controller
                 }
             }
 
-            return response()->json($results);
+            Log::info("Scan terminé avec succès. Nombre d'onduleurs trouvés: " . count($results));
+            
+            return response()->json([
+                'status' => 'success',
+                'message' => count($results) > 0 ? 'Onduleurs trouvés' : 'Aucun onduleur trouvé',
+                'data' => $results
+            ]);
+
         } catch (\Exception $e) {
-            Log::error("Erreur lors du scan des onduleurs: " . $e->getMessage());
-            return response()->json(['error' => $e->getMessage()], 500);
+            Log::error("Erreur lors du scan des onduleurs: " . $e->getMessage(), [
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Une erreur est survenue pendant la recherche des onduleurs',
+                'error' => config('app.debug') ? $e->getMessage() : null
+            ], 500);
         }
     }
 

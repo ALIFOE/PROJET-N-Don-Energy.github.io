@@ -31,120 +31,140 @@ class ScanInvertersCommand extends Command
 
     protected function scanNetwork(Installation $installation, int $timeout)
     {
-        $network = $this->getLocalNetwork();
-        $portsToScan = [502, 1502, 8080, 80]; // Ports communs pour Modbus TCP et REST API
+        try {
+            // Log du début du scan réseau
+            Log::info("Début du scan réseau pour l'installation #{$installation->id}");
 
-        foreach ($network as $ip) {
-            foreach ($portsToScan as $port) {
-                if ($this->isPortOpen($ip, $port, $timeout)) {
-                    $this->info("Port ouvert trouvé: {$ip}:{$port}");
+            $network = $this->getLocalNetwork();
+            if (empty($network)) {
+                Log::error("Impossible de déterminer le réseau local");
+                throw new \Exception("Impossible de déterminer le réseau local");
+            }
+
+            Log::info("Réseau local détecté : {$network}");
+
+            // Scan des ports courants pour les onduleurs
+            $ports = [502, 1502, 80, 8080]; // Ports communs pour Modbus TCP et API Web
+            
+            foreach ($ports as $port) {
+                $this->info("Scan du port {$port}...");
+                
+                try {
+                    $socket = @fsockopen($network, $port, $errno, $errstr, $timeout);
                     
-                    try {
-                        // Essaie de se connecter avec différents protocoles
-                        foreach (InverterConnectorFactory::getAvailableConnectors() as $type) {
-                            $config = [
-                                'host' => $ip,
-                                'port' => $port,
-                                'timeout' => $timeout
-                            ];
+                    if ($socket) {
+                        $address = "{$network}:{$port}";
+                        Log::info("Port ouvert trouvé: {$address}");
+                        $this->info("Port ouvert trouvé: {$address}");
+                        
+                        // Tenter de détecter le protocole et l'onduleur
+                        $protocol = $this->detectProtocol($network, $port);
+                        
+                        if ($protocol) {
+                            $this->info("Onduleur trouvé sur {$address} avec le protocole {$protocol}");
+                            Log::info("Onduleur trouvé sur {$address} avec le protocole {$protocol}");
                             
-                            if ($this->testConnection($type, $config)) {
-                                $this->info("Onduleur trouvé sur {$ip}:{$port} avec le protocole {$type}");
-                                
-                                // Récupère les informations de l'onduleur
-                                $deviceInfo = $this->getDeviceInfo($type, $config);
-                                if ($deviceInfo) {
-                                    $this->createInverter($installation, $deviceInfo, $type, $config);
-                                }
+                            // Enregistrer l'onduleur dans la base de données
+                            $inverter = $this->registerInverter($installation, $network, $port, $protocol);
+                            if ($inverter) {
+                                $this->info("Onduleur enregistré: ID #{$inverter->id}");
                             }
                         }
-                    } catch (\Exception $e) {
-                        Log::debug("Erreur lors du test de {$ip}:{$port} - " . $e->getMessage());
+                        
+                        fclose($socket);
+                    }
+                } catch (\Exception $e) {
+                    Log::warning("Erreur lors du scan du port {$port}: " . $e->getMessage());
+                    continue; // Continuer avec le port suivant
+                }
+            }
+            
+        } catch (\Exception $e) {
+            Log::error("Erreur lors du scan réseau: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    protected function getLocalNetwork()
+    {
+        // Obtenir l'adresse IP locale
+        $localIP = gethostbyname(gethostname());
+        if ($localIP === false || $localIP === gethostname()) {
+            Log::error("Impossible d'obtenir l'adresse IP locale");
+            return null;
+        }
+
+        // Extraire le préfixe réseau (supposons un masque /24)
+        $parts = explode('.', $localIP);
+        if (count($parts) !== 4) {
+            Log::error("Format d'adresse IP invalide: {$localIP}");
+            return null;
+        }
+
+        // Retourner le préfixe réseau
+        return "{$parts[0]}.{$parts[1]}.{$parts[2]}.1";
+    }
+
+    protected function detectProtocol($ip, $port)
+    {
+        try {
+            // Tester Modbus TCP
+            if ($port == 502 || $port == 1502) {
+                $socket = @fsockopen($ip, $port, $errno, $errstr, 1);
+                if ($socket) {
+                    // En-tête Modbus TCP minimal
+                    $data = pack("n*", 0, 0, 6, 1, 3, 0);
+                    fwrite($socket, $data);
+                    $response = fread($socket, 2);
+                    fclose($socket);
+                    
+                    if ($response !== false && strlen($response) > 0) {
+                        return 'modbus_tcp';
                     }
                 }
             }
-        }
-    }
 
-    protected function getLocalNetwork(): array
-    {
-        $ip = $_SERVER['SERVER_ADDR'] ?? '192.168.1.1';
-        $subnet = substr($ip, 0, strrpos($ip, '.') + 1);
-        
-        $network = [];
-        for ($i = 1; $i < 255; $i++) {
-            $network[] = $subnet . $i;
-        }
-        
-        return $network;
-    }
+            // Tester l'API Web
+            if ($port == 80 || $port == 8080) {
+                $ch = curl_init();
+                curl_setopt($ch, CURLOPT_URL, "http://{$ip}:{$port}/api/info");
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_TIMEOUT, 2);
+                $response = curl_exec($ch);
+                $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                curl_close($ch);
 
-    protected function isPortOpen(string $ip, int $port, int $timeout): bool
-    {
-        $connection = @fsockopen($ip, $port, $errno, $errstr, $timeout);
-        if ($connection) {
-            fclose($connection);
-            return true;
-        }
-        return false;
-    }
-
-    protected function testConnection(string $type, array $config): bool
-    {
-        try {
-            // Crée un onduleur temporaire pour tester la connexion
-            $inverter = new \App\Models\Inverter([
-                'connection_type' => $type,
-                'connection_config' => $config,
-                'ip_address' => $config['host'],
-                'port' => $config['port']
-            ]);
-
-            $connector = InverterConnectorFactory::create($inverter);
-            return $connector->connect();
-        } catch (\Exception $e) {
-            return false;
-        }
-    }
-
-    protected function getDeviceInfo(string $type, array $config): ?array
-    {
-        try {
-            $inverter = new \App\Models\Inverter([
-                'connection_type' => $type,
-                'connection_config' => $config,
-                'ip_address' => $config['host'],
-                'port' => $config['port']
-            ]);
-
-            $connector = InverterConnectorFactory::create($inverter);
-            if ($connector->connect()) {
-                return $connector->getDeviceInfo();
+                if ($httpCode == 200) {
+                    return 'rest_api';
+                }
             }
+
         } catch (\Exception $e) {
-            Log::error("Erreur lors de la récupération des infos: " . $e->getMessage());
+            Log::warning("Erreur lors de la détection du protocole: " . $e->getMessage());
         }
+
         return null;
     }
 
-    protected function createInverter(Installation $installation, array $deviceInfo, string $type, array $config)
+    protected function registerInverter(Installation $installation, $ip, $port, $protocol)
     {
         try {
-            $inverter = \App\Models\Inverter::create([
+            $inverter = new \App\Models\Inverter([
                 'installation_id' => $installation->id,
-                'brand' => $deviceInfo['manufacturer'] ?? 'Unknown',
-                'model' => $deviceInfo['model'] ?? 'Unknown',
-                'serial_number' => $deviceInfo['serial'] ?? null,
-                'ip_address' => $config['host'],
-                'port' => $config['port'],
-                'connection_type' => $type,
-                'connection_config' => $config,
+                'connection_config' => [
+                    'host' => $ip,
+                    'port' => $port,
+                    'protocol' => $protocol
+                ],
                 'status' => 'discovered'
             ]);
-
-            $this->info("Onduleur enregistré: ID #{$inverter->id}");
+            
+            $inverter->save();
+            return $inverter;
+            
         } catch (\Exception $e) {
-            $this->error("Erreur lors de l'enregistrement de l'onduleur: " . $e->getMessage());
+            Log::error("Erreur lors de l'enregistrement de l'onduleur: " . $e->getMessage());
+            return null;
         }
     }
 }

@@ -18,6 +18,8 @@ return new class extends Migration
             $table->foreignId('formation_id')->constrained()->onDelete('cascade');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('nom');
+            $table->string('email');
+            $table->string('telephone');
             $table->string('acte_naissance_path');
             $table->string('cni_path');
             $table->string('diplome_path');

@@ -7,25 +7,54 @@
         body {
             font-family: DejaVu Sans, sans-serif;
             font-size: 12px;
+            margin: 0;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #1d4ed8;
+        }
+        .logo {
+            max-width: 200px;
+            margin-bottom: 10px;
+        }
+        .company-info {
+            margin-bottom: 20px;
+            text-align: center;
+            color: #1d4ed8;
+            font-size: 14px;
+        }
+        .company-name {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 5px;
         }
         h1 {
-            font-size: 18px;
+            font-size: 24px;
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
+            color: #1d4ed8;
+            text-transform: uppercase;
         }
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
         }
         th, td {
             border: 1px solid #ddd;
-            padding: 8px;
+            padding: 12px;
             text-align: left;
         }
         th {
-            background-color: #f3f4f6;
+            background-color: #1d4ed8;
+            color: white;
             font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #f8fafc;
         }
         .date {
             width: 20%;
@@ -38,13 +67,27 @@
         }
         .footer {
             text-align: center;
-            font-size: 10px;
+            font-size: 11px;
             color: #666;
-            margin-top: 20px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
         }
     </style>
 </head>
 <body>
+    <div class="header">
+        <img src="{{ public_path('images/logo.png') }}" alt="N'Don Energy Logo" class="logo">
+        <div class="company-info">
+            <div class="company-name">N'Don Energy</div>
+            <div>Expert en Solutions d'Énergie Solaire</div>
+            <div>123 Avenue de l'Énergie Verte</div>
+            <div>75000 Paris, France</div>
+            <div>Tél: +33 (0)1 23 45 67 89</div>
+            <div>Email: contact@ndon-energy.com</div>
+        </div>
+    </div>
+
     <h1>{{ __("Historique des activités") }}</h1>
 
     <table>
@@ -67,7 +110,9 @@
     </table>
 
     <div class="footer">
-        {{ __("Document généré le") }} {{ now()->format('d/m/Y H:i') }}
+        <div>{{ __("Document généré le") }} {{ now()->format('d/m/Y H:i') }}</div>
+        <div>N'Don Energy - SIRET: 123 456 789 00001 - TVA: FR12 123456789</div>
+        <div>www.ndon-energy.com</div>
     </div>
 </body>
 </html>

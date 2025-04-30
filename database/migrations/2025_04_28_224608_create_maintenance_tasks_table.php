@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('maintenance_tasks', function (Blueprint $table) {
             $table->id();
             $table->foreignId('installation_id')->constrained('installations')->onDelete('cascade');
-            $table->foreignId('utilisateur_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->enum('type', ['preventive', 'corrective', 'predictive']);
             $table->text('description');
             $table->date('date');

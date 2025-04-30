@@ -112,7 +112,7 @@
                                 </li>
                             </ul>
                             <div class="mt-6 text-center">
-                                <a href="{{ route('contact') }}" class="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition duration-300">
+                                <a href="{{ route('maintenance-predictive') }}" class="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition duration-300">
                                     Prendre rendez-vous
                                 </a>
                             </div>
@@ -140,7 +140,7 @@
                                 </li>
                             </ul>
                             <div class="mt-6 text-center">
-                                <a href="{{ route('contact') }}" class="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition duration-300">
+                                <a href="{{ route('suivi-production') }}" class="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition duration-300">
                                     En savoir plus
                                 </a>
                             </div>
@@ -168,7 +168,7 @@
                                 </li>
                             </ul>
                             <div class="mt-6 text-center">
-                                <a href="{{ route('contact') }}" class="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition duration-300">
+                                <a href="{{ route('formation') }}" class="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition duration-300">
                                     S'inscrire à une formation
                                 </a>
                             </div>

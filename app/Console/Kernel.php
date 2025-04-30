@@ -13,6 +13,12 @@ class Kernel extends ConsoleKernel
         $schedule->command('meteo:verifier-conditions')
             ->everyFifteenMinutes()
             ->withoutOverlapping();
+
+        // Collecte des données des onduleurs toutes les 5 minutes
+        $schedule->command('inverters:collect-data')
+            ->everyFiveMinutes()
+            ->withoutOverlapping()
+            ->appendOutputTo(storage_path('logs/inverter-data.log'));
     }
 
     protected function commands()

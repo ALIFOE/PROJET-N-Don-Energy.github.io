@@ -136,6 +136,131 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Audit de Performance -->
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+                <h3 class="text-lg font-semibold text-gray-700 mb-4">Audit de Performance</h3>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="p-4 border rounded-lg">
+                        <div class="flex items-center justify-between mb-4">
+                            <h4 class="font-medium">Score de Performance</h4>
+                            <span class="text-2xl font-bold text-green-500" id="performanceScore">92%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2.5">
+                            <div class="bg-green-500 h-2.5 rounded-full" style="width: 92%"></div>
+                        </div>
+                    </div>
+                    <div class="p-4 border rounded-lg">
+                        <h4 class="font-medium mb-3">Points Forts</h4>
+                        <ul class="space-y-2 text-sm">
+                            <li class="flex items-center">
+                                <svg class="w-4 h-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"></path>
+                                </svg>
+                                Rendement optimal des panneaux
+                            </li>
+                            <li class="flex items-center">
+                                <svg class="w-4 h-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"></path>
+                                </svg>
+                                Maintenance régulière
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="p-4 border rounded-lg">
+                        <h4 class="font-medium mb-3">Points d'Amélioration</h4>
+                        <ul class="space-y-2 text-sm">
+                            <li class="flex items-center">
+                                <svg class="w-4 h-4 text-yellow-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"></path>
+                                </svg>
+                                Nettoyage des panneaux recommandé
+                            </li>
+                            <li class="flex items-center">
+                                <svg class="w-4 h-4 text-yellow-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"></path>
+                                </svg>
+                                Optimisation de l'angle possible
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recommandations Personnalisées -->
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+                <h3 class="text-lg font-semibold text-gray-700 mb-4">Recommandations Personnalisées</h3>
+                <div class="space-y-4">
+                    <div class="flex items-start p-4 border rounded-lg">
+                        <div class="flex-shrink-0 mr-4">
+                            <span class="inline-flex items-center justify-center h-10 w-10 rounded-full bg-blue-100">
+                                <svg class="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                                </svg>
+                            </span>
+                        </div>
+                        <div>
+                            <h4 class="font-medium">Optimisation de la Production</h4>
+                            <p class="mt-1 text-sm text-gray-600">Un nettoyage des panneaux pourrait augmenter la production de 5-10%. Planifiez un entretien dans les prochaines semaines.</p>
+                            <a href="{{ route('maintenance-predictive') }}" class="mt-2 inline-block text-sm text-blue-600 hover:text-blue-800">Planifier maintenant</a>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start p-4 border rounded-lg">
+                        <div class="flex-shrink-0 mr-4">
+                            <span class="inline-flex items-center justify-center h-10 w-10 rounded-full bg-green-100">
+                                <svg class="h-6 w-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            </span>
+                        </div>
+                        <div>
+                            <h4 class="font-medium">Stockage d'Énergie</h4>
+                            <p class="mt-1 text-sm text-gray-600">L'ajout d'une batterie de stockage pourrait augmenter votre taux d'autoconsommation de 30%.</p>
+                            <button class="mt-2 text-sm text-blue-600 hover:text-blue-800">En savoir plus</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Suivi des Améliorations -->
+            <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+                <h3 class="text-lg font-semibold text-gray-700 mb-4">Suivi des Améliorations</h3>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead>
+                            <tr>
+                                <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                                <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Impact</th>
+                                <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap">Nettoyage des panneaux</td>
+                                <td class="px-6 py-4 whitespace-nowrap">15 avril 2025</td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="text-green-600">+8% production</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Complété</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap">Ajustement angle panneaux</td>
+                                <td class="px-6 py-4 whitespace-nowrap">Prévu mai 2025</td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="text-gray-600">+3-5% estimé</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Planifié</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 

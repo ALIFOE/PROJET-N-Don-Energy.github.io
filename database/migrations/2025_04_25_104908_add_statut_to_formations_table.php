@@ -13,9 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('formations', function (Blueprint $table) {
-            $table->string('statut')->default('active'); // Ajout de la colonne 'statut'
-        });
+        // Migration désactivée car le statut est déjà inclus dans la table formations
     }
 
     /**
@@ -25,8 +23,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('formations', function (Blueprint $table) {
-            $table->dropColumn('statut'); // Suppression de la colonne 'statut' lors du rollback
-        });
+        // Migration désactivée car le statut est déjà inclus dans la table formations
     }
 };

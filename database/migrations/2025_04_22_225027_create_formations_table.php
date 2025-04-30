@@ -13,19 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        // Schema::create('formations', function (Blueprint $table) {
-        //     $table->id();
-        //     $table->string('nom');
-        //     $table->text('description')->nullable();
-        //     $table->integer('duree')->comment('en heures');
-        //     $table->decimal('prix', 10, 2);
-        //     $table->string('statut')->default('active');
-        //     $table->timestamps();
-        // });
+        // Migration désactivée car remplacée par une version plus récente
     }
 
     public function down()
     {
-        // Schema::dropIfExists('formations');
+        // Migration désactivée car remplacée par une version plus récente
     }
 };

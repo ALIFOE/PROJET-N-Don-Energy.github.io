@@ -89,7 +89,7 @@ async function downloadReport(type, period) {
             method: 'GET',
             credentials: 'include',
             headers: {
-                'Accept': 'application/json',
+                'Accept': type === 'pdf' ? 'application/pdf' : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
                 'X-XSRF-TOKEN': token
             }
         });
@@ -99,15 +99,28 @@ async function downloadReport(type, period) {
         }
 
         const blob = await response.blob();
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `rapport-${type}-${period}.${type === 'excel' ? 'xlsx' : 'pdf'}`;
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-        document.body.removeChild(a);
-        showNotification('success', 'Succès', 'Le rapport a été téléchargé avec succès');
+        const fileName = `rapport-${type}-${period}.${type === 'excel' ? 'xlsx' : 'pdf'}`;
+
+        // Pour les PDF, on peut les ouvrir dans un nouvel onglet
+        if (type === 'pdf') {
+            const pdfUrl = window.URL.createObjectURL(blob);
+            window.open(pdfUrl, '_blank');
+            setTimeout(() => window.URL.revokeObjectURL(pdfUrl), 1000);
+        } else {
+            // Pour les autres types de fichiers, on utilise le téléchargement standard
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            setTimeout(() => {
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+            }, 1000);
+        }
+        
+        showNotification('success', 'Succès', 'Le rapport a été généré avec succès');
     } catch (error) {
         console.error('Erreur lors du téléchargement:', error);
         showNotification('error', 'Erreur', 'Une erreur est survenue lors du téléchargement du rapport');

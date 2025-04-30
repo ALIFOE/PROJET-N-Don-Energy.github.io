@@ -11,13 +11,19 @@ class DonneeProduction extends Model
 
     protected $fillable = [
         'installation_id',
+        'onduleur_id',
         'date_heure',
         'puissance_instantanee',
         'energie_jour',
         'energie_mois',
         'energie_annee',
         'energie_totale',
-        'rendement'
+        'rendement',
+        'temperature',
+        'irradiance',
+        'niveau_batterie',
+        'code_erreur',
+        'code_avertissement'
     ];
 
     protected $casts = [
@@ -27,11 +33,19 @@ class DonneeProduction extends Model
         'energie_mois' => 'float',
         'energie_annee' => 'float',
         'energie_totale' => 'float',
-        'rendement' => 'float'
+        'rendement' => 'float',
+        'temperature' => 'float',
+        'irradiance' => 'float',
+        'niveau_batterie' => 'float'
     ];
 
     public function installation()
     {
         return $this->belongsTo(Installation::class);
+    }
+
+    public function onduleur()
+    {
+        return $this->belongsTo(Onduleur::class);
     }
 }

@@ -1,14 +1,31 @@
 @extends('layouts.app')
 
 @section('content')
+<!-- Ajout du meta tag CSRF -->
+<meta name="csrf-token" content="{{ csrf_token() }}">
+
 <div class="container mx-auto px-4 py-8">
     <div class="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow">
         <h2 class="text-2xl font-bold mb-6">Ajouter un nouvel onduleur</h2>
 
         <div class="mb-8">
-            <button id="scanButton" type="button" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">
-                Rechercher des onduleurs
+            <h3 class="text-lg font-semibold mb-2">Recherche automatique d'onduleurs sur le réseau</h3>
+            <p class="text-sm text-gray-600 mb-4">Cliquez sur le bouton ci-dessous pour rechercher des onduleurs connectés à votre réseau local. Sélectionnez-en un pour remplir automatiquement les informations ci-dessous.</p>
+            <p class="text-sm text-gray-600 mb-4">Assurez-vous que votre appareil est connecté au même réseau que l'onduleur.</p>
+            <button id="scanButton" type="button" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded flex items-center">
+                <span>Recherche automatique des onduleurs</span>
+                <span id="loadingSpinner" class="ml-2 hidden">
+                    <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                </span>
             </button>
+
+            <div id="scanStatus" class="mt-3 text-sm hidden">
+                <p id="scanStatusText" class="font-medium"></p>
+            </div>
+
             <div id="scanResults" class="mt-4 hidden">
                 <h3 class="text-lg font-semibold mb-2">Onduleurs détectés</h3>
                 <div id="resultsList" class="space-y-2">
@@ -210,35 +227,53 @@ document.addEventListener('DOMContentLoaded', function() {
     const scanButton = document.getElementById('scanButton');
     const scanResults = document.getElementById('scanResults');
     const resultsList = document.getElementById('resultsList');
+    const loadingSpinner = document.getElementById('loadingSpinner');
+    const scanStatus = document.getElementById('scanStatus');
+    const scanStatusText = document.getElementById('scanStatusText');
     
     scanButton.addEventListener('click', function() {
         scanButton.disabled = true;
-        scanButton.textContent = 'Recherche en cours...';
+        loadingSpinner.classList.remove('hidden');
+        scanStatus.classList.remove('hidden');
+        scanStatusText.textContent = 'Recherche en cours...';
         
-        fetch('/onduleurs/scan', {
+        fetch('/api/onduleurs/scan', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'Accept': 'application/json'
             }
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Erreur HTTP: ${response.status}`);
+            }
+            return response.json();
+        })
         .then(data => {
             scanResults.classList.remove('hidden');
             resultsList.innerHTML = '';
             
-            if (data.length === 0) {
+            if (data.status === 'error') {
+                throw new Error(data.message || 'Une erreur est survenue');
+            }
+            
+            if (data.status === 'empty' || !data.data || data.data.length === 0) {
                 resultsList.innerHTML = '<p class="text-gray-500">Aucun onduleur trouvé sur le réseau</p>';
+                scanStatusText.textContent = 'Aucun onduleur trouvé';
+                scanStatusText.className = 'text-yellow-500';
                 return;
             }
             
-            data.forEach(inverter => {
+            data.data.forEach(inverter => {
                 const div = document.createElement('div');
                 div.className = 'p-3 bg-gray-50 rounded border border-gray-200';
                 div.innerHTML = `
                     <p class="font-medium">${inverter.brand} ${inverter.model}</p>
                     <p class="text-sm text-gray-600">IP: ${inverter.ip}:${inverter.port}</p>
                     <p class="text-sm text-gray-600">N° série: ${inverter.serial_number}</p>
+                    <p class="text-sm text-gray-600">Protocole: ${inverter.connection_type}</p>
                     <button type="button" class="mt-2 bg-indigo-500 hover:bg-indigo-600 text-white text-sm py-1 px-3 rounded"
                         onclick="selectInverter('${inverter.brand}', '${inverter.model}', '${inverter.serial_number}', '${inverter.ip}', '${inverter.port}')">
                         Sélectionner
@@ -246,14 +281,46 @@ document.addEventListener('DOMContentLoaded', function() {
                 `;
                 resultsList.appendChild(div);
             });
+            
+            scanStatusText.textContent = 'Recherche terminée avec succès';
+            scanStatusText.className = 'text-green-500';
         })
         .catch(error => {
             console.error('Erreur:', error);
-            resultsList.innerHTML = '<p class="text-red-500">Erreur lors de la recherche</p>';
+            
+            let errorMessage;
+            if (error.message.includes('HTTP: 500')) {
+                errorMessage = 'Erreur serveur lors de la recherche. Veuillez réessayer.';
+            } else if (error.message.includes('HTTP: 404')) {
+                errorMessage = 'Aucun onduleur trouvé sur le réseau.';
+            } else if (error.message.includes('Failed to fetch')) {
+                errorMessage = 'Impossible de contacter le serveur. Vérifiez votre connexion.';
+            } else {
+                errorMessage = 'Erreur lors de la recherche: ' + error.message;
+            }
+            
+            resultsList.innerHTML = `<p class="text-red-500">${errorMessage}</p>`;
+            scanStatusText.textContent = errorMessage;
+            scanStatusText.className = 'text-red-500';
+            
+            // Afficher des conseils de dépannage
+            const troubleshootingDiv = document.createElement('div');
+            troubleshootingDiv.className = 'mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded';
+            troubleshootingDiv.innerHTML = `
+                <h4 class="font-semibold text-yellow-800 mb-2">Conseils de dépannage :</h4>
+                <ul class="list-disc pl-5 text-sm text-yellow-700 space-y-1">
+                    <li>Vérifiez que l'onduleur est sous tension et connecté au réseau</li>
+                    <li>Assurez-vous que votre ordinateur est sur le même réseau que l'onduleur</li>
+                    <li>Vérifiez que les ports nécessaires (502, 1502, 80, 8080) ne sont pas bloqués par un pare-feu</li>
+                    <li>Essayez de désactiver temporairement votre pare-feu pour tester</li>
+                    <li>Si le problème persiste, contactez le support technique</li>
+                </ul>
+            `;
+            resultsList.appendChild(troubleshootingDiv);
         })
         .finally(() => {
             scanButton.disabled = false;
-            scanButton.textContent = 'Rechercher des onduleurs';
+            loadingSpinner.classList.add('hidden');
         });
     });
 

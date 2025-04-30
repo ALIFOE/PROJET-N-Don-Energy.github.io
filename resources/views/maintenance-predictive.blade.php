@@ -113,7 +113,7 @@
                                     <tr class="hover:bg-gray-50">
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $maintenance->installation->nom }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 capitalize">{{ $maintenance->type }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $maintenance->date_prevue->format('d/m/Y') }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ isset($maintenance->date_prevue) ? $maintenance->date_prevue->format('d/m/Y') : 'Non définie' }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full
                                                 @if($maintenance->statut === 'planifiée') bg-yellow-100 text-yellow-800

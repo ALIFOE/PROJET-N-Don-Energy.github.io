@@ -6,6 +6,7 @@ use App\Models\DonneeMeteo;
 use App\Models\Installation;
 use App\Services\InverterService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class PerformanceController extends Controller
 {
@@ -48,18 +49,25 @@ class PerformanceController extends Controller
 
     private function calculateRegionalPerformance()
     {
-        // Logique pour calculer la performance moyenne de la région
-        $installations = Installation::where('region', session('region'))->get();
-        $totalEfficiency = 0;
-        $count = 0;
+        try {
+            // Logique pour calculer la performance moyenne de la région
+            $installations = Installation::where('region', session('region'))
+                ->where('efficacite', '>', 0)
+                ->where('efficacite', '<=', 100)
+                ->get();
+            
+            $totalEfficiency = $installations->sum('efficacite');
+            $count = $installations->count();
 
-        foreach ($installations as $installation) {
-            if ($installation->efficacite > 0) {
-                $totalEfficiency += $installation->efficacite;
-                $count++;
+            if ($count === 0) {
+                return 0;
             }
-        }
 
-        return $count > 0 ? ($totalEfficiency / $count) : 0;
+            $averageEfficiency = $totalEfficiency / $count;
+            return is_finite($averageEfficiency) ? $averageEfficiency : 0;
+        } catch (\Exception $e) {
+            Log::error('Erreur dans le calcul de performance régionale: ' . $e->getMessage());
+            return 0;
+        }
     }
 }
