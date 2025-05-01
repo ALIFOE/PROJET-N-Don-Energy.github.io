@@ -96,7 +96,7 @@
                 </div>
             @endif
             
-            <form action="{{ route('dimensionnement.submit') }}" method="POST" class="space-y-6">
+            <form action="{{ route('dimensionnements.store') }}" method="POST" class="space-y-6">
                 @csrf
                 
                 <!-- Informations générales -->
@@ -259,4 +259,4 @@
             </form>
         </div>
     </div>
-</x-app-layout> 
+</x-app-layout>

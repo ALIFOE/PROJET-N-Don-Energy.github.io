@@ -85,6 +85,88 @@
                 </div>
             </div>
 
+            <!-- Solutions de stockage d'énergie -->
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-16">
+                <h2 class="text-3xl font-bold text-gray-900 text-center mb-8">Solutions de Stockage d'Énergie</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="p-6 border rounded-lg">
+                        <h3 class="text-xl font-semibold mb-4">Batteries Domestiques</h3>
+                        <ul class="space-y-3">
+                            <li class="flex items-start">
+                                <i class="fas fa-battery-full text-green-500 mt-1 mr-3"></i>
+                                <span class="text-gray-600">Stockage intelligent de l'énergie excédentaire</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-bolt text-green-500 mt-1 mr-3"></i>
+                                <span class="text-gray-600">Utilisation optimisée pendant les pics de consommation</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="p-6 border rounded-lg">
+                        <h3 class="text-xl font-semibold mb-4">Solutions Professionnelles</h3>
+                        <ul class="space-y-3">
+                            <li class="flex items-start">
+                                <i class="fas fa-industry text-green-500 mt-1 mr-3"></i>
+                                <span class="text-gray-600">Systèmes de grande capacité pour entreprises</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-chart-line text-green-500 mt-1 mr-3"></i>
+                                <span class="text-gray-600">Gestion intelligente de la charge</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Surveillance intelligente -->
+            <div class="bg-gray-50 rounded-lg shadow-lg p-8 mb-16">
+                <h2 class="text-3xl font-bold text-gray-900 text-center mb-8">Surveillance Intelligente</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="text-center p-6">
+                        <i class="fas fa-mobile-alt text-4xl text-blue-600 mb-4"></i>
+                        <h3 class="text-xl font-semibold mb-2">Application Mobile</h3>
+                        <p class="text-gray-600">Suivez votre production en temps réel depuis votre smartphone</p>
+                    </div>
+                    <div class="text-center p-6">
+                        <i class="fas fa-chart-bar text-4xl text-blue-600 mb-4"></i>
+                        <h3 class="text-xl font-semibold mb-2">Analyses Détaillées</h3>
+                        <p class="text-gray-600">Rapports personnalisés et statistiques de performance</p>
+                    </div>
+                    <div class="text-center p-6">
+                        <i class="fas fa-bell text-4xl text-blue-600 mb-4"></i>
+                        <h3 class="text-xl font-semibold mb-2">Alertes Intelligentes</h3>
+                        <p class="text-gray-600">Notifications en cas d'anomalie ou de maintenance nécessaire</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Garanties et certifications -->
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-16">
+                <h2 class="text-3xl font-bold text-gray-900 text-center mb-8">Nos Garanties et Certifications</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <div class="text-center p-6 border rounded-lg">
+                        <i class="fas fa-certificate text-4xl text-yellow-500 mb-4"></i>
+                        <h3 class="text-lg font-semibold mb-2">QualiPV</h3>
+                        <p class="text-gray-600">Certification professionnelle reconnue</p>
+                    </div>
+                    <div class="text-center p-6 border rounded-lg">
+                        <i class="fas fa-shield-alt text-4xl text-green-500 mb-4"></i>
+                        <h3 class="text-lg font-semibold mb-2">Garantie 25 ans</h3>
+                        <p class="text-gray-600">Sur les panneaux solaires</p>
+                    </div>
+                    <div class="text-center p-6 border rounded-lg">
+                        <i class="fas fa-tools text-4xl text-blue-500 mb-4"></i>
+                        <h3 class="text-lg font-semibold mb-2">SAV Premium</h3>
+                        <p class="text-gray-600">Support technique dédié</p>
+                    </div>
+                    <div class="text-center p-6 border rounded-lg">
+                        <i class="fas fa-handshake text-4xl text-purple-500 mb-4"></i>
+                        <h3 class="text-lg font-semibold mb-2">Assurance décennale</h3>
+                        <p class="text-gray-600">Installation garantie</p>
+                    </div>
+                </div>
+            </div>
+
             <!-- Notre processus -->
             <div class="bg-white rounded-lg shadow-lg p-8 mb-16">
                 <h2 class="text-3xl font-bold text-gray-900 text-center mb-8">Notre Processus d'Installation</h2>

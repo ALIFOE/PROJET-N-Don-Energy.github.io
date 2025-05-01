@@ -43,7 +43,10 @@ Route::middleware(['auth'])->group(function () {
     // ...autres routes existantes...
 
     // Routes pour les dimensionnements
-    Route::resource('dimensionnements', DimensionnementController::class);
+    Route::middleware(['auth'])->group(function () {
+        Route::get('/dimensionnement', [DimensionnementController::class, 'create'])->name('dimensionnement');
+        Route::resource('dimensionnements', DimensionnementController::class);
+    });
 
     // Routes pour onduleurs
     Route::get('/onduleurs', [OnduleurController::class, 'index'])->name('onduleurs.index');
@@ -118,6 +121,7 @@ Route::get('/about', function () {
 Route::get('/formation', [App\Http\Controllers\FormationController::class, 'index'])->name('formation');
 Route::get('/formation/inscription', [App\Http\Controllers\FormationController::class, 'show'])->name('formation.inscription.page');
 Route::post('/formation/inscription', [App\Http\Controllers\FormationController::class, 'inscription'])->name('formation.inscription');
+Route::get('/formation/mes-inscriptions', [App\Http\Controllers\FormationController::class, 'mesInscriptions'])->middleware('auth')->name('formation.mes-inscriptions');
 
 Route::get('/installation', function () {
     return view('installation');
@@ -139,7 +143,7 @@ Route::middleware(['auth'])->group(function () {
 });
 
 Route::get('/dimensionnement', [DimensionnementController::class, 'showForm'])->name('dimensionnement');
-Route::post('/dimensionnement', [DimensionnementController::class, 'submit'])->name('dimensionnement.submit');
+Route::post('/dimensionnement', [DimensionnementController::class, 'store'])->name('dimensionnement.submit');
 
 Route::get('/checkout/{product}', [PaymentController::class, 'showCheckout'])->name('checkout');
 Route::post('/process-payment', [PaymentController::class, 'processPayment'])->name('process.payment');
@@ -155,10 +159,47 @@ Route::middleware(['auth'])->group(function () {
 
 // Routes d'administration
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    // Tableau de bord d'administration
+    Route::get('/dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
+    
+    // Journal d'activités
+    Route::get('/activites', [App\Http\Controllers\Admin\LogActiviteController::class, 'index'])->name('activites.index');
+    
+    // Gestion des utilisateurs
+    Route::get('/users', [App\Http\Controllers\Admin\UtilisateurController::class, 'index'])->name('users.index');
+    Route::get('/users/create', [App\Http\Controllers\Admin\UtilisateurController::class, 'create'])->name('users.create');
+    Route::post('/users', [App\Http\Controllers\Admin\UtilisateurController::class, 'store'])->name('users.store');
+    Route::get('/users/{user}/edit', [App\Http\Controllers\Admin\UtilisateurController::class, 'edit'])->name('users.edit');
+    Route::put('/users/{user}', [App\Http\Controllers\Admin\UtilisateurController::class, 'update'])->name('users.update');
+    Route::delete('/users/{user}', [App\Http\Controllers\Admin\UtilisateurController::class, 'destroy'])->name('users.destroy');
+    
+    // Commandes existantes
     Route::get('/orders', [App\Http\Controllers\Admin\OrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/{order}', [App\Http\Controllers\Admin\OrderController::class, 'show'])->name('orders.show');
     Route::put('/orders/{order}/status', [App\Http\Controllers\Admin\OrderController::class, 'updateStatus'])->name('orders.update-status');
-    Route::get('/users/{user}', [App\Http\Controllers\Admin\UtilisateurController::class, 'show'])->name('users.show');
+    
+    // Contacts existants
+    Route::get('/contacts', [ContactController::class, 'admin'])->name('contacts');
+    Route::patch('/contacts/{id}/mark-read', [ContactController::class, 'markAsRead'])->name('contacts.mark-read');
+    Route::delete('/contacts/{id}', [ContactController::class, 'destroy'])->name('contacts.destroy');
+
+    // Messagerie administrative
+    Route::get('/messages', [App\Http\Controllers\Admin\AdminMessageController::class, 'index'])->name('messages.index');
+    Route::get('/messages/create', [App\Http\Controllers\Admin\AdminMessageController::class, 'create'])->name('messages.create');
+    Route::post('/messages', [App\Http\Controllers\Admin\AdminMessageController::class, 'store'])->name('messages.store');
+    Route::get('/messages/{message}', [App\Http\Controllers\Admin\AdminMessageController::class, 'show'])->name('messages.show');
+    Route::delete('/messages/{message}', [App\Http\Controllers\Admin\AdminMessageController::class, 'destroy'])->name('messages.destroy');
+
+    // Routes pour la gestion des inscriptions aux formations
+    Route::get('/formations/inscriptions', [App\Http\Controllers\Admin\AdminFormationController::class, 'index'])->name('formations.inscriptions.index');
+    Route::get('/formations/inscriptions/{inscription}', [App\Http\Controllers\Admin\AdminFormationController::class, 'show'])->name('formations.inscriptions.show');
+    Route::put('/formations/inscriptions/{inscription}/status', [App\Http\Controllers\Admin\AdminFormationController::class, 'updateStatus'])->name('formations.inscriptions.update-status');
+
+    // Route pour marquer les notifications comme lues
+    Route::patch('/notifications/{notification}/mark-as-read', function ($id) {
+        auth()->user()->notifications()->findOrFail($id)->markAsRead();
+        return back()->with('success', 'Notification marquée comme lue');
+    })->name('notifications.mark-as-read');
 });
 
 Route::get('/technician/form', [TechnicianController::class, 'showForm'])->name('technician.form');

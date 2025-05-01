@@ -78,12 +78,12 @@ class DimensionnementController extends Controller
                     'exception' => $mailException,
                     'email' => $request->email
                 ]);
-                // On continue même si l'email échoue
             }
 
             return redirect()
-                ->route('dashboard')
+                ->route('dimensionnements.index')
                 ->with('success', 'Votre demande de dimensionnement a été enregistrée avec succès. Un email de confirmation vous a été envoyé.');
+                
         } catch (\Exception $e) {
             Log::error('Erreur lors de la création du dimensionnement : ' . $e->getMessage(), [
                 'exception' => $e,

@@ -26,10 +26,7 @@ class DimensionnementRequest extends FormRequest
             'email' => 'required|email|max:255',
             'telephone' => 'required|string|max:20',
             'adresse' => 'required|string|max:255',
-            'ville' => 'required|string|max:100',
-            'code_postal' => 'required|string|max:10',
-            'pays' => 'required|string|max:100',
-            'type_logement' => 'required|string|in:maison,appartement,commerce,industriel',
+            'type_logement' => 'required|string|in:maison,appartement',
             'surface_toiture' => 'required|numeric|min:0',
             'orientation' => 'required|string|in:sud,sud-est,sud-ouest,autre',
             'facture_annuelle' => 'required|numeric|min:0',
@@ -38,9 +35,9 @@ class DimensionnementRequest extends FormRequest
             'budget' => 'required|numeric|min:0',
             'type_installation' => 'required|string|in:toiture,sol,ombriere,autre',
             'equipements' => 'required|array',
-            'equipements.*' => 'string|in:climatisation,pompe_chaleur,vehicule_electrique',
+            'equipements.*' => 'string|in:chauffage,ballon,climatisation',
             'objectifs' => 'required|array',
-            'objectifs.*' => 'string|in:autonomie,economie,ecologie'
+            'objectifs.*' => 'string|in:reduction,autoproduction,revente,environnement'
         ];
     }
 
@@ -77,7 +74,7 @@ class DimensionnementRequest extends FormRequest
             'ville' => 'ville',
             'code_postal' => 'code postal',
             'type_logement' => 'type de logement',
-            'surface_toiture' => 'surface de toiture',
+            'surface_disponible' => 'surface disponible',
             'orientation' => 'orientation',
             'facture_annuelle' => 'facture annuelle',
             'fournisseur' => 'fournisseur d\'électricité',

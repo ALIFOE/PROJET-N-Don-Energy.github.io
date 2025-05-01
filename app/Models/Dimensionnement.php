@@ -16,51 +16,42 @@ class Dimensionnement extends Model
         'email',
         'telephone',
         'adresse',
-        'ville',
-        'code_postal',
-        'pays',
-        'surface_disponible',
-        'consommation_annuelle',
+        'type_logement',
+        'surface_toiture',
+        'orientation',
+        'facture_annuelle',
+        'fournisseur',
+        'nb_personnes',
+        'budget',
+        'type_installation',
+        'equipements',
+        'objectifs',
+        'statut',
         'puissance_installee',
         'production_annuelle_estimee',
         'economie_annuelle_estimee',
         'taux_autoconsommation',
         'taux_autoproduction',
         'prix_kwh',
-        'budget_total',
         'duree_amortissement',
-        'rentabilite',
-        'statut',
-        'type_logement',
-        'surface_toiture',
-        'orientation',
-        'budget',
-        'type_installation',
-        'equipements',
-        'objectifs',
-        'facture_annuelle',
-        'fournisseur',
-        'nb_personnes'
+        'rentabilite'
     ];
 
     protected $casts = [
         'equipements' => 'array',
         'objectifs' => 'array',
-        'surface_disponible' => 'float',
-        'consommation_annuelle' => 'float',
+        'surface_toiture' => 'float',
+        'facture_annuelle' => 'float',
+        'budget' => 'float',
+        'nb_personnes' => 'integer',
         'puissance_installee' => 'float',
         'production_annuelle_estimee' => 'float',
         'economie_annuelle_estimee' => 'float',
         'taux_autoconsommation' => 'float',
         'taux_autoproduction' => 'float',
         'prix_kwh' => 'float',
-        'budget_total' => 'float',
         'duree_amortissement' => 'float',
-        'rentabilite' => 'float',
-        'surface_toiture' => 'float',
-        'budget' => 'float',
-        'facture_annuelle' => 'float',
-        'nb_personnes' => 'integer'
+        'rentabilite' => 'float'
     ];
 
     /**
@@ -69,6 +60,26 @@ class Dimensionnement extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function setEquipementsAttribute($value)
+    {
+        $this->attributes['equipements'] = is_array($value) ? json_encode($value) : $value;
+    }
+
+    public function setObjectifsAttribute($value)
+    {
+        $this->attributes['objectifs'] = is_array($value) ? json_encode($value) : $value;
+    }
+
+    public function getEquipementsAttribute($value)
+    {
+        return $value ? json_decode($value, true) : [];
+    }
+
+    public function getObjectifsAttribute($value)
+    {
+        return $value ? json_decode($value, true) : [];
     }
 
     protected static function getDescription(string $action, $model): string

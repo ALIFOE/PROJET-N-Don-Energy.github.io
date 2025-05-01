@@ -7,8 +7,8 @@
                 <h1 class="text-5xl font-extrabold text-gray-900 mb-4">Centre de Formation N'Don Energy</h1>
                 <p class="text-2xl text-gray-600 max-w-3xl mx-auto mb-4">Expert en Solutions d'Énergie Solaire</p>
                 <div class="text-gray-600">
-                    <p>123 Avenue de l'Énergie Verte, 75000 Paris</p>
-                    <p>Tél: +33 (0)1 23 45 67 89 | Email: formation@ndon-energy.com</p>
+                    <p>Rue KOPEGA 54 GBY Lmé-Togo</p>
+                    <p>Tél: +228 97 73 43 81 | Email: formation@ndon-energy.com</p>
                     <p>Numéro d'agrément: 11756789100</p>
                 </div>
             </div>
@@ -23,6 +23,17 @@
                     <img src="{{ asset('images/certif-2.png') }}" alt="Certification QualiPV" class="h-20 mx-auto mb-2">
                     <p class="text-sm text-gray-600">Certifié QualiPV</p>
                 </div>
+            </div>
+
+            <!-- Liste déroulante des formations -->
+            <div class="max-w-xl mx-auto mb-12 relative z-50">
+                <label for="formation" class="block text-sm font-medium text-gray-700 mb-2">Choisissez votre formation</label>
+                <select name="formation" id="formation" class="block w-full px-4 py-3 rounded-lg border border-gray-300 bg-white shadow-sm focus:border-blue-500 focus:ring-blue-500 relative z-50">
+                    <option value="">Sélectionnez une formation</option>
+                    @foreach($formations as $formation)
+                        <option value="{{ $formation->id }}">{{ $formation->nom }} - {{ $formation->duree }} - {{ number_format($formation->prix, 2, ',', ' ') }}€</option>
+                    @endforeach
+                </select>
             </div>
 
             <!-- Filtres de formation -->
@@ -225,7 +236,7 @@
                     <h2 class="text-3xl font-bold text-white mb-6">Prêt à développer vos compétences ?</h2>
                     <p class="text-blue-100 mb-4 text-lg">Inscrivez-vous maintenant et bénéficiez de -10% sur votre première formation</p>
                     <p class="text-blue-100 mb-8">
-                        <i class="fas fa-phone-alt mr-2"></i> +33 (0)1 23 45 67 89
+                        <i class="fas fa-phone-alt mr-2"></i> +228 97 73 43 81
                         <span class="mx-4">|</span>
                         <i class="fas fa-envelope mr-2"></i> formation@ndon-energy.com
                     </p>

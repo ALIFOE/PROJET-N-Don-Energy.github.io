@@ -16,16 +16,21 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
-        'meteo_config'
+        'meteo_config',
+        'report_frequency',
+        'report_formats',
     ];
 
     protected $hidden = [
         'password',
         'remember_token',
-    ];    protected $casts = [
+    ];
+
+    protected $casts = [
         'email_verified_at' => 'datetime',
-        'report_formats' => 'array',
+        'password' => 'hashed',
         'meteo_config' => 'array',
+        'report_formats' => 'array',
     ];
 
     public function onduleurs()
@@ -56,6 +61,6 @@ class User extends Authenticatable
      */
     public function isAdmin(): bool
     {
-        return $this->hasRole('admin');
+        return $this->role === 'admin';
     }
 }

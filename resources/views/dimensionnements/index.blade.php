@@ -25,10 +25,13 @@
                                             {{ __('Date') }}
                                         </th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            {{ __('Type') }}
+                                            {{ __('Type installation') }}
                                         </th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            {{ __('Localisation') }}
+                                            {{ __('Surface') }}
+                                        </th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            {{ __('Budget') }}
                                         </th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                             {{ __('Statut') }}
@@ -48,7 +51,10 @@
                                                 {{ ucfirst($dimensionnement->type_installation) }}
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm">
-                                                {{ $dimensionnement->ville }}, {{ $dimensionnement->pays }}
+                                                {{ number_format($dimensionnement->surface_toiture, 2, ',', ' ') }} m²
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                                {{ number_format($dimensionnement->budget, 2, ',', ' ') }} €
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap">
                                                 <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 

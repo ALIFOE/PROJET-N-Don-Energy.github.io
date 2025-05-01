@@ -44,68 +44,10 @@
                                     <dt class="text-sm font-medium text-gray-500">{{ __('Adresse') }}</dt>
                                     <dd class="mt-1">{{ $dimensionnement->adresse }}</dd>
                                 </div>
-                                <div>
-                                    <dt class="text-sm font-medium text-gray-500">{{ __('Ville') }}</dt>
-                                    <dd class="mt-1">{{ $dimensionnement->ville }}</dd>
-                                </div>
-                                <div>
-                                    <dt class="text-sm font-medium text-gray-500">{{ __('Code postal') }}</dt>
-                                    <dd class="mt-1">{{ $dimensionnement->code_postal }}</dd>
-                                </div>
-                                <div>
-                                    <dt class="text-sm font-medium text-gray-500">{{ __('Pays') }}</dt>
-                                    <dd class="mt-1">{{ $dimensionnement->pays }}</dd>
-                                </div>
                             </dl>
-                        </div>
 
-                        <div>
-                            <h4 class="text-lg font-medium mb-4">{{ __('Informations techniques') }}</h4>
+                            <h4 class="text-lg font-medium my-4">{{ __('Consommation actuelle') }}</h4>
                             <dl class="grid grid-cols-1 gap-4">
-                                <div>
-                                    <dt class="text-sm font-medium text-gray-500">{{ __('Type de logement') }}</dt>
-                                    <dd class="mt-1">{{ ucfirst($dimensionnement->type_logement) }}</dd>
-                                </div>
-                                <div>
-                                    <dt class="text-sm font-medium text-gray-500">{{ __('Surface disponible') }}</dt>
-                                    <dd class="mt-1">{{ $dimensionnement->surface_toiture }} m²</dd>
-                                </div>
-                                <div>
-                                    <dt class="text-sm font-medium text-gray-500">{{ __('Orientation') }}</dt>
-                                    <dd class="mt-1">{{ ucfirst($dimensionnement->orientation) }}</dd>
-                                </div>
-                                <div>
-                                    <dt class="text-sm font-medium text-gray-500">{{ __('Type d\'installation') }}</dt>
-                                    <dd class="mt-1">{{ ucfirst($dimensionnement->type_installation) }}</dd>
-                                </div>
-                                <div>
-                                    <dt class="text-sm font-medium text-gray-500">{{ __('Équipements') }}</dt>
-                                    <dd class="mt-1">
-                                        @if($dimensionnement->equipements)
-                                            <ul class="list-disc list-inside">
-                                                @foreach($dimensionnement->equipements as $equipement)
-                                                    <li>{{ __($equipement) }}</li>
-                                                @endforeach
-                                            </ul>
-                                        @else
-                                            {{ __('Aucun équipement spécifié') }}
-                                        @endif
-                                    </dd>
-                                </div>
-                                <div>
-                                    <dt class="text-sm font-medium text-gray-500">{{ __('Objectifs') }}</dt>
-                                    <dd class="mt-1">
-                                        @if($dimensionnement->objectifs)
-                                            <ul class="list-disc list-inside">
-                                                @foreach($dimensionnement->objectifs as $objectif)
-                                                    <li>{{ __($objectif) }}</li>
-                                                @endforeach
-                                            </ul>
-                                        @else
-                                            {{ __('Aucun objectif spécifié') }}
-                                        @endif
-                                    </dd>
-                                </div>
                                 <div>
                                     <dt class="text-sm font-medium text-gray-500">{{ __('Facture annuelle') }}</dt>
                                     <dd class="mt-1">{{ number_format($dimensionnement->facture_annuelle, 2, ',', ' ') }} €</dd>
@@ -119,8 +61,58 @@
                                     <dd class="mt-1">{{ $dimensionnement->nb_personnes }}</dd>
                                 </div>
                                 <div>
-                                    <dt class="text-sm font-medium text-gray-500">{{ __('Budget') }}</dt>
+                                    <dt class="text-sm font-medium text-gray-500">{{ __('Équipements') }}</dt>
+                                    <dd class="mt-1">
+                                        @if($dimensionnement->equipements)
+                                            <ul class="list-disc list-inside">
+                                                @foreach($dimensionnement->equipements as $equipement)
+                                                    <li>{{ ucfirst(str_replace('_', ' ', $equipement)) }}</li>
+                                                @endforeach
+                                            </ul>
+                                        @else
+                                            {{ __('Aucun équipement spécifié') }}
+                                        @endif
+                                    </dd>
+                                </div>
+                            </dl>
+                        </div>
+
+                        <div>
+                            <h4 class="text-lg font-medium mb-4">{{ __('Caractéristiques du projet') }}</h4>
+                            <dl class="grid grid-cols-1 gap-4">
+                                <div>
+                                    <dt class="text-sm font-medium text-gray-500">{{ __('Type de logement') }}</dt>
+                                    <dd class="mt-1">{{ ucfirst($dimensionnement->type_logement) }}</dd>
+                                </div>
+                                <div>
+                                    <dt class="text-sm font-medium text-gray-500">{{ __('Surface de toiture') }}</dt>
+                                    <dd class="mt-1">{{ number_format($dimensionnement->surface_toiture, 2, ',', ' ') }} m²</dd>
+                                </div>
+                                <div>
+                                    <dt class="text-sm font-medium text-gray-500">{{ __('Orientation') }}</dt>
+                                    <dd class="mt-1">{{ ucfirst($dimensionnement->orientation) }}</dd>
+                                </div>
+                                <div>
+                                    <dt class="text-sm font-medium text-gray-500">{{ __('Type d\'installation') }}</dt>
+                                    <dd class="mt-1">{{ ucfirst($dimensionnement->type_installation) }}</dd>
+                                </div>
+                                <div>
+                                    <dt class="text-sm font-medium text-gray-500">{{ __('Budget envisagé') }}</dt>
                                     <dd class="mt-1">{{ number_format($dimensionnement->budget, 2, ',', ' ') }} €</dd>
+                                </div>
+                                <div>
+                                    <dt class="text-sm font-medium text-gray-500">{{ __('Objectifs du projet') }}</dt>
+                                    <dd class="mt-1">
+                                        @if($dimensionnement->objectifs)
+                                            <ul class="list-disc list-inside">
+                                                @foreach($dimensionnement->objectifs as $objectif)
+                                                    <li>{{ ucfirst(str_replace('_', ' ', $objectif)) }}</li>
+                                                @endforeach
+                                            </ul>
+                                        @else
+                                            {{ __('Aucun objectif spécifié') }}
+                                        @endif
+                                    </dd>
                                 </div>
                             </dl>
                         </div>

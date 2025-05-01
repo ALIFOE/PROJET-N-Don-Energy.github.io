@@ -6,7 +6,7 @@
     </head>
     <div class="container mx-auto px-6 py-3">
         <div class="flex justify-between items-center">
-            <!-- Logo et Nom -->
+            <!-- Logo et Nom -->            
             <div class="flex items-center">
                 <a href="{{ route('home') }}" class="flex items-center">
                     <i class="fas fa-solar-panel text-blue-600 text-2xl mr-2"></i>
@@ -17,15 +17,92 @@
             <!-- Navigation Links -->
             <div class="hidden md:flex space-x-10">
                 <a href="{{ route('home') }}" class="navbar-link {{ request()->routeIs('home') ? 'active' : '' }}">Accueil</a>
-                <a href="{{ route('fonctionnalite') }}" class="navbar-link {{ request()->routeIs('fonctionnalite') ? 'active' : '' }}">Fonctionnalités</a>
-                <a href="{{ route('formation') }}" class="navbar-link {{ request()->routeIs('formation') ? 'active' : '' }}">Formations</a>
+                <a href="{{ route('fonctionnalite') }}" class="navbar-link {{ request()->routeIs('fonctionnalite') ? 'active' : '' }}">Fonctions</a>
+                
+                <div class="relative" x-data="{ open: false }">
+                    <button @click="open = !open" @click.away="open = false" class="navbar-link inline-flex items-center {{ request()->routeIs('formation*') ? 'active' : '' }}">
+                        <span>Formations</span>
+                        <i class="fas fa-chevron-down ml-1 text-sm"></i>
+                    </button>
+                    <div x-show="open" class="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
+                        <a href="{{ route('formation') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                            Toutes les formations
+                        </a>
+                        @auth
+                            <a href="{{ route('formation.mes-inscriptions') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                Mes inscriptions
+                            </a>
+                        @endauth
+                    </div>
+                </div>
+
                 <a href="{{ route('installation') }}" class="navbar-link {{ request()->routeIs('installation') ? 'active' : '' }}">Devis-Installations</a>
                 <a href="{{ route('market-place') }}" class="navbar-link {{ request()->routeIs('market-place') ? 'active' : '' }}">Marcket-Place</a>
                 {{-- <a href="{{ route('rapports-analyses') }}" class="navbar-link {{ request()->routeIs('rapports-analyses') ? 'active' : '' }}">Rapports et Analyses</a> --}}
                 <a href="{{ route('about') }}" class="navbar-link {{ request()->routeIs('about') ? 'active' : '' }}">À propos</a>
                 <a href="{{ route('contact') }}" class="navbar-link {{ request()->routeIs('contact') ? 'active' : '' }}">Contact</a>
-                <a href="{{ route('activites.index') }}" class="navbar-link {{ request()->routeIs('activites.*') ? 'active' : '' }}">Mes activités</a>
-            </div>
+                <a href="{{ route('activites.index') }}" class="navbar-link {{ request()->routeIs('activites.*') ? 'active' : '' }}">activités</a>
+            </div>            
+            <!-- Admin Menu -->
+            @auth
+                @if(Auth::user()->isAdmin())
+                    <div class="relative mr-4" x-data="{ open: false }">
+                        <button @click="open = !open" class="flex items-center text-gray-800 hover:text-blue-600">
+                            <i class="fas fa-cog mr-1"></i>
+                            <span>Admin</span>
+                            <i class="fas fa-chevron-down ml-1 text-sm"></i>
+                        </button>
+                        <div x-show="open" @click.away="open = false" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
+                            <a href="{{ route('admin.dashboard') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                <i class="fas fa-tachometer-alt mr-2"></i>Tableau de bord
+                            </a>
+                            <a href="{{ route('admin.users.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                <i class="fas fa-users mr-2"></i>Utilisateurs
+                            </a>
+                            <a href="{{ route('admin.orders.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                <i class="fas fa-shopping-cart mr-2"></i>Commandes
+                            </a>
+                            <a href="{{ route('admin.formations.inscriptions.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                <i class="fas fa-book mr-2"></i>Inscriptions formations
+                            </a>
+                        </div>
+                    </div>
+                    <div class="relative mr-4" x-data="{ open: false }">
+                        <button @click="open = !open" class="flex items-center text-gray-800 hover:text-blue-600">
+                            <i class="fas fa-bell mr-1"></i>
+                            @if(Auth::user()->unreadNotifications->count() > 0)
+                                <span class="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
+                                    {{ Auth::user()->unreadNotifications->count() }}
+                                </span>
+                            @endif
+                        </button>
+                        <div x-show="open" @click.away="open = false" class="absolute right-0 mt-2 w-80 bg-white rounded-md shadow-lg py-1 z-50">
+                            @forelse(Auth::user()->unreadNotifications as $notification)
+                                <div class="px-4 py-2 border-b text-sm">
+                                    <p class="font-semibold text-gray-800">{{ $notification->data['message'] }}</p>
+                                    <div class="flex justify-between items-center mt-2">
+                                        <a href="{{ route('admin.formations.inscriptions.show', $notification->data['inscription_id']) }}" 
+                                           class="text-blue-600 hover:text-blue-800">
+                                            Voir les détails
+                                        </a>
+                                        <form action="{{ route('notifications.mark-as-read', $notification->id) }}" method="POST" class="inline">
+                                            @csrf
+                                            @method('PATCH')
+                                            <button type="submit" class="text-gray-600 hover:text-gray-800 text-xs">
+                                                Marquer comme lu
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            @empty
+                                <div class="px-4 py-2 text-sm text-gray-700">
+                                    Aucune notification non lue
+                                </div>
+                            @endforelse
+                        </div>
+                    </div>
+                @endif
+            @endauth
 
             <!-- User Menu -->
             <div class="flex items-center">
@@ -89,8 +166,19 @@
                 <a href="{{ route('about') }}" class="navbar-link {{ request()->routeIs('about') ? 'active' : '' }}">À propos</a>
                 <a href="{{ route('contact') }}" class="navbar-link {{ request()->routeIs('contact') ? 'active' : '' }}">Contact</a>
                 <a href="{{ route('activites.index') }}" class="navbar-link {{ request()->routeIs('activites.*') ? 'active' : '' }}">Mes activités</a>
-                @auth
-                    <a href="{{ route('dashboard') }}" class="navbar-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">Tableau de bord</a>
+                @auth                
+                <a href="{{ route('dashboard') }}" class="navbar-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">Tableau de bord</a>                    
+                @if (Auth::user()->isAdmin())
+                        <a href="{{ route('admin.activites.index') }}" class="navbar-link {{ request()->routeIs('admin.activites.index') ? 'active' : '' }}">
+                            Journal d'activités
+                        </a>
+                        <a href="{{ route('admin.messages.index') }}" class="navbar-link {{ request()->routeIs('admin.messages.*') ? 'active' : '' }}">
+                            Messages
+                        </a>
+                        <a href="{{ route('admin.formations.inscriptions.index') }}" class="navbar-link {{ request()->routeIs('admin.formations.inscriptions.*') ? 'active' : '' }}">
+                            Inscriptions formations
+                        </a>
+                    @endif
                     <a href="{{ route('admin.contacts') }}" class="navbar-link {{ request()->routeIs('admin.contacts') ? 'active' : '' }}">
                         Messages de contact
                         @php
