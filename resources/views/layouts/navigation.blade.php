@@ -12,20 +12,31 @@
                     <i class="fas fa-solar-panel text-blue-600 text-2xl mr-2"></i>
                     <span class="text-xl font-bold text-gray-800">Né Don Energy</span>
                 </a>
-            </div>
-
-            <!-- Navigation Links -->
-            <div class="hidden md:flex space-x-10">
-                <a href="{{ route('home') }}" class="navbar-link {{ request()->routeIs('home') ? 'active' : '' }}">Accueil</a>
-                <a href="{{ route('fonctionnalite') }}" class="navbar-link {{ request()->routeIs('fonctionnalite') ? 'active' : '' }}">Fonctionnalités</a>
-                <a href="{{ route('formation') }}" class="navbar-link {{ request()->routeIs('formation') ? 'active' : '' }}">Formations</a>
-                <a href="{{ route('installation') }}" class="navbar-link {{ request()->routeIs('installation') ? 'active' : '' }}">Devis-Installations</a>
-                <a href="{{ route('market-place') }}" class="navbar-link {{ request()->routeIs('market-place') ? 'active' : '' }}">Marcket-Place</a>
-                {{-- <a href="{{ route('rapports-analyses') }}" class="navbar-link {{ request()->routeIs('rapports-analyses') ? 'active' : '' }}">Rapports et Analyses</a> --}}
-                <a href="{{ route('about') }}" class="navbar-link {{ request()->routeIs('about') ? 'active' : '' }}">À propos</a>
-                <a href="{{ route('contact') }}" class="navbar-link {{ request()->routeIs('contact') ? 'active' : '' }}">Contact</a>
-                <a href="{{ route('activites.index') }}" class="navbar-link {{ request()->routeIs('activites.*') ? 'active' : '' }}">Mes activités</a>
-            </div>
+            </div>            <!-- Navigation Links -->
+            @if(auth()->check())
+                @if(auth()->user()->isAdmin())
+                    @include('layouts.admin-navigation')
+                @elseif(auth()->user()->role === 'technician')
+                    @include('layouts.technician-navigation')
+                @else
+                    <!-- Menu Client -->
+                    <div class="hidden md:flex space-x-10">
+                        <a href="{{ route('home') }}" class="navbar-link {{ request()->routeIs('home') ? 'active' : '' }}">Accueil</a>
+                        <a href="{{ route('fonctionnalite') }}" class="navbar-link {{ request()->routeIs('fonctionnalite') ? 'active' : '' }}">Fonctionnalités</a>
+                        <a href="{{ route('formation') }}" class="navbar-link {{ request()->routeIs('formation') ? 'active' : '' }}">Formations</a>
+                        <a href="{{ route('installation') }}" class="navbar-link {{ request()->routeIs('installation') ? 'active' : '' }}">Devis-Installations</a>
+                        <a href="{{ route('market-place') }}" class="navbar-link {{ request()->routeIs('market-place') ? 'active' : '' }}">Market-Place</a>
+                    </div>
+                @endif
+            @else
+                <!-- Menu Visiteur -->
+                <div class="hidden md:flex space-x-10">
+                    <a href="{{ route('home') }}" class="navbar-link {{ request()->routeIs('home') ? 'active' : '' }}">Accueil</a>
+                    <a href="{{ route('fonctionnalite') }}" class="navbar-link {{ request()->routeIs('fonctionnalite') ? 'active' : '' }}">Fonctionnalités</a>
+                    <a href="{{ route('formation') }}" class="navbar-link {{ request()->routeIs('formation') ? 'active' : '' }}">Formations</a>
+                    <a href="{{ route('market-place') }}" class="navbar-link {{ request()->routeIs('market-place') ? 'active' : '' }}">Market-Place</a>
+                </div>
+            @endif
 
             <!-- User Menu -->
             <div class="flex items-center">
@@ -42,17 +53,19 @@
                         </button>
                         <div x-show="open" @click.away="open = false" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
                             <a href="{{ route('dashboard') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Tableau de bord</a>
-                            <a href="{{ route('admin.contacts') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                Messages de contact
-                                @php
-                                    $unreadCount = \App\Models\Contact::where('statut', 'non_lu')->count();
-                                @endphp
-                                @if($unreadCount > 0)
-                                    <span class="inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-red-600 rounded-full ml-2">
-                                        {{ $unreadCount }}
-                                    </span>
-                                @endif
-                            </a>
+                            @if(auth()->user()->is_admin)
+                                <a href="{{ route('admin.contacts.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                    Messages de contact
+                                    @php
+                                        $unreadCount = \App\Models\Contact::where('statut', 'non_lu')->count();
+                                    @endphp
+                                    @if($unreadCount > 0)
+                                        <span class="inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-red-600 rounded-full ml-2">
+                                            {{ $unreadCount }}
+                                        </span>
+                                    @endif
+                                </a>
+                            @endif
                             <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profil</a>
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
@@ -79,35 +92,28 @@
 
         <!-- Mobile Menu -->
         <div :class="{'block': open, 'hidden': !open}" class="hidden md:hidden mt-4">
-            <div class="flex flex-col space-y-3">
-                <a href="{{ route('home') }}" class="navbar-link {{ request()->routeIs('home') ? 'active' : '' }}">Accueil</a>
-                <a href="{{ route('fonctionnalite') }}" class="navbar-link {{ request()->routeIs('fonctionnalite') ? 'active' : '' }}">Fonctionnalités</a>
-                <a href="{{ route('formation') }}" class="navbar-link {{ request()->routeIs('formation') ? 'active' : '' }}">Formation</a>
-                <a href="{{ route('installation') }}" class="navbar-link {{ request()->routeIs('installation') ? 'active' : '' }}">Installations</a>
-                <a href="{{ route('market-place') }}" class="navbar-link {{ request()->routeIs('tarifs') ? 'active' : '' }}">Martek Place</a>
-                <a href="{{ route('rapports-analyses') }}" class="navbar-link {{ request()->routeIs('rapports-analyses') ? 'active' : '' }}">Rapports et Analyses</a>
-                <a href="{{ route('about') }}" class="navbar-link {{ request()->routeIs('about') ? 'active' : '' }}">À propos</a>
-                <a href="{{ route('contact') }}" class="navbar-link {{ request()->routeIs('contact') ? 'active' : '' }}">Contact</a>
-                <a href="{{ route('activites.index') }}" class="navbar-link {{ request()->routeIs('activites.*') ? 'active' : '' }}">Mes activités</a>
-                @auth
-                    <a href="{{ route('dashboard') }}" class="navbar-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">Tableau de bord</a>
-                    <a href="{{ route('admin.contacts') }}" class="navbar-link {{ request()->routeIs('admin.contacts') ? 'active' : '' }}">
-                        Messages de contact
-                        @php
-                            $unreadCount = \App\Models\Contact::where('statut', 'non_lu')->count();
-                        @endphp
-                        @if($unreadCount > 0)
-                            <span class="inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-red-600 rounded-full ml-2">
-                                {{ $unreadCount }}
-                            </span>
-                        @endif
-                    </a>
-                    <a href="{{ route('profile.edit') }}" class="navbar-link {{ request()->routeIs('profile.edit') ? 'active' : '' }}">Profil</a>
-                    <form method="POST" action="{{ route('logout') }}" class="block">
-                        @csrf
-                        <button type="submit" class="navbar-link w-full text-left">Déconnexion</button>
-                    </form>
-                @endauth
+            <div class="flex flex-col space-y-3">                <!-- Contenu mobile en fonction du rôle -->
+                @if(auth()->check())
+                    @if(auth()->user()->isAdmin())
+                        <a href="{{ route('admin.functionalities.index') }}" class="navbar-link">Gérer les Fonctionnalités</a>
+                        <a href="{{ route('admin.formations.index') }}" class="navbar-link">Gérer les Formations</a>
+                        <a href="{{ route('admin.installations.index') }}" class="navbar-link">Gérer les Devis</a>
+                        <a href="{{ route('admin.products.index') }}" class="navbar-link">Gérer les Produits</a>
+                    @elseif(auth()->user()->role === 'technician')
+                        <a href="{{ route('fonctionnalite') }}" class="navbar-link">Fonctionnalités</a>
+                        <a href="{{ route('technician.installations') }}" class="navbar-link">Installations</a>
+                        <a href="{{ route('technician.maintenance') }}" class="navbar-link">Maintenance</a>
+                    @else
+                        <a href="{{ route('fonctionnalite') }}" class="navbar-link">Fonctionnalités</a>
+                        <a href="{{ route('formation') }}" class="navbar-link">Formations</a>
+                        <a href="{{ route('installation') }}" class="navbar-link">Devis-Installations</a>
+                        <a href="{{ route('market-place') }}" class="navbar-link">Market-Place</a>
+                    @endif
+                @else
+                    <a href="{{ route('fonctionnalite') }}" class="navbar-link">Fonctionnalités</a>
+                    <a href="{{ route('formation') }}" class="navbar-link">Formations</a>
+                    <a href="{{ route('market-place') }}" class="navbar-link">Market-Place</a>
+                @endif
             </div>
         </div>
     </div>

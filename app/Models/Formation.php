@@ -5,13 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 class Formation extends Model
-{
-    protected $fillable = [
-        'nom',
+{    protected $fillable = [
+        'titre',
         'description',
-        'duree',
-        'niveau',
+        'date_debut',
+        'date_fin',
         'prix',
+        'places_disponibles',
+        'prerequis',
+        'image',
         'statut'
     ];
 

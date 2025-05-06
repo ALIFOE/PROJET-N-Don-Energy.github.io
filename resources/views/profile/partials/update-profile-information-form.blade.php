@@ -47,6 +47,14 @@
             @endif
         </div>
 
+        <div>
+            <x-input-label for="role" :value="__('Role')" />
+            <div class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100">
+                {{ ucfirst($user->role) }}
+            </div>
+            <p class="mt-1 text-sm text-gray-600">{{ __("Your role determines your permissions in the application.") }}</p>
+        </div>
+
         <div class="flex items-center gap-4">
             <x-primary-button>{{ __('Save') }}</x-primary-button>
 

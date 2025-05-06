@@ -22,11 +22,33 @@ use App\Http\Controllers\MeteoController;
 use App\Http\Controllers\RegionalPerformanceController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MessageController;
+use App\Http\Controllers\Admin\FunctionalityController;
+use App\Http\Controllers\Admin\FormationController as AdminFormationController;
+// use App\Http\Controllers\Admin\InstallationController;
+use App\Http\Controllers\Admin\ProductController;
 
 // Routes publiques
 Route::get('/', function () {
     return view('home');
 })->name('home');
+
+// Routes d'administration
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    // Route du tableau de bord admin
+    Route::get('/dashboard', function () {
+        return view('admin.dashboard');
+    })->name('dashboard');
+
+    // Routes pour les fonctionnalités
+    Route::resource('functionalities', FunctionalityController::class);
+
+    // Routes pour les formations
+    Route::resource('formations', AdminFormationController::class);
+    Route::get('formations/{formation}/inscriptions', [AdminFormationController::class, 'inscriptions'])
+        ->name('formations.inscriptions');
+    Route::delete('formations/inscriptions/{inscription}', [AdminFormationController::class, 'destroyInscription'])
+        ->name('formations.inscriptions.destroy');
+});
 
 // Routes protégées par authentification
 Route::middleware(['auth'])->group(function () {
@@ -131,13 +153,6 @@ Route::get('/service', function () {
     return view('service');
 })->middleware(['auth'])->name('service');
 
-// Routes pour l'administration des messages de contact
-Route::middleware(['auth'])->group(function () {
-    Route::get('/admin/contacts', [ContactController::class, 'admin'])->name('admin.contacts');
-    Route::patch('/admin/contacts/{id}/mark-read', [ContactController::class, 'markAsRead'])->name('admin.contacts.mark-read');
-    Route::delete('/admin/contacts/{id}', [ContactController::class, 'destroy'])->name('admin.contacts.destroy');
-});
-
 Route::get('/dimensionnement', [DimensionnementController::class, 'showForm'])->name('dimensionnement');
 Route::post('/dimensionnement', [DimensionnementController::class, 'submit'])->name('dimensionnement.submit');
 
@@ -155,10 +170,31 @@ Route::middleware(['auth'])->group(function () {
 
 // Routes d'administration
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    // Gestion des contacts
+    Route::get('/contacts', [ContactController::class, 'admin'])->name('contacts.index');
+    Route::patch('/contacts/{id}/mark-read', [ContactController::class, 'markAsRead'])->name('contacts.mark-read');
+    Route::delete('/contacts/{id}', [ContactController::class, 'destroy'])->name('contacts.destroy');
+    
+    // Gestion des commandes
     Route::get('/orders', [App\Http\Controllers\Admin\OrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/{order}', [App\Http\Controllers\Admin\OrderController::class, 'show'])->name('orders.show');
     Route::put('/orders/{order}/status', [App\Http\Controllers\Admin\OrderController::class, 'updateStatus'])->name('orders.update-status');
+    
+    // Gestion des utilisateurs
     Route::get('/users/{user}', [App\Http\Controllers\Admin\UtilisateurController::class, 'show'])->name('users.show');
+
+    // Gestion des fonctionnalités
+    Route::resource('functionalities', FunctionalityController::class);      // Gestion des formations
+    Route::resource('formations', App\Http\Controllers\Admin\FormationController::class);
+    Route::get('formations/inscriptions', [App\Http\Controllers\Admin\FormationController::class, 'inscriptions'])->name('formations.inscriptions');
+    Route::delete('formations/inscriptions/{inscription}', [App\Http\Controllers\Admin\FormationController::class, 'destroyInscription'])->name('formations.inscriptions.destroy');
+    
+    // Gestion des installations et devis
+    Route::resource('installations', InstallationController::class);
+    Route::get('installations/pending', [InstallationController::class, 'pending'])->name('installations.pending');
+    
+    // Gestion de la marketplace
+    Route::resource('products', ProductController::class);
 });
 
 Route::get('/technician/form', [TechnicianController::class, 'showForm'])->name('technician.form');
@@ -182,6 +218,12 @@ Route::middleware(['auth', 'role:technicien'])->name('technicien.')->prefix('tec
     Route::post('/onduleurs/{onduleur}/test-connection', [App\Http\Controllers\Technicien\OnduleurController::class, 'testConnection'])->name('onduleurs.test-connection');
     Route::post('/onduleurs/{onduleur}/reset-connection', [App\Http\Controllers\Technicien\OnduleurController::class, 'resetConnection'])->name('onduleurs.reset-connection');
     Route::delete('/onduleurs/{onduleur}', [App\Http\Controllers\Technicien\OnduleurController::class, 'destroy'])->name('onduleurs.destroy');
+});
+
+// Routes pour les techniciens
+Route::middleware(['auth', 'role:technician'])->prefix('technician')->name('technician.')->group(function () {
+    Route::get('installations', [TechnicianController::class, 'installations'])->name('installations');
+    Route::get('maintenance', [TechnicianController::class, 'maintenance'])->name('maintenance');
 });
 
 Route::resource('messages', MessageController::class);
