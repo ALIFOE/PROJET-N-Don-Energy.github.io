@@ -12,22 +12,7 @@ class CalculateurSolaire
 
     private function getPanneauOptimal(): Panneau
     {
-        $panneau = Panneau::where('type', 'Monocristallin haute performance')->first();
-        
-        if (!$panneau) {
-            // Création d'un panneau par défaut si aucun n'est trouvé
-            $panneau = new Panneau([
-                'type' => 'Monocristallin haute performance',
-                'capacite_wc' => 400,
-                'surface' => 1.96,
-                'rendement' => 0.20,
-                'fabricant' => 'Générique',
-                'modele' => 'Standard',
-                'garantie_annees' => 25
-            ]);
-        }
-        
-        return $panneau;
+        return Panneau::where('type', 'Monocristallin haute performance')->first();
     }
 
     public function evaluerFaisabilite(array $donnees): array

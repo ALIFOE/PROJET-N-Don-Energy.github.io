@@ -12,7 +12,7 @@ class FormationController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth')->only(['inscription', 'mesInscriptions']);
+        $this->middleware('auth')->only(['inscription']);
     }
 
     public function index()
@@ -40,48 +40,35 @@ class FormationController extends Controller
             'autres_documents_paths.*' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048'
         ]);
 
-        // Stocker les fichiers dans le dossier public
-        $acteNaissancePath = $request->file('acte_naissance_path')->store('public/documents/formations');
-        $cniPath = $request->file('cni_path')->store('public/documents/formations');
-        $diplomePath = $request->file('diplome_path')->store('public/documents/formations');
+        // Stocker les fichiers
+        $acteNaissancePath = $request->file('acte_naissance_path')->store('documents/formations');
+        $cniPath = $request->file('cni_path')->store('documents/formations');
+        $diplomePath = $request->file('diplome_path')->store('documents/formations');
         
         $autresDocumentsPaths = [];
         if ($request->hasFile('autres_documents_paths')) {
             foreach ($request->file('autres_documents_paths') as $file) {
-                $autresDocumentsPaths[] = $file->store('public/documents/formations');
+                $autresDocumentsPaths[] = $file->store('documents/formations');
             }
         }
 
-        // Créer l'inscription en retirant 'public/' du chemin stocké
+        // Créer l'inscription
         $inscription = FormationInscription::create([
             'formation_id' => $request->formation,
             'user_id' => auth()->id(),
             'nom' => $request->nom,
             'email' => $request->email,
             'telephone' => $request->telephone,
-            'acte_naissance_path' => str_replace('public/', '', $acteNaissancePath),
-            'cni_path' => str_replace('public/', '', $cniPath),
-            'diplome_path' => str_replace('public/', '', $diplomePath),
-            'autres_documents_paths' => array_map(function($path) {
-                return str_replace('public/', '', $path);
-            }, $autresDocumentsPaths),
+            'acte_naissance_path' => $acteNaissancePath,
+            'cni_path' => $cniPath,
+            'diplome_path' => $diplomePath,
+            'autres_documents_paths' => $autresDocumentsPaths,
             'statut' => 'en_attente'
         ]);
 
         // Déclencher l'événement
         event(new FormationInscriptionCreated($inscription));
 
-        return redirect()->route('formation')
-            ->with('success', 'Votre inscription a été enregistrée avec succès ! Nous vous contacterons prochainement.');
-    }
-
-    public function mesInscriptions()
-    {
-        $inscriptions = FormationInscription::with('formation')
-            ->where('user_id', auth()->id())
-            ->latest()
-            ->get();
-
-        return view('formation.mes-inscriptions', compact('inscriptions'));
+        return redirect()->back()->with('success', 'Votre inscription a été enregistrée avec succès. Nous vous contacterons pour la suite du processus.');
     }
 }

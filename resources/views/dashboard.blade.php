@@ -282,7 +282,7 @@
                                                 <div class="mt-4">
                                                     <h4 class="text-md font-medium mb-2">{{ __("Graphique de production") }}</h4>
                                                     <div class="w-full h-60 bg-gray-50 rounded-lg flex items-center justify-center" id="chart-{{ $onduleur->id }}">
-                                                        <p class="text-gray-400">Chargement des données...</p>
+                                                        <p class="text-gray-400">{{ __("Chargement des données...") }}</p>
                                                     </div>
                                                 </div>
                                                 
