@@ -105,8 +105,5 @@
                 @endforelse
             </tbody>
         </table>
-        <div class="px-5 py-5 bg-white border-t flex flex-col xs:flex-row items-center xs:justify-between">
-            {{ $products->links() }}
-        </div>
     </div>
 @endsection

@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\Client\DashboardController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Client\InstallationController;
 use App\Http\Controllers\Client\RealtimeDataController;
 use App\Http\Controllers\Client\InverterController;
@@ -26,28 +27,56 @@ use App\Http\Controllers\Admin\FunctionalityController;
 use App\Http\Controllers\Admin\FormationController as AdminFormationController;
 // use App\Http\Controllers\Admin\InstallationController;
 use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\FormationController;
 
 // Routes publiques
 Route::get('/', function () {
     return view('home');
 })->name('home');
 
+// Routes pour les formations
+Route::prefix('formation')->group(function () {
+    Route::get('/', [FormationController::class, 'index'])->name('formation');
+    Route::get('/inscription', [FormationController::class, 'show'])->name('inscription');
+    Route::post('/inscription', [FormationController::class, 'inscription'])->middleware(['auth'])->name('formation.inscription');
+    // Les routes avec paramètres dynamiques doivent être en dernier
+    Route::get('/{formation}/flyer', [FormationController::class, 'downloadFlyer'])->name('formation.flyer.download');
+});
+
 // Routes d'administration
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     // Route du tableau de bord admin
-    Route::get('/dashboard', function () {
-        return view('admin.dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
+
+    // Gestion des utilisateurs
+    Route::get('/users', [App\Http\Controllers\Admin\UtilisateurController::class, 'index'])->name('users.index');
+    Route::get('/users/create', [App\Http\Controllers\Admin\UtilisateurController::class, 'create'])->name('users.create');
+    Route::post('/users', [App\Http\Controllers\Admin\UtilisateurController::class, 'store'])->name('users.store');
+    Route::get('/users/{user}', [App\Http\Controllers\Admin\UtilisateurController::class, 'show'])->name('users.show');
+    Route::get('/users/{user}/edit', [App\Http\Controllers\Admin\UtilisateurController::class, 'edit'])->name('users.edit');
+    Route::put('/users/{user}', [App\Http\Controllers\Admin\UtilisateurController::class, 'update'])->name('users.update');
+    Route::delete('/users/{user}', [App\Http\Controllers\Admin\UtilisateurController::class, 'destroy'])->name('users.destroy');
 
     // Routes pour les fonctionnalités
-    Route::resource('functionalities', FunctionalityController::class);
+    Route::resource('functionalities', FunctionalityController::class);    // Routes pour les formations
 
-    // Routes pour les formations
-    Route::resource('formations', AdminFormationController::class);
-    Route::get('formations/{formation}/inscriptions', [AdminFormationController::class, 'inscriptions'])
+    // Routes des formations - l'ordre est important !
+    Route::get('formations/inscriptions', [App\Http\Controllers\Admin\FormationController::class, 'inscriptions'])
         ->name('formations.inscriptions');
-    Route::delete('formations/inscriptions/{inscription}', [AdminFormationController::class, 'destroyInscription'])
+    Route::delete('formations/inscriptions/{inscription}', [App\Http\Controllers\Admin\FormationController::class, 'destroyInscription'])
         ->name('formations.inscriptions.destroy');
+    Route::get('formations/{formation}/flyer', [App\Http\Controllers\Admin\FormationController::class, 'downloadFlyer'])
+        ->name('formations.flyer.download');
+    
+    Route::resource('formations', App\Http\Controllers\Admin\FormationController::class)->names([
+        'index' => 'formations.index',
+        'create' => 'formations.create',
+        'store' => 'formations.store',
+        'show' => 'formations.show',
+        'edit' => 'formations.edit',
+        'update' => 'formations.update',
+        'destroy' => 'formations.destroy',
+    ]);
 });
 
 // Routes protégées par authentification
@@ -137,9 +166,12 @@ Route::get('/about', function () {
 })->name('about');
 
 // Routes pour les formations
-Route::get('/formation', [App\Http\Controllers\FormationController::class, 'index'])->name('formation');
-Route::get('/formation/inscription', [App\Http\Controllers\FormationController::class, 'show'])->name('formation.inscription.page');
-Route::post('/formation/inscription', [App\Http\Controllers\FormationController::class, 'inscription'])->name('formation.inscription');
+Route::prefix('formation')->group(function () {
+    Route::get('/', [FormationController::class, 'index'])->name('formation');
+    Route::get('/inscription', [FormationController::class, 'show'])->name('formation.inscription.page');
+    Route::post('/inscription', [FormationController::class, 'inscription'])->name('formation.inscription');
+    Route::get('/{formation}/flyer', [FormationController::class, 'downloadFlyer'])->name('formation.flyer.download');
+});
 
 Route::get('/installation', function () {
     return view('installation');
@@ -181,13 +213,34 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::put('/orders/{order}/status', [App\Http\Controllers\Admin\OrderController::class, 'updateStatus'])->name('orders.update-status');
     
     // Gestion des utilisateurs
+    Route::get('/users', [App\Http\Controllers\Admin\UtilisateurController::class, 'index'])->name('users.index');
+    Route::get('/users/create', [App\Http\Controllers\Admin\UtilisateurController::class, 'create'])->name('users.create');
+    Route::post('/users', [App\Http\Controllers\Admin\UtilisateurController::class, 'store'])->name('users.store');
     Route::get('/users/{user}', [App\Http\Controllers\Admin\UtilisateurController::class, 'show'])->name('users.show');
+    Route::get('/users/{user}/edit', [App\Http\Controllers\Admin\UtilisateurController::class, 'edit'])->name('users.edit');
+    Route::put('/users/{user}', [App\Http\Controllers\Admin\UtilisateurController::class, 'update'])->name('users.update');
+    Route::delete('/users/{user}', [App\Http\Controllers\Admin\UtilisateurController::class, 'destroy'])->name('users.destroy');
 
     // Gestion des fonctionnalités
     Route::resource('functionalities', FunctionalityController::class);      // Gestion des formations
-    Route::resource('formations', App\Http\Controllers\Admin\FormationController::class);
-    Route::get('formations/inscriptions', [App\Http\Controllers\Admin\FormationController::class, 'inscriptions'])->name('formations.inscriptions');
-    Route::delete('formations/inscriptions/{inscription}', [App\Http\Controllers\Admin\FormationController::class, 'destroyInscription'])->name('formations.inscriptions.destroy');
+
+    // Routes des formations - l'ordre est important !
+    Route::get('formations/inscriptions', [App\Http\Controllers\Admin\FormationController::class, 'inscriptions'])
+        ->name('formations.inscriptions');
+    Route::delete('formations/inscriptions/{inscription}', [App\Http\Controllers\Admin\FormationController::class, 'destroyInscription'])
+        ->name('formations.inscriptions.destroy');
+    Route::get('formations/{formation}/flyer', [App\Http\Controllers\Admin\FormationController::class, 'downloadFlyer'])
+        ->name('formations.flyer.download');
+    
+    Route::resource('formations', App\Http\Controllers\Admin\FormationController::class)->names([
+        'index' => 'formations.index',
+        'create' => 'formations.create',
+        'store' => 'formations.store',
+        'show' => 'formations.show',
+        'edit' => 'formations.edit',
+        'update' => 'formations.update',
+        'destroy' => 'formations.destroy',
+    ]);
     
     // Gestion des installations et devis
     Route::resource('installations', InstallationController::class);
@@ -227,5 +280,10 @@ Route::middleware(['auth', 'role:technician'])->prefix('technician')->name('tech
 });
 
 Route::resource('messages', MessageController::class);
+
+// Routes pour la gestion des utilisateurs (administration)
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::resource('users', \App\Http\Controllers\Admin\UserController::class);
+});
 
 require __DIR__.'/auth.php';

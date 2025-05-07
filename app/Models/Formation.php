@@ -5,7 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 class Formation extends Model
-{    protected $fillable = [
+{
+    protected $fillable = [
         'titre',
         'description',
         'date_debut',
@@ -14,7 +15,17 @@ class Formation extends Model
         'places_disponibles',
         'prerequis',
         'image',
+        'flyer',
+        'niveau',
         'statut'
+    ];
+
+    protected $casts = [
+        'date_debut' => 'datetime',
+        'date_fin' => 'datetime',
+        'prix' => 'float',
+        'places_disponibles' => 'integer',
+        'statut' => 'string'
     ];
 
     // Une formation peut avoir plusieurs inscriptions

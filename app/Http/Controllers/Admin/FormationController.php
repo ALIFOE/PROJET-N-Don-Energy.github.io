@@ -14,11 +14,11 @@ class FormationController extends Controller
     {
         $this->middleware('auth');
         $this->middleware('admin');
-    }
-
-    public function index()
+    }    public function index()
     {
-        $formations = Formation::latest()->paginate(10);
+        $formations = Formation::withCount('inscriptions')
+            ->latest()
+            ->paginate(10);
         return view('admin.formations.index', compact('formations'));
     }
 
@@ -35,14 +35,20 @@ class FormationController extends Controller
             'date_debut' => 'required|date',
             'date_fin' => 'required|date|after:date_debut',
             'prix' => 'required|numeric|min:0',
-            'places_disponibles' => 'required|integer|min:1',
+            'places_disponibles' => 'required|integer|min:1', 
             'prerequis' => 'nullable|string',
             'image' => 'nullable|image|max:2048',
+            'flyer' => 'nullable|mimes:pdf|max:5120', // Ajout du flyer, max 5MB
             'statut' => 'required|in:active,inactive'
         ]);
 
         if ($request->hasFile('image')) {
             $validatedData['image'] = $request->file('image')->store('formations', 'public');
+        }
+
+        // Stocker le flyer s'il existe
+        if ($request->hasFile('flyer')) {
+            $validatedData['flyer'] = $request->file('flyer')->store('formations/flyers', 'public');
         }
 
         Formation::create($validatedData);
@@ -67,6 +73,7 @@ class FormationController extends Controller
             'places_disponibles' => 'required|integer|min:1',
             'prerequis' => 'nullable|string',
             'image' => 'nullable|image|max:2048',
+            'flyer' => 'nullable|mimes:pdf|max:5120', // Ajout du flyer, max 5MB
             'statut' => 'required|in:active,inactive'
         ]);
 
@@ -76,6 +83,15 @@ class FormationController extends Controller
                 Storage::disk('public')->delete($formation->image);
             }
             $validatedData['image'] = $request->file('image')->store('formations', 'public');
+        }
+
+        // Gérer le flyer
+        if ($request->hasFile('flyer')) {
+            // Supprimer l'ancien flyer s'il existe
+            if ($formation->flyer) {
+                Storage::disk('public')->delete($formation->flyer);
+            }
+            $validatedData['flyer'] = $request->file('flyer')->store('formations/flyers', 'public');
         }
 
         $formation->update($validatedData);
@@ -89,6 +105,11 @@ class FormationController extends Controller
         // Supprimer l'image si elle existe
         if ($formation->image) {
             Storage::disk('public')->delete($formation->image);
+        }
+
+        // Supprimer le flyer s'il existe
+        if ($formation->flyer) {
+            Storage::disk('public')->delete($formation->flyer);
         }
 
         $formation->delete();
@@ -112,23 +133,32 @@ class FormationController extends Controller
     {
         // Supprimer les fichiers associés
         if ($inscription->acte_naissance_path) {
-            Storage::disk('public')->delete($inscription->acte_naissance_path);
+            Storage::delete($inscription->acte_naissance_path);
         }
         if ($inscription->cni_path) {
-            Storage::disk('public')->delete($inscription->cni_path);
+            Storage::delete($inscription->cni_path);
         }
         if ($inscription->diplome_path) {
-            Storage::disk('public')->delete($inscription->diplome_path);
+            Storage::delete($inscription->diplome_path);
         }
         if ($inscription->autres_documents_paths) {
-            foreach ($inscription->autres_documents_paths as $document) {
-                Storage::disk('public')->delete($document);
+            foreach ($inscription->autres_documents_paths as $path) {
+                Storage::delete($path);
             }
         }
 
         $inscription->delete();
 
-        return redirect()->back()
-            ->with('success', 'Inscription supprimée avec succès.');
+        return redirect()->route('admin.formations.inscriptions')
+            ->with('success', 'Inscription supprimée avec succès');
+    }
+
+    public function downloadFlyer(Formation $formation)
+    {
+        if (!$formation->flyer || !Storage::disk('public')->exists($formation->flyer)) {
+            abort(404, 'Le flyer demandé n\'existe pas.');
+        }
+
+        return Storage::disk('public')->download($formation->flyer);
     }
 }

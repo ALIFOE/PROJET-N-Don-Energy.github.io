@@ -83,7 +83,7 @@
             <div>Expert en Solutions d'Énergie Solaire</div>
             <div>123 Avenue de l'Énergie Verte</div>
             <div>75000 Paris, France</div>
-            <div>Tél: +33 (0)1 23 45 67 89</div>
+            <div>Tél: +228 97 73 43 81</div>
             <div>Email: contact@ndon-energy.com</div>
         </div>
     </div>

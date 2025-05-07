@@ -62,7 +62,11 @@
                         @else
                             @foreach($products as $product)
                                 <div class="product-card" data-category="{{ $product->categorie }}">
-                                    <img src="{{ asset($product->image ?? 'images/default-product.jpg') }}" alt="{{ $product->nom }}" class="w-full h-48 object-cover rounded-t-lg">
+                                    @if($product->image)
+                                        <img src="{{ Storage::url($product->image) }}" alt="{{ $product->nom }}" class="w-full h-48 object-cover rounded-t-lg">
+                                    @else
+                                        <img src="{{ asset('images/default-product.jpg') }}" alt="{{ $product->nom }}" class="w-full h-48 object-cover rounded-t-lg">
+                                    @endif
                                     
                             <div class="p-4">
                                         <h3 class="text-xl font-semibold mb-2">{{ $product->nom }}</h3>

@@ -35,6 +35,8 @@ class DashboardController extends Controller
         $formations_count = Formation::count();
         $formations_active = Formation::where('date_fin', '>=', $now)->count();
         $formations_participants = Formation::where('date_fin', '>=', $now)
+            ->withCount('inscriptions')
+            ->get()
             ->sum('inscriptions_count');
 
         // Statistiques des commandes

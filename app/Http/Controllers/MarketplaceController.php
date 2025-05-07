@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Schema;
 
 class MarketplaceController extends Controller
 {
@@ -88,4 +89,4 @@ class MarketplaceController extends Controller
             Product::create($product);
         }
     }
-} 
+}

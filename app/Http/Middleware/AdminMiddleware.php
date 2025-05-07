@@ -17,10 +17,11 @@ class AdminMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        if (Auth::check() && Auth::user()->isAdmin()) {
-            return $next($request);
+        if (!Auth::check() || !Auth::user()->isAdmin()) {
+            return redirect()->route('dashboard')
+                ->with('error', 'Accès non autorisé. Cette section est réservée aux administrateurs.');
         }
 
-        return redirect('/')->with('error', 'Accès non autorisé.');
+        return $next($request);
     }
 }

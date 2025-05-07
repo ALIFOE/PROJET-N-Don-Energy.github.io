@@ -1,4 +1,4 @@
-@extends('admin.layouts.admin')
+resources/views/admin/formations/form.blade.php@extends('admin.layouts.admin')
 
 @section('content')
     <div class="flex justify-between items-center mb-6">

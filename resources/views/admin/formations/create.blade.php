@@ -83,15 +83,25 @@
                     @error('prerequis')
                         <p class="text-red-500 text-xs italic">{{ $message }}</p>
                     @enderror
-                </div>
+                </div>                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="mb-6">
+                        <label for="image" class="block text-gray-700 text-sm font-bold mb-2">Image de couverture</label>
+                        <input type="file" name="image" id="image" accept="image/*"
+                               class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('image') border-red-500 @enderror">
+                        @error('image')
+                            <p class="text-red-500 text-xs italic">{{ $message }}</p>
+                        @enderror
+                    </div>
 
-                <div class="mb-6">
-                    <label for="image" class="block text-gray-700 text-sm font-bold mb-2">Image</label>
-                    <input type="file" name="image" id="image" accept="image/*"
-                           class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('image') border-red-500 @enderror">
-                    @error('image')
-                        <p class="text-red-500 text-xs italic">{{ $message }}</p>
-                    @enderror
+                    <div class="mb-6">
+                        <label for="flyer" class="block text-gray-700 text-sm font-bold mb-2">Flyer de la formation (PDF)</label>
+                        <input type="file" name="flyer" id="flyer" accept=".pdf"
+                               class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('flyer') border-red-500 @enderror">
+                        <p class="text-sm text-gray-500 mt-1">Format accepté: PDF uniquement</p>
+                        @error('flyer')
+                            <p class="text-red-500 text-xs italic">{{ $message }}</p>
+                        @enderror
+                    </div>
                 </div>
 
                 <div class="mb-6">

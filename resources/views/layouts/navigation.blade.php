@@ -95,7 +95,7 @@
             <div class="flex flex-col space-y-3">                <!-- Contenu mobile en fonction du rôle -->
                 @if(auth()->check())
                     @if(auth()->user()->isAdmin())
-                        <a href="{{ route('admin.functionalities.index') }}" class="navbar-link">Gérer les Fonctionnalités</a>
+                        <a href="{{ route('admin.functionalities.index') }}" class="navbar-link">Gérer les Installations</a>
                         <a href="{{ route('admin.formations.index') }}" class="navbar-link">Gérer les Formations</a>
                         <a href="{{ route('admin.installations.index') }}" class="navbar-link">Gérer les Devis</a>
                         <a href="{{ route('admin.products.index') }}" class="navbar-link">Gérer les Produits</a>

@@ -126,10 +126,9 @@
                                 <select name="formation" id="formation" 
                                     class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" 
                                     required>
-                                    <option value="">Sélectionnez une formation</option>
-                                    @foreach ($formations as $formation)
+                                    <option value="">Sélectionnez une formation</option>                                    @foreach ($formations as $formation)
                                         <option value="{{ $formation->id }}" {{ old('formation') == $formation->id ? 'selected' : '' }}>
-                                            {{ $formation->nom }} - {{ $formation->duree }}
+                                            {{ $formation->titre }} - {{ \Carbon\Carbon::parse($formation->date_debut)->diffInDays($formation->date_fin) }} jours
                                         </option>
                                     @endforeach
                                 </select>

@@ -13,17 +13,21 @@ class FormationController extends Controller
     public function __construct()
     {
         $this->middleware('auth')->only(['inscription']);
-    }
-
-    public function index()
+    }    public function index()
     {
-        $formations = Formation::where('statut', 'active')->get();
+        $formations = Formation::with('inscriptions')
+            ->where('statut', 'active')
+            ->where('date_debut', '>', now())
+            ->orderBy('date_debut')
+            ->get();
         return view('formation', compact('formations'));
-    }
-
-    public function show()
+    }public function show()
     {
-        $formations = Formation::where('statut', 'active')->get();
+        $formations = Formation::where('statut', 'active')
+            ->whereRaw('(SELECT COUNT(*) FROM formation_inscriptions WHERE formation_id = formations.id) < formations.places_disponibles')
+            ->where('date_debut', '>', now())
+            ->orderBy('date_debut')
+            ->get();
         return view('inscription', compact('formations'));
     }
 
@@ -34,10 +38,10 @@ class FormationController extends Controller
             'email' => 'required|email',
             'telephone' => 'required|string|min:8',
             'formation' => 'required|exists:formations,id',
-            'acte_naissance_path' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
-            'cni_path' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
-            'diplome_path' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
-            'autres_documents_paths.*' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048'
+            'acte_naissance_path' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
+            'cni_path' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
+            'diplome_path' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
+            'autres_documents_paths.*' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120'
         ]);
 
         // Stocker les fichiers
@@ -70,5 +74,14 @@ class FormationController extends Controller
         event(new FormationInscriptionCreated($inscription));
 
         return redirect()->back()->with('success', 'Votre inscription a été enregistrée avec succès. Nous vous contacterons pour la suite du processus.');
+    }
+
+    public function downloadFlyer(Formation $formation)
+    {
+        if (!$formation->flyer || !Storage::disk('public')->exists($formation->flyer)) {
+            abort(404, 'Le flyer demandé n\'existe pas.');
+        }
+
+        return Storage::disk('public')->download($formation->flyer);
     }
 }
