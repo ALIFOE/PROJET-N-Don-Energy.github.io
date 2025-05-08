@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\BlogController;
@@ -21,10 +22,10 @@ use App\Http\Controllers\SuiviProductionController;
 use App\Http\Controllers\RapportController;
 use App\Http\Controllers\MeteoController;
 use App\Http\Controllers\RegionalPerformanceController;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\Admin\FunctionalityController;
 use App\Http\Controllers\Admin\FormationController as AdminFormationController;
+use App\Http\Controllers\Admin\NotificationController;
 // use App\Http\Controllers\Admin\InstallationController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\FormationController;
@@ -77,6 +78,16 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
         'update' => 'formations.update',
         'destroy' => 'formations.destroy',
     ]);
+    
+    // Gestion des devis
+    Route::get('/devis', [App\Http\Controllers\Admin\DevisController::class, 'index'])->name('devis.index');
+    Route::get('/devis/{devis}', [App\Http\Controllers\Admin\DevisController::class, 'show'])->name('devis.show');
+    Route::delete('/devis/{devis}', [App\Http\Controllers\Admin\DevisController::class, 'destroy'])->name('devis.destroy');
+
+    // Routes pour les notifications
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications/{id}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
+    Route::post('/notifications/mark-all-as-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
 });
 
 // Routes protégées par authentification

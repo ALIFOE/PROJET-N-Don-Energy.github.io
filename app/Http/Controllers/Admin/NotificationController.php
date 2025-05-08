@@ -1,0 +1,34 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Notifications\DatabaseNotification;
+
+class NotificationController extends Controller
+{
+    public function __construct()
+    {
+        $this->middleware('auth');
+        $this->middleware('admin');
+    }
+
+    public function index()
+    {
+        return view('admin.notifications.index');
+    }
+
+    public function markAsRead($id)
+    {
+        DatabaseNotification::findOrFail($id)->markAsRead();
+        return back()->with('success', 'Notification marquée comme lue');
+    }
+
+    public function markAllAsRead()
+    {
+        auth()->user()->unreadNotifications->markAsRead();
+        return back()->with('success', 'Toutes les notifications ont été marquées comme lues');
+    }
+}

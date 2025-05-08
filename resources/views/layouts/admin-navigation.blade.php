@@ -1,18 +1,29 @@
 <!-- Menu Administrateur -->
 <div class="hidden md:flex space-x-8">
-    <a href="{{ route('admin.dashboard') }}" class="navbar-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
+    <!-- <a href="{{ route('admin.dashboard') }}" class="navbar-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
         <i class="fas fa-chart-line"></i> Tableau de bord
+    </a> -->
+
+    <a href="{{ route('admin.notifications.index') }}" class="navbar-link {{ request()->routeIs('admin.notifications.*') ? 'active' : '' }}">
+        <i class="fas fa-bell"></i> 
+        Notifications
+        @if(auth()->user()->unreadNotifications->count() > 0)
+            <span class="inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full">
+                {{ auth()->user()->unreadNotifications->count() }}
+            </span>
+        @endif
     </a>
 
     <div class="relative" x-data="{ open: false }">
         <button @click="open = !open" class="navbar-link">
-            <i class="fas fa-solar-panel"></i> Installations
+            <i class="fas fa-file-invoice-dollar"></i> Devis
             <i class="fas fa-chevron-down ml-1"></i>
         </button>
         <div x-show="open" @click.away="open = false" class="absolute mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
             <div class="py-1">
-                <a href="{{ route('admin.installations.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Voir les installations</a>
-                <a href="{{ route('admin.installations.create') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Nouvelle installation</a>
+                <a href="{{ route('admin.devis.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                    <i class="fas fa-list mr-2"></i>Liste des devis
+                </a>
             </div>
         </div>
     </div>

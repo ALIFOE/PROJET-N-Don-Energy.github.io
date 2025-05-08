@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Devis;
+use App\Models\User;
 use App\Services\DevisAnalyzer;
+use App\Notifications\NewDevisNotification;
 use Illuminate\Http\Request;
 
 class DevisController extends Controller
@@ -43,6 +45,12 @@ class DevisController extends Controller
         // Sauvegarder le devis avec l'analyse
         $devisData = array_merge($validated, ['analyse_technique' => json_encode($analyse)]);
         $devis = Devis::create($devisData);
+
+        // Envoyer une notification à tous les administrateurs
+        $admins = User::where('role', 'admin')->get();
+        foreach ($admins as $admin) {
+            $admin->notify(new NewDevisNotification($devis));
+        }
 
         // Redirection vers la page de résultats
         return redirect()->route('devis.resultats', $devis)
