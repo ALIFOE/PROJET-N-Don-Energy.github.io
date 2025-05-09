@@ -17,6 +17,6 @@
         <li><strong>Document téléversé :</strong> <a href="{{ $details['document_url'] }}" target="_blank">Télécharger le document</a></li>
     </ul>
     <p>Cordialement,</p>
-    <p>L'équipe Né Don Energy</p>
+    <p>L'équipe CREFER</p>
 </body>
 </html>

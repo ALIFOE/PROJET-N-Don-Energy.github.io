@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Né Don Energy - Gestion d'installations solaires photovoltaïques</title>
+        <title>CREFER - Gestion d'installations solaires photovoltaïques</title>
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
         <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
@@ -12,10 +12,6 @@
         <style>
             body {
                 font-family: 'Poppins', sans-serif;
-                background-image: url('{{ asset('images/image-back.png') }}');
-                background-size: cover;
-                background-position: center;
-                background-attachment: fixed;
                 background-color: #f8f9fa;
                 animation: backgroundZoom 20s ease-in-out infinite alternate;
             }
@@ -30,7 +26,7 @@
             }
 
             .solar-gradient {
-                background: linear-gradient(135deg, #1e88e5 0%, #0d47a1 100%);
+                background: linear-gradient(135deg, var(--primary-color, #FFA500) 0%, var(--accent-color, #0000FF) 100%);
             }
             .card {
                 transition: all 0.3s ease;
@@ -138,9 +134,9 @@
                 <p class="mt-4 text-xl text-gray-200 hero-description">Suivi en temps réel, analyses avancées et maintenance prédictive pour maximiser votre production d'énergie photovoltaïque.</p>
                 <div class="mt-8 flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4 justify-center md:justify-start">
                     @auth
-                        <a href="{{ route('service') }}" class="btn-primary text-center py-3 px-6 rounded-md text-lg font-medium hover:bg-blue-700">Démarrer un service</a>
+                        <a href="{{ route('dashboard') }}" class="btn-primary text-center py-3 px-6 rounded-md text-lg font-medium hover:bg-blue-700">Accéder au tableau de bord</a>
                     @else
-                        <a href="{{ route('register') }}" class="btn-primary text-center py-3 px-6 rounded-md text-lg font-medium hover:bg-blue-700">Démarrer un service</a>
+                        <a href="{{ route('register') }}" class="btn-primary text-center py-3 px-6 rounded-md text-lg font-medium hover:bg-blue-700">Commencer maintenant</a>
                     @endauth
                     <a href="{{ route('about') }}" class="bg-white text-blue-600 text-center py-3 px-6 rounded-md text-lg font-medium hover:bg-gray-100">En savoir plus</a>
                 </div>
@@ -152,7 +148,7 @@
         <div class="container mx-auto px-6">
             <div class="content-section">
                 <div class="text-center mb-12">
-                    <h2 class="text-3xl font-bold text-gray-800 section-title">Pourquoi choisir Né Don Energy ?</h2>
+                    <h2 class="text-3xl font-bold text-gray-800 section-title">Pourquoi choisir CREFER ?</h2>
                     <p class="mt-4 text-xl text-gray-600 section-description">Une solution complète pour optimiser vos installations photovoltaïques</p>
                 </div>
                 
@@ -349,7 +345,7 @@
         <div class="container mx-auto px-6">
             <div class="text-center mb-12">
                 <h2 class="text-3xl font-bold text-gray-800">Témoignages de nos clients</h2>
-                <p class="mt-4 text-xl text-gray-600">Ce que nos utilisateurs disent de Né Don Energy</p>
+                <p class="mt-4 text-xl text-gray-600">Ce que nos utilisateurs disent de CREFER</p>
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -363,7 +359,7 @@
                             <i class="fas fa-star"></i>
                         </div>
                     </div>
-                    <p class="text-gray-600 italic">"Grâce à Né Don Energy, j'ai augmenté le rendement de mon installation de 15% en détectant rapidement des panneaux défectueux. L'interface est intuitive et les graphiques sont très clairs."</p>
+                    <p class="text-gray-600 italic">"Grâce à CREFER, j'ai augmenté le rendement de mon installation de 15% en détectant rapidement des panneaux défectueux. L'interface est intuitive et les graphiques sont très clairs."</p>
                     <div class="mt-6 flex items-center">
                         <div class="h-12 w-12 rounded-full bg-gray-300 flex items-center justify-center text-gray-600 text-xl font-bold">JD</div>
                         <div class="ml-4">
@@ -403,7 +399,7 @@
                             <i class="fas fa-star-half-alt"></i>
                         </div>
                     </div>
-                    <p class="text-gray-600 italic">"Notre entreprise gère plus de 50 installations et Né Don Energy nous a permis de centraliser toutes les données. Les rapports automatiques nous font gagner un temps précieux."</p>
+                    <p class="text-gray-600 italic">"Notre entreprise gère plus de 50 installations et CREFER nous a permis de centraliser toutes les données. Les rapports automatiques nous font gagner un temps précieux."</p>
                     <div class="mt-6 flex items-center">
                         <div class="h-12 w-12 rounded-full bg-gray-300 flex items-center justify-center text-gray-600 text-xl font-bold">PG</div>
                         <div class="ml-4">
@@ -416,85 +412,13 @@
         </div>
     </section>
 
-    <section class="py-16 bg-blue-900 text-white">
+    <section class="py-16 bg-orange-400 text-white">
         <div class="container mx-auto px-6 text-center">
             <h2 class="text-3xl font-bold mb-6">Prêt à optimiser vos installations solaires ?</h2>
-            <p class="text-xl mb-8 max-w-2xl mx-auto">Rejoignez les milliers d'utilisateurs qui font confiance à Né Don Energy pour maximiser la rentabilité de leurs panneaux photovoltaïques.</p>
-            <a href="{{ route('register') }}" class="bg-white text-blue-900 py-3 px-8 rounded-md text-lg font-medium hover:bg-gray-100 transition duration-300">Créer un compte gratuitement</a>
+            <p class="text-xl mb-8 max-w-2xl mx-auto">Rejoignez les milliers d'utilisateurs qui font confiance à CREFER pour maximiser la rentabilité de leurs panneaux photovoltaïques.</p>
+            <a href="{{ route('register') }}" class="bg-white text-orange-500 py-3 px-8 rounded-md text-lg font-medium hover:bg-gray-100 transition duration-300">Créer un compte gratuitement</a>
         </div>
     </section>
-
-    <footer class="bg-gray-800 text-white py-12">
-        <div class="container mx-auto px-6">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-                <div>
-                    <div class="flex items-center mb-4">
-                        <i class="fas fa-solar-panel text-blue-400 text-3xl mr-2"></i>
-                        <span class="text-2xl font-bold">Né Don Energy</span>
-                    </div>
-                    <p class="text-gray-400">La solution complète pour le suivi et l'optimisation de vos installations solaires photovoltaïques.</p>
-                    <div class="flex mt-4 space-x-4">
-                        <a href="#" class="text-gray-400 hover:text-white transition duration-300">
-                            <i class="fab fa-facebook-f"></i>
-                        </a>
-                        <a href="#" class="text-gray-400 hover:text-white transition duration-300">
-                            <i class="fab fa-twitter"></i>
-                        </a>
-                        <a href="#" class="text-gray-400 hover:text-white transition duration-300">
-                            <i class="fab fa-linkedin-in"></i>
-                        </a>
-                        <a href="#" class="text-gray-400 hover:text-white transition duration-300">
-                            <i class="fab fa-instagram"></i>
-                        </a>
-                    </div>
-                </div>
-                
-                <div>
-                    <h3 class="text-lg font-semibold mb-4">Liens rapides</h3>
-                    <ul class="space-y-2">
-                        <li><a href="/home" class="text-gray-400 hover:text-white transition duration-300">Accueil</a></li>
-                        <li><a href="/fonctionnalite" class="text-gray-400 hover:text-white transition duration-300">Fonctionnalités</a></li>
-                        <li><a href="/tarifs" class="text-gray-400 hover:text-white transition duration-300">Tarifs</a></li>
-                        <li><a href="/about" class="text-gray-400 hover:text-white transition duration-300">À propos</a></li>
-                        <li><a href="contact" class="text-gray-400 hover:text-white transition duration-300">Contact</a></li>
-                    </ul>
-                </div>
-                
-                <div>
-                    <h3 class="text-lg font-semibold mb-4">Services</h3>
-                    <ul class="space-y-2">
-                        <li><a href="/suivi-production" class="text-gray-400 hover:text-white transition duration-300">Suivi de production</a></li>
-                        <li><a href="/maintenance-predictive" class="text-gray-400 hover:text-white transition duration-300">Maintenance prédictive</a></li>
-                        <li><a href="/optimisation" class="text-gray-400 hover:text-white transition duration-300">Optimisation de rendement</a></li>
-                        <li><a href="/assistance" class="text-gray-400 hover:text-white transition duration-300">Assistance technique</a></li>
-                        <li><a href="/formation" class="text-gray-400 hover:text-white transition duration-300">Formation</a></li>
-                    </ul>
-                </div>
-                
-                <div>
-                    <h3 class="text-lg font-semibold mb-4">Contact</h3>
-                    <ul class="space-y-2">
-                        <li class="flex items-start">
-                            <i class="fas fa-map-marker-alt mt-1 mr-2 text-blue-400"></i>
-                            <span class="text-gray-400">Rue KOPEGA 56.GB Lomé, Togo</span>
-                        </li>
-                        <li class="flex items-center">
-                            <i class="fas fa-phone mt-1 mr-2 text-blue-400"></i>
-                            <span class="text-gray-400">+228 97 73 43 81</span>
-                        </li>
-                        <li class="flex items-center">
-                            <i class="fas fa-envelope mt-1 mr-2 text-blue-400"></i>
-                            <span class="text-gray-400">contact@Né Don Energy.com</span>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="border-t border-gray-700 mt-8 pt-8 text-center">
-                <p class="text-gray-400">&copy; {{ date('Y') }} Né Don Energy. Tous droits réservés.</p>
-            </div>
-        </div>
-    </footer>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.10.2/cdn.min.js" defer></script>
     <script>
@@ -520,8 +444,8 @@
                 datasets: [{
                     label: 'Production Togo (kW)',
                     data: togoBaseData,
-                    borderColor: '#1e88e5',
-                    backgroundColor: 'rgba(30, 136, 229, 0.1)',
+                    borderColor: '#FFA500',
+                    backgroundColor: 'rgba(255, 165, 0, 0.1)',
                     borderWidth: 2,
                     fill: true,
                     tension: 0.4
@@ -529,8 +453,8 @@
                 {
                     label: 'Moyenne Mondiale (kW)',
                     data: worldBaseData,
-                    borderColor: '#4caf50',
-                    backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                    borderColor: '#0000FF',
+                    backgroundColor: 'rgba(0, 0, 255, 0.1)',
                     borderWidth: 2,
                     fill: true,
                     tension: 0.4

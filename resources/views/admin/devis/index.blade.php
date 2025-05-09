@@ -34,37 +34,37 @@
                 </tr>
             </thead>
             <tbody>
-                @forelse($devisList as $devis)
+                @forelse($devis as $item)
                 <tr>
                     <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                         <div class="flex items-center">
                             <div class="ml-3">
                                 <p class="text-gray-900 whitespace-no-wrap">
-                                    {{ $devis->nom }} {{ $devis->prenom }}
+                                    {{ $item->nom }} {{ $item->prenom }}
                                 </p>
                                 <p class="text-gray-600 whitespace-no-wrap">
-                                    {{ $devis->email }}
+                                    {{ $item->email }}
                                 </p>
                             </div>
                         </div>
                     </td>
                     <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                        <p class="text-gray-900 whitespace-no-wrap">{{ $devis->type_batiment }}</p>
+                        <p class="text-gray-900 whitespace-no-wrap">{{ $item->type_batiment }}</p>
                     </td>
                     <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                        <p class="text-gray-900 whitespace-no-wrap">{{ $devis->consommation_annuelle }} kWh</p>
+                        <p class="text-gray-900 whitespace-no-wrap">{{ $item->consommation_annuelle }} kWh</p>
                     </td>
                     <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                         <p class="text-gray-900 whitespace-no-wrap">
-                            {{ $devis->created_at->format('d/m/Y H:i') }}
+                            {{ $item->created_at->format('d/m/Y H:i') }}
                         </p>
                     </td>
                     <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                         <div class="flex space-x-3">
-                            <a href="{{ route('admin.devis.show', $devis) }}" class="text-blue-600 hover:text-blue-900">
+                            <a href="{{ route('admin.devis.show', $item) }}" class="text-blue-600 hover:text-blue-900">
                                 <i class="fas fa-eye"></i> Voir
                             </a>
-                            <form action="{{ route('admin.devis.destroy', $devis) }}" method="POST" class="inline-block">
+                            <form action="{{ route('admin.devis.destroy', $item) }}" method="POST" class="inline-block">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="text-red-600 hover:text-red-900" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce devis ?')">
@@ -84,7 +84,7 @@
             </tbody>
         </table>
         <div class="px-5 py-5 bg-white border-t flex flex-col xs:flex-row items-center xs:justify-between">
-            {{ $devisList->links() }}
+            {{ $devis->links() }}
         </div>
     </div>
 </div>

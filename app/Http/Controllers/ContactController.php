@@ -6,6 +6,7 @@ use App\Models\Contact;
 use App\Mail\ContactFormMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use App\Events\ClientActivity;
 
 class ContactController extends Controller
 {
@@ -37,12 +38,18 @@ class ContactController extends Controller
         // Ajouter le téléphone seulement s'il est présent
         if (isset($validated['telephone'])) {
             $contactData['telephone'] = $validated['telephone'];
-        }
-
-        $contact = Contact::create($contactData);
+        }        $contact = Contact::create($contactData);
 
         // Envoi de l'email
         Mail::to(config('mail.from.address'))->send(new ContactFormMail($validated));
+
+        // Déclencher l'événement pour notifier les administrateurs
+        event(new ClientActivity('contact_form', [
+            'name' => $validated['nom'],
+            'email' => $validated['email'],
+            'subject' => $validated['sujet'],
+            'id' => $contact->id
+        ]));
 
         // Redirection avec message de succès
         return redirect()->back()->with('success', 'Votre message a été envoyé avec succès ! Nous vous répondrons dans les plus brefs délais.');

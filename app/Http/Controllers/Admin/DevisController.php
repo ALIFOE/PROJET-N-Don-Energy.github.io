@@ -10,8 +10,8 @@ class DevisController extends Controller
 {
     public function index()
     {
-        $devisList = Devis::latest()->paginate(10);
-        return view('admin.devis.index', compact('devisList'));
+        $devis = Devis::latest()->paginate(10);
+        return view('admin.devis.index', compact('devis'));
     }
 
     public function show(Devis $devis)

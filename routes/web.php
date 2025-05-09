@@ -26,86 +26,56 @@ use App\Http\Controllers\MessageController;
 use App\Http\Controllers\Admin\FunctionalityController;
 use App\Http\Controllers\Admin\FormationController as AdminFormationController;
 use App\Http\Controllers\Admin\NotificationController;
-// use App\Http\Controllers\Admin\InstallationController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\FormationController;
+use App\Http\Controllers\MaintenanceController;
+use App\Http\Controllers\OptimisationController;
+use App\Http\Controllers\SupportController;
 
 // Routes publiques
 Route::get('/', function () {
     return view('home');
 })->name('home');
 
+Route::get('/service', function () {
+    return view('service');
+})->name('service');
+
 // Routes pour les formations
 Route::prefix('formation')->group(function () {
     Route::get('/', [FormationController::class, 'index'])->name('formation');
     Route::get('/inscription', [FormationController::class, 'show'])->name('inscription');
     Route::post('/inscription', [FormationController::class, 'inscription'])->middleware(['auth'])->name('formation.inscription');
-    // Les routes avec paramètres dynamiques doivent être en dernier
     Route::get('/{formation}/flyer', [FormationController::class, 'downloadFlyer'])->name('formation.flyer.download');
 });
 
 // Routes d'administration
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
-    // Route du tableau de bord admin
-    Route::get('/dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
-
-    // Gestion des utilisateurs
-    Route::get('/users', [App\Http\Controllers\Admin\UtilisateurController::class, 'index'])->name('users.index');
-    Route::get('/users/create', [App\Http\Controllers\Admin\UtilisateurController::class, 'create'])->name('users.create');
-    Route::post('/users', [App\Http\Controllers\Admin\UtilisateurController::class, 'store'])->name('users.store');
-    Route::get('/users/{user}', [App\Http\Controllers\Admin\UtilisateurController::class, 'show'])->name('users.show');
-    Route::get('/users/{user}/edit', [App\Http\Controllers\Admin\UtilisateurController::class, 'edit'])->name('users.edit');
-    Route::put('/users/{user}', [App\Http\Controllers\Admin\UtilisateurController::class, 'update'])->name('users.update');
-    Route::delete('/users/{user}', [App\Http\Controllers\Admin\UtilisateurController::class, 'destroy'])->name('users.destroy');
-
-    // Routes pour les fonctionnalités
-    Route::resource('functionalities', FunctionalityController::class);    // Routes pour les formations
-
-    // Routes des formations - l'ordre est important !
-    Route::get('formations/inscriptions', [App\Http\Controllers\Admin\FormationController::class, 'inscriptions'])
-        ->name('formations.inscriptions');
-    Route::delete('formations/inscriptions/{inscription}', [App\Http\Controllers\Admin\FormationController::class, 'destroyInscription'])
-        ->name('formations.inscriptions.destroy');
-    Route::get('formations/{formation}/flyer', [App\Http\Controllers\Admin\FormationController::class, 'downloadFlyer'])
-        ->name('formations.flyer.download');
-    
-    Route::resource('formations', App\Http\Controllers\Admin\FormationController::class)->names([
-        'index' => 'formations.index',
-        'create' => 'formations.create',
-        'store' => 'formations.store',
-        'show' => 'formations.show',
-        'edit' => 'formations.edit',
-        'update' => 'formations.update',
-        'destroy' => 'formations.destroy',
-    ]);
-    
-    // Gestion des devis
-    Route::get('/devis', [App\Http\Controllers\Admin\DevisController::class, 'index'])->name('devis.index');
-    Route::get('/devis/{devis}', [App\Http\Controllers\Admin\DevisController::class, 'show'])->name('devis.show');
-    Route::delete('/devis/{devis}', [App\Http\Controllers\Admin\DevisController::class, 'destroy'])->name('devis.destroy');
-
-    // Routes pour les notifications
+    Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
-    Route::post('/notifications/{id}/mark-as-read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
-    Route::post('/notifications/mark-all-as-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
+    Route::put('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
+    Route::delete('/notifications/{id}', [NotificationController::class, 'destroy'])->name('notifications.destroy');
+    Route::resource('users', \App\Http\Controllers\Admin\UserController::class);
+    Route::resource('functionalities', FunctionalityController::class);
+    Route::resource('devis', \App\Http\Controllers\Admin\DevisController::class);
+    Route::resource('orders', \App\Http\Controllers\Admin\OrderController::class);
+    
+    Route::get('formations/inscriptions', [AdminFormationController::class, 'inscriptions'])->name('formations.inscriptions');
+    Route::delete('formations/inscriptions/{inscription}', [AdminFormationController::class, 'destroyInscription'])->name('formations.inscriptions.destroy');
+    Route::get('formations/{formation}/flyer', [AdminFormationController::class, 'downloadFlyer'])->name('formations.flyer.download');
+    
+    Route::resource('formations', AdminFormationController::class);
+    Route::resource('installations', InstallationController::class);
+    Route::get('installations/pending', [InstallationController::class, 'pending'])->name('installations.pending');
+    Route::resource('products', ProductController::class);
 });
 
 // Routes protégées par authentification
 Route::middleware(['auth'])->group(function () {
-    Route::get('/systeme-intelligent', 'App\Http\Controllers\SystemeIntelligentController@index')
-        ->name('systeme-intelligent');
-});
-Route::middleware(['auth'])->group(function () {
+    Route::get('/systeme-intelligent', 'App\Http\Controllers\SystemeIntelligentController@index')->name('systeme-intelligent');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    
-    // Routes pour les performances régionales
     Route::get('/performances-regionales', [RegionalPerformanceController::class, 'index'])->name('performances.regionales');
     Route::get('/api/performances-regionales/data', [RegionalPerformanceController::class, 'getData'])->name('performances.regionales.data');
-
-    // ...autres routes existantes...
-
-    // Routes pour les dimensionnements
-    Route::resource('dimensionnements', DimensionnementController::class);
 
     // Routes pour onduleurs
     Route::get('/onduleurs', [OnduleurController::class, 'index'])->name('onduleurs.index');
@@ -119,7 +89,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/onduleurs/{onduleur}/performance', [OnduleurController::class, 'performance'])->name('onduleurs.performance');
     Route::post('/onduleurs/test-connection', [OnduleurController::class, 'testConnection'])->name('onduleurs.test-connection');
 
-    // Routes pour le client
+    // Routes pour le profil
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -129,21 +99,21 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/activites/export-pdf', [LogActiviteController::class, 'exportPDF'])->name('activites.export-pdf');
     Route::delete('/activites/reset', [LogActiviteController::class, 'reset'])->name('activites.reset');
 
-    // Routes pour la maintenance prédictive
+    // Routes pour la maintenance
     Route::get('/maintenance-predictive', [App\Http\Controllers\MaintenanceController::class, 'index'])->name('maintenance-predictive');
     Route::post('/maintenance', [App\Http\Controllers\MaintenanceController::class, 'store'])->name('maintenance.store');
     Route::get('/maintenance/{id}/edit', [App\Http\Controllers\MaintenanceController::class, 'edit'])->name('maintenance.edit');
     Route::put('/maintenance/{id}', [App\Http\Controllers\MaintenanceController::class, 'update'])->name('maintenance.update');
     Route::delete('/maintenance/{id}', [App\Http\Controllers\MaintenanceController::class, 'destroy'])->name('maintenance.destroy');
     
-    // Routes pour les prévisions météo
-    Route::get('/previsions-meteo', [App\Http\Controllers\MeteoController::class, 'index'])->name('previsions-meteo');
-    Route::get('/meteo/donnees-actuelles', [App\Http\Controllers\MeteoController::class, 'getDonneesActuelles'])->name('meteo.donnees-actuelles');
-    Route::get('/meteo/alertes/configuration', [App\Http\Controllers\MeteoController::class, 'showAlerteConfig'])->name('meteo.alertes.config');
-    Route::post('/meteo/alertes/configuration', [App\Http\Controllers\MeteoController::class, 'saveAlerteConfig'])->name('meteo.alertes.save');
+    // Routes pour la météo
+    Route::get('/previsions-meteo', [MeteoController::class, 'index'])->name('previsions-meteo');
+    Route::get('/meteo/donnees-actuelles', [MeteoController::class, 'getDonneesActuelles'])->name('meteo.donnees-actuelles');
+    Route::get('/meteo/alertes/configuration', [MeteoController::class, 'showAlerteConfig'])->name('meteo.alertes.config');
+    Route::post('/meteo/alertes/configuration', [MeteoController::class, 'saveAlerteConfig'])->name('meteo.alertes.save');
 
-    // Routes pour les rapports et analyses
-    Route::get('/rapports-analyses', [App\Http\Controllers\RapportController::class, 'index'])->name('rapports-analyses');
+    // Routes pour les rapports
+    Route::get('/rapports-analyses', [RapportController::class, 'index'])->name('rapports-analyses');
 
     // Routes pour la configuration des onduleurs
     Route::get('/onduleur/config', [OnduleurConfigController::class, 'show'])->name('onduleur.config');
@@ -155,6 +125,27 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/devis/{devis}/resultats', [DevisController::class, 'resultats'])->name('devis.resultats');
     Route::get('/devis', [DevisController::class, 'index'])->name('devis.index');
     Route::get('/devis/{devis}/download-pdf', [DevisController::class, 'downloadPdf'])->name('devis.download-pdf');
+    
+    // Routes pour les paramètres
+    Route::get('/parametres', [App\Http\Controllers\SettingsController::class, 'index'])->name('settings.index');
+    Route::put('/parametres/update', [App\Http\Controllers\SettingsController::class, 'update'])->name('settings.update');
+    Route::put('/parametres/security', [App\Http\Controllers\SettingsController::class, 'security'])->name('settings.security');
+    Route::put('/parametres/display', [App\Http\Controllers\SettingsController::class, 'display'])->name('settings.display');
+    Route::post('/parametres/2fa', [App\Http\Controllers\SettingsController::class, 'toggleTwoFactor'])->name('settings.2fa');
+
+    // Routes pour les dimensionnements
+    Route::get('/dimensionnements', [DimensionnementController::class, 'index'])->name('dimensionnements.index');
+    Route::get('/dimensionnements/{dimensionnement}', [DimensionnementController::class, 'show'])->name('dimensionnements.show');
+    Route::get('/dimensionnement', [DimensionnementController::class, 'showForm'])->name('dimensionnement');
+    Route::post('/dimensionnement', [DimensionnementController::class, 'submit'])->name('dimensionnement.submit');
+});
+
+// Routes des services
+Route::middleware(['auth'])->group(function () {
+    Route::get('/suivi-production', [SuiviProductionController::class, 'index'])->name('suivi-production');
+    Route::get('/maintenance', [MaintenanceController::class, 'index'])->name('maintenance');
+    Route::get('/optimisation', [OptimisationController::class, 'index'])->name('optimisation');
+    Route::get('/support', [SupportController::class, 'index'])->name('support');
 });
 
 // Routes pour le blog
@@ -176,14 +167,6 @@ Route::get('/about', function () {
     return view('about');
 })->name('about');
 
-// Routes pour les formations
-Route::prefix('formation')->group(function () {
-    Route::get('/', [FormationController::class, 'index'])->name('formation');
-    Route::get('/inscription', [FormationController::class, 'show'])->name('formation.inscription.page');
-    Route::post('/inscription', [FormationController::class, 'inscription'])->name('formation.inscription');
-    Route::get('/{formation}/flyer', [FormationController::class, 'downloadFlyer'])->name('formation.flyer.download');
-});
-
 Route::get('/installation', function () {
     return view('installation');
 })->name('installation');
@@ -192,13 +175,7 @@ Route::get('/installation', function () {
 Route::get('/contact', [ContactController::class, 'index'])->name('contact');
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 
-Route::get('/service', function () {
-    return view('service');
-})->middleware(['auth'])->name('service');
-
-Route::get('/dimensionnement', [DimensionnementController::class, 'showForm'])->name('dimensionnement');
-Route::post('/dimensionnement', [DimensionnementController::class, 'submit'])->name('dimensionnement.submit');
-
+// Routes pour les paiements
 Route::get('/checkout/{product}', [PaymentController::class, 'showCheckout'])->name('checkout');
 Route::post('/process-payment', [PaymentController::class, 'processPayment'])->name('process.payment');
 Route::get('/payment-success/{order}', [PaymentController::class, 'paymentSuccess'])->name('payment.success');
@@ -211,64 +188,17 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/orders/{order}/success', [OrderController::class, 'success'])->name('orders.success');
 });
 
-// Routes d'administration
-Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
-    // Gestion des contacts
-    Route::get('/contacts', [ContactController::class, 'admin'])->name('contacts.index');
-    Route::patch('/contacts/{id}/mark-read', [ContactController::class, 'markAsRead'])->name('contacts.mark-read');
-    Route::delete('/contacts/{id}', [ContactController::class, 'destroy'])->name('contacts.destroy');
-    
-    // Gestion des commandes
-    Route::get('/orders', [App\Http\Controllers\Admin\OrderController::class, 'index'])->name('orders.index');
-    Route::get('/orders/{order}', [App\Http\Controllers\Admin\OrderController::class, 'show'])->name('orders.show');
-    Route::put('/orders/{order}/status', [App\Http\Controllers\Admin\OrderController::class, 'updateStatus'])->name('orders.update-status');
-    
-    // Gestion des utilisateurs
-    Route::get('/users', [App\Http\Controllers\Admin\UtilisateurController::class, 'index'])->name('users.index');
-    Route::get('/users/create', [App\Http\Controllers\Admin\UtilisateurController::class, 'create'])->name('users.create');
-    Route::post('/users', [App\Http\Controllers\Admin\UtilisateurController::class, 'store'])->name('users.store');
-    Route::get('/users/{user}', [App\Http\Controllers\Admin\UtilisateurController::class, 'show'])->name('users.show');
-    Route::get('/users/{user}/edit', [App\Http\Controllers\Admin\UtilisateurController::class, 'edit'])->name('users.edit');
-    Route::put('/users/{user}', [App\Http\Controllers\Admin\UtilisateurController::class, 'update'])->name('users.update');
-    Route::delete('/users/{user}', [App\Http\Controllers\Admin\UtilisateurController::class, 'destroy'])->name('users.destroy');
-
-    // Gestion des fonctionnalités
-    Route::resource('functionalities', FunctionalityController::class);      // Gestion des formations
-
-    // Routes des formations - l'ordre est important !
-    Route::get('formations/inscriptions', [App\Http\Controllers\Admin\FormationController::class, 'inscriptions'])
-        ->name('formations.inscriptions');
-    Route::delete('formations/inscriptions/{inscription}', [App\Http\Controllers\Admin\FormationController::class, 'destroyInscription'])
-        ->name('formations.inscriptions.destroy');
-    Route::get('formations/{formation}/flyer', [App\Http\Controllers\Admin\FormationController::class, 'downloadFlyer'])
-        ->name('formations.flyer.download');
-    
-    Route::resource('formations', App\Http\Controllers\Admin\FormationController::class)->names([
-        'index' => 'formations.index',
-        'create' => 'formations.create',
-        'store' => 'formations.store',
-        'show' => 'formations.show',
-        'edit' => 'formations.edit',
-        'update' => 'formations.update',
-        'destroy' => 'formations.destroy',
-    ]);
-    
-    // Gestion des installations et devis
-    Route::resource('installations', InstallationController::class);
-    Route::get('installations/pending', [InstallationController::class, 'pending'])->name('installations.pending');
-    
-    // Gestion de la marketplace
-    Route::resource('products', ProductController::class);
+// Routes pour les techniciens
+Route::middleware(['auth', 'role:technician'])->prefix('technician')->name('technician.')->group(function () {
+    Route::get('installations', [TechnicianController::class, 'installations'])->name('installations');
+    Route::get('maintenance', [TechnicianController::class, 'maintenance'])->name('maintenance');
 });
 
 Route::get('/technician/form', [TechnicianController::class, 'showForm'])->name('technician.form');
 Route::post('/technician/form', [TechnicianController::class, 'submitForm'])->name('technician.form.submit');
 Route::post('/technician/submit', [TechnicianController::class, 'submit'])->name('technician.submit');
 
-Route::post('/formation/inscription', [App\Http\Controllers\FormationController::class, 'inscription'])->name('formation.inscription');
-
-Route::get('/inscription', [App\Http\Controllers\FormationController::class, 'show'])->name('inscription');
-
+// Routes pour le suivi de production
 Route::get('/suivi-production', [SuiviProductionController::class, 'index'])->name('suivi-production');
 Route::get('/suivi-production/data', [SuiviProductionController::class, 'getData'])->name('suivi-production.data');
 Route::get('/suivi-production/export-pdf', [SuiviProductionController::class, 'exportPDF'])->name('suivi-production.export-pdf');
@@ -282,19 +212,6 @@ Route::middleware(['auth', 'role:technicien'])->name('technicien.')->prefix('tec
     Route::post('/onduleurs/{onduleur}/test-connection', [App\Http\Controllers\Technicien\OnduleurController::class, 'testConnection'])->name('onduleurs.test-connection');
     Route::post('/onduleurs/{onduleur}/reset-connection', [App\Http\Controllers\Technicien\OnduleurController::class, 'resetConnection'])->name('onduleurs.reset-connection');
     Route::delete('/onduleurs/{onduleur}', [App\Http\Controllers\Technicien\OnduleurController::class, 'destroy'])->name('onduleurs.destroy');
-});
-
-// Routes pour les techniciens
-Route::middleware(['auth', 'role:technician'])->prefix('technician')->name('technician.')->group(function () {
-    Route::get('installations', [TechnicianController::class, 'installations'])->name('installations');
-    Route::get('maintenance', [TechnicianController::class, 'maintenance'])->name('maintenance');
-});
-
-Route::resource('messages', MessageController::class);
-
-// Routes pour la gestion des utilisateurs (administration)
-Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::resource('users', \App\Http\Controllers\Admin\UserController::class);
 });
 
 require __DIR__.'/auth.php';

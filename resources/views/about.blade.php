@@ -45,13 +45,13 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
-                    <h1 class="text-3xl font-bold mb-8 text-center">À propos de Né Don Energy</h1>
+                    <h1 class="text-3xl font-bold mb-8 text-center">À propos de CREFER</h1>
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
                         <div>
                             <h2 class="text-2xl font-semibold mb-4">Notre Mission</h2>
                             <p class="text-gray-600 mb-6">
-                                Né Don Energy est né de la volonté de simplifier et d'optimiser la gestion des installations solaires photovoltaïques. Notre mission est de fournir aux propriétaires d'installations solaires et aux professionnels du secteur les outils nécessaires pour maximiser leur production d'énergie renouvelable.
+                                CREFER est né de la volonté de simplifier et d'optimiser la gestion des installations solaires photovoltaïques. Notre mission est de fournir aux propriétaires d'installations solaires et aux professionnels du secteur les outils nécessaires pour maximiser leur production d'énergie renouvelable.
                             </p>
                             <p class="text-gray-600">
                                 Nous croyons en un avenir plus durable et nous nous engageons à contribuer à la transition énergétique en rendant l'énergie solaire plus accessible et plus efficace.

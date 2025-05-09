@@ -201,44 +201,44 @@ document.addEventListener('DOMContentLoaded', () => {
 @endpush
 
 <x-app-layout>
-    <div class="py-12">
+    <div class="py-12 bg-gray-900">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+            <div class="bg-gray-800 overflow-hidden shadow-lg sm:rounded-lg border border-gray-700">
                 <div class="p-6">
-                    <h1 class="text-3xl font-bold mb-8 text-blue-600">Rapports et Analyses</h1>
+                    <h1 class="text-3xl font-bold mb-8 text-orange-400">Rapports et Analyses</h1>
 
                     <!-- Résumé des performances -->
                     <div class="mb-8">
-                        <h2 class="text-xl font-semibold mb-4">Performances de l'Onduleur</h2>
+                        <h2 class="text-xl font-semibold mb-4 text-gray-300">Performances de l'Onduleur</h2>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <div class="bg-green-50 p-6 rounded-lg">
+                            <div class="bg-gray-700 p-6 rounded-lg border-t-4 border-orange-500">
                                 <div class="flex items-center justify-between mb-4">
-                                    <h3 class="font-semibold">Production actuelle</h3>
-                                    <i class="fas fa-bolt text-green-500 text-xl"></i>
+                                    <h3 class="font-semibold text-gray-300">Production actuelle</h3>
+                                    <i class="fas fa-bolt text-orange-500 text-xl"></i>
                                 </div>
-                                <p id="production-actuelle" class="text-3xl font-bold text-green-600 mb-2">--</p>
-                                <p class="text-sm text-green-600">
+                                <p id="production-actuelle" class="text-3xl font-bold text-orange-400 mb-2">--</p>
+                                <p class="text-sm text-gray-400">
                                     <i class="fas fa-clock mr-1"></i>
                                     Temps réel
                                 </p>
                             </div>
-                            <div class="bg-blue-50 p-6 rounded-lg">
+                            <div class="bg-gray-700 p-6 rounded-lg border-t-4 border-blue-500">
                                 <div class="flex items-center justify-between mb-4">
-                                    <h3 class="font-semibold">Production journalière</h3>
+                                    <h3 class="font-semibold text-gray-300">Production journalière</h3>
                                     <i class="fas fa-solar-panel text-blue-500 text-xl"></i>
                                 </div>
-                                <p id="production-journaliere" class="text-3xl font-bold text-blue-600 mb-2">--</p>
-                                <p class="text-sm text-blue-600">
+                                <p id="production-journaliere" class="text-3xl font-bold text-blue-400 mb-2">--</p>
+                                <p class="text-sm text-gray-400">
                                     Aujourd'hui
                                 </p>
                             </div>
-                            <div class="bg-purple-50 p-6 rounded-lg">
+                            <div class="bg-gray-700 p-6 rounded-lg border-t-4 border-orange-500">
                                 <div class="flex items-center justify-between mb-4">
-                                    <h3 class="font-semibold">État de l'onduleur</h3>
-                                    <i class="fas fa-check-circle text-purple-500 text-xl"></i>
+                                    <h3 class="font-semibold text-gray-300">État de l'onduleur</h3>
+                                    <i class="fas fa-check-circle text-orange-500 text-xl"></i>
                                 </div>
-                                <p id="etat-onduleur" class="text-3xl font-bold text-purple-600 mb-2">--</p>
-                                <p class="text-sm text-purple-600">
+                                <p id="etat-onduleur" class="text-3xl font-bold text-orange-400 mb-2">--</p>
+                                <p class="text-sm text-gray-400">
                                     État actuel
                                 </p>
                             </div>
@@ -247,36 +247,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     <!-- Performances régionales -->
                     <div class="mb-8">
-                        <h2 class="text-xl font-semibold mb-4">Performances Régionales</h2>
+                        <h2 class="text-xl font-semibold mb-4 text-gray-300">Performances Régionales</h2>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <div class="bg-amber-50 p-6 rounded-lg">
+                            <div class="bg-gray-700 p-6 rounded-lg border-t-4 border-orange-500">
                                 <div class="flex items-center justify-between mb-4">
-                                    <h3 class="font-semibold">Production régionale</h3>
-                                    <i class="fas fa-sun text-amber-500 text-xl"></i>
+                                    <h3 class="font-semibold text-gray-300">Production régionale</h3>
+                                    <i class="fas fa-sun text-orange-500 text-xl"></i>
                                 </div>
-                                <p id="production-regionale" class="text-3xl font-bold text-amber-600 mb-2">--</p>
-                                <p class="text-sm text-amber-600">
+                                <p id="production-regionale" class="text-3xl font-bold text-orange-400 mb-2">--</p>
+                                <p class="text-sm text-gray-400">
                                     <i class="fas fa-arrow-up mr-1"></i>
                                     Production totale de la région
                                 </p>
                             </div>
-                            <div class="bg-teal-50 p-6 rounded-lg">
+                            <div class="bg-gray-700 p-6 rounded-lg border-t-4 border-blue-500">
                                 <div class="flex items-center justify-between mb-4">
-                                    <h3 class="font-semibold">Irradiation solaire</h3>
-                                    <i class="fas fa-radiation text-teal-500 text-xl"></i>
+                                    <h3 class="font-semibold text-gray-300">Irradiation solaire</h3>
+                                    <i class="fas fa-radiation text-blue-500 text-xl"></i>
                                 </div>
-                                <p id="irradiation" class="text-3xl font-bold text-teal-600 mb-2">--</p>
-                                <p class="text-sm text-teal-600">
+                                <p id="irradiation" class="text-3xl font-bold text-blue-400 mb-2">--</p>
+                                <p class="text-sm text-gray-400">
                                     Moyenne journalière
                                 </p>
                             </div>
-                            <div class="bg-indigo-50 p-6 rounded-lg">
+                            <div class="bg-gray-700 p-6 rounded-lg border-t-4 border-orange-500">
                                 <div class="flex items-center justify-between mb-4">
-                                    <h3 class="font-semibold">Performance collective</h3>
-                                    <i class="fas fa-chart-pie text-indigo-500 text-xl"></i>
+                                    <h3 class="font-semibold text-gray-300">Performance collective</h3>
+                                    <i class="fas fa-chart-pie text-orange-500 text-xl"></i>
                                 </div>
-                                <p id="performance-collective" class="text-3xl font-bold text-indigo-600 mb-2">--</p>
-                                <p class="text-sm text-indigo-600">
+                                <p id="performance-collective" class="text-3xl font-bold text-orange-400 mb-2">--</p>
+                                <p class="text-sm text-gray-400">
                                     Efficacité moyenne régionale
                                 </p>
                             </div>
@@ -285,23 +285,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     <!-- Graphiques -->
                     <div class="mb-8">
-                        <h2 class="text-xl font-semibold mb-4">Analyses détaillées</h2>
+                        <h2 class="text-xl font-semibold mb-4 text-gray-300">Analyses détaillées</h2>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div class="bg-white p-6 rounded-lg shadow">
-                                <h3 class="font-semibold mb-4">Production mensuelle</h3>
-                                <div class="aspect-w-16 aspect-h-9 bg-gray-100 rounded-lg">
+                            <div class="bg-gray-700 p-6 rounded-lg shadow-lg border border-gray-600">
+                                <h3 class="font-semibold mb-4 text-gray-300">Production mensuelle</h3>
+                                <div class="aspect-w-16 aspect-h-9 bg-gray-800 rounded-lg">
                                     <!-- Emplacement pour le graphique -->
                                     <div class="flex items-center justify-center">
-                                        <p class="text-gray-500">Graphique de production mensuelle</p>
+                                        <p class="text-gray-400">Graphique de production mensuelle</p>
                                     </div>
                                 </div>
                             </div>
-                            <div class="bg-white p-6 rounded-lg shadow">
-                                <h3 class="font-semibold mb-4">Comparaison annuelle</h3>
-                                <div class="aspect-w-16 aspect-h-9 bg-gray-100 rounded-lg">
+                            <div class="bg-gray-700 p-6 rounded-lg shadow-lg border border-gray-600">
+                                <h3 class="font-semibold mb-4 text-gray-300">Comparaison annuelle</h3>
+                                <div class="aspect-w-16 aspect-h-9 bg-gray-800 rounded-lg">
                                     <!-- Emplacement pour le graphique -->
                                     <div class="flex items-center justify-center">
-                                        <p class="text-gray-500">Graphique de comparaison annuelle</p>
+                                        <p class="text-gray-400">Graphique de comparaison annuelle</p>
                                     </div>
                                 </div>
                             </div>
@@ -310,34 +310,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     <!-- Rapports disponibles -->
                     <div class="mb-8">
-                        <h2 class="text-xl font-semibold mb-4">Rapports disponibles</h2>
-                        <div class="bg-white shadow rounded-lg overflow-hidden">
-                            <div class="divide-y divide-gray-200">
-                                <div class="p-4 hover:bg-gray-50">
+                        <h2 class="text-xl font-semibold mb-4 text-gray-300">Rapports disponibles</h2>
+                        <div class="bg-gray-700 shadow-lg rounded-lg overflow-hidden border border-gray-600">
+                            <div class="divide-y divide-gray-600">
+                                <div class="p-4 hover:bg-gray-600 transition duration-150">
                                     <div class="flex items-center justify-between">
                                         <div class="flex items-center">
-                                            <i class="fas fa-file-pdf text-red-500 text-xl mr-3"></i>
+                                            <i class="fas fa-file-pdf text-orange-500 text-xl mr-3"></i>
                                             <div>
-                                                <h3 class="font-semibold">Rapport mensuel - Avril 2025</h3>
-                                                <p class="text-sm text-gray-500">Généré le 28/04/2025</p>
+                                                <h3 class="font-semibold text-gray-300">Rapport mensuel - Avril 2025</h3>
+                                                <p class="text-sm text-gray-400">Généré le 28/04/2025</p>
                                             </div>
                                         </div>
-                                        <button class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition download-report" data-type="pdf" data-period="mensuel">
+                                        <button class="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600 transition duration-300 download-report" data-type="pdf" data-period="mensuel">
                                             <i class="fas fa-download mr-2"></i>
                                             Télécharger
                                         </button>
                                     </div>
                                 </div>
-                                <div class="p-4 hover:bg-gray-50">
+                                <div class="p-4 hover:bg-gray-600 transition duration-150">
                                     <div class="flex items-center justify-between">
                                         <div class="flex items-center">
-                                            <i class="fas fa-file-excel text-green-500 text-xl mr-3"></i>
+                                            <i class="fas fa-file-excel text-blue-500 text-xl mr-3"></i>
                                             <div>
-                                                <h3 class="font-semibold">Export données brutes - Avril 2025</h3>
-                                                <p class="text-sm text-gray-500">Format Excel</p>
+                                                <h3 class="font-semibold text-gray-300">Export données brutes - Avril 2025</h3>
+                                                <p class="text-sm text-gray-400">Format Excel</p>
                                             </div>
                                         </div>
-                                        <button class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition download-report" data-type="excel" data-period="mensuel">
+                                        <button class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300 download-report" data-type="excel" data-period="mensuel">
                                             <i class="fas fa-download mr-2"></i>
                                             Télécharger
                                         </button>
@@ -349,46 +349,46 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     <!-- Options de personnalisation -->
                     <div>
-                        <h2 class="text-xl font-semibold mb-4">Personnalisation des rapports</h2>
-                        <div class="bg-white shadow rounded-lg p-6">
+                        <h2 class="text-xl font-semibold mb-4 text-gray-300">Personnalisation des rapports</h2>
+                        <div class="bg-gray-700 shadow-lg rounded-lg p-6 border border-gray-600">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
-                                    <h3 class="font-semibold mb-4">Fréquence des rapports</h3>
+                                    <h3 class="font-semibold mb-4 text-gray-300">Fréquence des rapports</h3>
                                     <div class="space-y-2">
                                         <label class="flex items-center">
-                                            <input type="radio" name="frequency" class="form-radio text-blue-600" checked>
-                                            <span class="ml-2">Quotidien</span>
+                                            <input type="radio" name="frequency" class="form-radio text-orange-500 bg-gray-800 border-gray-600" checked>
+                                            <span class="ml-2 text-gray-300">Quotidien</span>
                                         </label>
                                         <label class="flex items-center">
-                                            <input type="radio" name="frequency" class="form-radio text-blue-600">
-                                            <span class="ml-2">Hebdomadaire</span>
+                                            <input type="radio" name="frequency" class="form-radio text-orange-500 bg-gray-800 border-gray-600">
+                                            <span class="ml-2 text-gray-300">Hebdomadaire</span>
                                         </label>
                                         <label class="flex items-center">
-                                            <input type="radio" name="frequency" class="form-radio text-blue-600">
-                                            <span class="ml-2">Mensuel</span>
+                                            <input type="radio" name="frequency" class="form-radio text-orange-500 bg-gray-800 border-gray-600">
+                                            <span class="ml-2 text-gray-300">Mensuel</span>
                                         </label>
                                     </div>
                                 </div>
                                 <div>
-                                    <h3 class="font-semibold mb-4">Format préféré</h3>
+                                    <h3 class="font-semibold mb-4 text-gray-300">Format préféré</h3>
                                     <div class="space-y-2">
                                         <label class="flex items-center">
-                                            <input type="checkbox" class="form-checkbox text-blue-600" checked>
-                                            <span class="ml-2">PDF</span>
+                                            <input type="checkbox" class="form-checkbox text-orange-500 bg-gray-800 border-gray-600" checked>
+                                            <span class="ml-2 text-gray-300">PDF</span>
                                         </label>
                                         <label class="flex items-center">
-                                            <input type="checkbox" class="form-checkbox text-blue-600">
-                                            <span class="ml-2">Excel</span>
+                                            <input type="checkbox" class="form-checkbox text-orange-500 bg-gray-800 border-gray-600">
+                                            <span class="ml-2 text-gray-300">Excel</span>
                                         </label>
                                         <label class="flex items-center">
-                                            <input type="checkbox" class="form-checkbox text-blue-600">
-                                            <span class="ml-2">CSV</span>
+                                            <input type="checkbox" class="form-checkbox text-orange-500 bg-gray-800 border-gray-600">
+                                            <span class="ml-2 text-gray-300">CSV</span>
                                         </label>
                                     </div>
                                 </div>
                             </div>
                             <div class="mt-6">
-                                <button id="save-preferences" class="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600 transition">
+                                <button id="save-preferences" class="bg-orange-500 text-white px-6 py-2 rounded hover:bg-orange-600 transition duration-300">
                                     Sauvegarder les préférences
                                 </button>
                             </div>

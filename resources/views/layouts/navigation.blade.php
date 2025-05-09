@@ -3,16 +3,29 @@
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
         <link href="{{ asset('css/styles.css') }}" rel="stylesheet">
+        <style>
+            .nav-icon {
+                color: var(--primary-color, #FFA500);
+            }
+            .nav-brand {
+                color: var(--dark-color, #000000);
+            }
+            .dropdown-item:hover {
+                background-color: rgba(255, 165, 0, 0.1);
+                color: var(--primary-color, #FFA500);
+            }
+        </style>
     </head>
     <div class="container mx-auto px-6 py-3">
         <div class="flex justify-between items-center">
             <!-- Logo et Nom -->
             <div class="flex items-center">
                 <a href="{{ route('home') }}" class="flex items-center">
-                    <i class="fas fa-solar-panel text-blue-600 text-2xl mr-2"></i>
-                    <span class="text-xl font-bold text-gray-800">Né Don Energy</span>
+                    <i class="fas fa-solar-panel nav-icon text-2xl mr-2"></i>
+                    <span class="text-xl font-bold nav-brand">CREFER</span>
                 </a>
-            </div>            <!-- Navigation Links -->
+            </div>
+            <!-- Navigation Links -->
             @if(auth()->check())
                 @if(auth()->user()->isAdmin())
                     @include('layouts.admin-navigation')
@@ -23,9 +36,10 @@
                     <div class="hidden md:flex space-x-10">
                         <a href="{{ route('home') }}" class="navbar-link {{ request()->routeIs('home') ? 'active' : '' }}">Accueil</a>
                         <a href="{{ route('fonctionnalite') }}" class="navbar-link {{ request()->routeIs('fonctionnalite') ? 'active' : '' }}">Fonctionnalités</a>
-                        <a href="{{ route('formation') }}" class="navbar-link {{ request()->routeIs('formation') ? 'active' : '' }}">Formations</a>
-                        <a href="{{ route('installation') }}" class="navbar-link {{ request()->routeIs('installation') ? 'active' : '' }}">Devis-Installations</a>
-                        <a href="{{ route('market-place') }}" class="navbar-link {{ request()->routeIs('market-place') ? 'active' : '' }}">Market-Place</a>
+                        <a href="{{ route('formation') }}" class="navbar-link {{ request()->routeIs('formation') ? 'active' : '' }}">Formations à CREFER</a>
+                        <a href="{{ route('installation') }}" class="navbar-link {{ request()->routeIs('installation') ? 'active' : '' }}">Devis</a>
+                        <a href="{{ route('market-place') }}" class="navbar-link {{ request()->routeIs('market-place') ? 'active' : '' }}">Boutique  EGENT</a>
+                        <a href="{{ route('contact') }}" class="navbar-link {{ request()->routeIs('contact') ? 'active' : '' }}">Contact</a>
                     </div>
                 @endif
             @else
@@ -33,8 +47,8 @@
                 <div class="hidden md:flex space-x-10">
                     <a href="{{ route('home') }}" class="navbar-link {{ request()->routeIs('home') ? 'active' : '' }}">Accueil</a>
                     <a href="{{ route('fonctionnalite') }}" class="navbar-link {{ request()->routeIs('fonctionnalite') ? 'active' : '' }}">Fonctionnalités</a>
-                    <a href="{{ route('formation') }}" class="navbar-link {{ request()->routeIs('formation') ? 'active' : '' }}">Formations</a>
-                    <a href="{{ route('market-place') }}" class="navbar-link {{ request()->routeIs('market-place') ? 'active' : '' }}">Market-Place</a>
+                    <a href="{{ route('formation') }}" class="navbar-link {{ request()->routeIs('formation') ? 'active' : '' }}">Formations à CREFER</a>
+                    <a href="{{ route('market-place') }}" class="navbar-link {{ request()->routeIs('market-place') ? 'active' : '' }}">Boutique EGENT</a>
                 </div>
             @endif
 
@@ -95,24 +109,31 @@
             <div class="flex flex-col space-y-3">                <!-- Contenu mobile en fonction du rôle -->
                 @if(auth()->check())
                     @if(auth()->user()->isAdmin())
-                        <a href="{{ route('admin.functionalities.index') }}" class="navbar-link">Gérer les Installations</a>
+                        <a href="{{ route('admin.notifications.index') }}" class="navbar-link">Notifications</a>
                         <a href="{{ route('admin.formations.index') }}" class="navbar-link">Gérer les Formations</a>
                         <a href="{{ route('admin.installations.index') }}" class="navbar-link">Gérer les Devis</a>
                         <a href="{{ route('admin.products.index') }}" class="navbar-link">Gérer les Produits</a>
+                        <a href="{{ route('admin.users.index') }}" class="navbar-link">Gérer les Utilisateurs</a>
                     @elseif(auth()->user()->role === 'technician')
-                        <a href="{{ route('fonctionnalite') }}" class="navbar-link">Fonctionnalités</a>
+                        <a href="{{ route('formation') }}" class="navbar-link">Formations à CREFER</a>
+                        <a href="{{ route('installation') }}" class="navbar-link">Devis</a>
                         <a href="{{ route('technician.installations') }}" class="navbar-link">Installations</a>
                         <a href="{{ route('technician.maintenance') }}" class="navbar-link">Maintenance</a>
-                    @else
+                    @elseif (auth()->user()->role === 'client')
+                        <a href="{{ route('home') }}" class="navbar-link">Accueil</a>
                         <a href="{{ route('fonctionnalite') }}" class="navbar-link">Fonctionnalités</a>
-                        <a href="{{ route('formation') }}" class="navbar-link">Formations</a>
-                        <a href="{{ route('installation') }}" class="navbar-link">Devis-Installations</a>
-                        <a href="{{ route('market-place') }}" class="navbar-link">Market-Place</a>
+                        <a href="{{ route('formation') }}" class="navbar-link">Formations à CREFER</a>
+                        <a href="{{ route('installation') }}" class="navbar-link">Devis</a>
+                        <a href="{{ route('market-place') }}" class="navbar-link">Boutique EGENT</a>
+                        <a href="{{ route('contact') }}" class="navbar-link">Contact</a>
                     @endif
                 @else
+                    <a href="{{ route('home') }}" class="navbar-link">Accueil</a>
                     <a href="{{ route('fonctionnalite') }}" class="navbar-link">Fonctionnalités</a>
-                    <a href="{{ route('formation') }}" class="navbar-link">Formations</a>
-                    <a href="{{ route('market-place') }}" class="navbar-link">Market-Place</a>
+                    <a href="{{ route('formation') }}" class="navbar-link">Formations à CREFER</a>
+                    <a href="{{ route('installation') }}" class="navbar-link">Devis</a>
+                    <a href="{{ route('market-place') }}" class="navbar-link">Boutique EGENT</a>
+                    <a href="{{ route('contact') }}" class="navbar-link">Contact</a>
                 @endif
             </div>
         </div>

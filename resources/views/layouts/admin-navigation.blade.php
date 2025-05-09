@@ -55,6 +55,8 @@
         </div>
     </div>
 
+   
+
     <a href="{{ route('admin.users.index') }}" class="navbar-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
         <i class="fas fa-users"></i> Utilisateurs
     </a>

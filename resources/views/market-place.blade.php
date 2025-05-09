@@ -17,8 +17,8 @@
                 transition: all 0.3s ease;
             }
             .category-tab.active {
-                background-color: #1e88e5;
-                color: white;
+                background-color: var(--primary-color, #FFA500);
+                color: var(--secondary-color, #FFFFFF);
             }
             .product-image {
                 height: 200px;
@@ -27,7 +27,15 @@
             .price-tag {
                 font-size: 1.5rem;
                 font-weight: bold;
-                color: #1e88e5;
+                color: var(--primary-color, #FFA500);
+            }
+            .product-action-btn {
+                background-color: var(--primary-color, #FFA500);
+                color: var(--secondary-color, #FFFFFF);
+                transition: all 0.3s ease;
+            }
+            .product-action-btn:hover {
+                background-color: var(--accent-color, #0000FF);
             }
         </style>
     </head>
@@ -73,7 +81,7 @@
                                         <p class="text-gray-600 mb-4">{{ $product->description }}</p>
                                 <div class="flex justify-between items-center">
                                             <span class="text-2xl font-bold">{{ number_format($product->prix, 0, ',', ' ') }} FCFA</span>
-                                            <a href="{{ route('checkout', $product->id) }}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">
+                                            <a href="{{ route('checkout', $product->id) }}" class="product-action-btn px-4 py-2 rounded hover:bg-blue-700 transition-colors">
                                                 Commander
                                             </a>
                             </div>

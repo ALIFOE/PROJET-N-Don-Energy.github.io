@@ -9,6 +9,7 @@ use App\Mail\OrderConfirmationMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use App\Events\ClientActivity;
 
 class OrderController extends Controller
 {
@@ -38,12 +39,18 @@ class OrderController extends Controller
             'customer_email' => $validatedData['customer_email'],
             'customer_phone' => $validatedData['customer_phone'],
             'customer_address' => $validatedData['customer_address']
-        ]);
-
-        // Envoyer l'e-mail à l'administrateur
+        ]);        // Envoyer l'e-mail à l'administrateur
         if (config('mail.admin_email')) {
             Mail::to(config('mail.admin_email'))->send(new AdminOrderNotificationMail($order));
         }
+
+        // Déclencher l'événement pour notifier les administrateurs
+        event(new ClientActivity('order_placed', [
+            'name' => $validatedData['customer_name'],
+            'email' => $validatedData['customer_email'],
+            'id' => $order->id,
+            'amount' => $total_price
+        ]));
 
         // Envoyer l'e-mail de confirmation au client
         Mail::to($order->customer_email)->send(new OrderConfirmationMail($order));

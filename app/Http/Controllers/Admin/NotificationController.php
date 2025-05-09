@@ -31,4 +31,10 @@ class NotificationController extends Controller
         auth()->user()->unreadNotifications->markAsRead();
         return back()->with('success', 'Toutes les notifications ont été marquées comme lues');
     }
+
+    public function destroy($id)
+    {
+        DatabaseNotification::findOrFail($id)->delete();
+        return back()->with('success', 'Notification supprimée avec succès');
+    }
 }

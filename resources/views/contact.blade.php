@@ -29,7 +29,7 @@
                         </div>
                         <div class="flex items-center">
                             <i class="fas fa-envelope text-blue-500 mr-3"></i>
-                            <span class="text-gray-600">contact@Né Don Energy.com</span>
+                            <span class="text-gray-600">contact@CREFER.com</span>
                         </div>
                     </div>
                 </div>

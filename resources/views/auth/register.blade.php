@@ -3,7 +3,7 @@
         <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg">
             <div class="flex items-center justify-center mb-6">
                 <i class="fas fa-solar-panel text-blue-600 text-4xl mr-2"></i>
-                <span class="text-2xl font-bold text-gray-800">Né Don Energy</span>
+                <span class="text-2xl font-bold text-gray-800">CREFER</span>
             </div>
 
             <h2 class="text-2xl font-bold text-center text-gray-800 mb-8">Inscription</h2>

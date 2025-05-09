@@ -35,7 +35,7 @@
     <div class="header">
         <div class="company-info">
             <div class="logo">
-                <i class="fas fa-solar-panel"></i> Né Don Energy
+                <i class="fas fa-solar-panel"></i> CREFER
             </div>
             <div class="contact-info">
                 <p>Rue KOPEGA 56.GB<br>

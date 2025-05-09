@@ -36,7 +36,7 @@
                 transition: border-color 0.3s;
             }
             .form-input:focus {
-                border-color: #1e88e5;
+                border-color: var(--primary-color, #FFA500);
                 outline: none;
             }
             .checkbox-group {
@@ -50,8 +50,8 @@
                 gap: 0.5rem;
             }
             .submit-btn {
-                background-color: #1e88e5;
-                color: white;
+                background-color: var(--primary-color, #FFA500);
+                color: var(--secondary-color, #FFFFFF);
                 padding: 0.75rem 2rem;
                 border-radius: 6px;
                 border: none;
@@ -60,12 +60,15 @@
                 transition: background-color 0.3s;
             }
             .submit-btn:hover {
-                background-color: #0d47a1;
+                background-color: var(--accent-color, #0000FF);
             }
             .info-text {
                 color: #6b7280;
                 font-size: 0.875rem;
                 margin-top: 0.25rem;
+            }
+            .file-input-wrapper:hover {
+                border-color: var(--primary-color, #FFA500);
             }
         </style>
     </head>
@@ -259,4 +262,4 @@
             </form>
         </div>
     </div>
-</x-app-layout> 
+</x-app-layout>

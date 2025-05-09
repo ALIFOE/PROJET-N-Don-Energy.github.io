@@ -35,7 +35,7 @@ class AlerteMeteo extends Notification implements ShouldQueue
     public function toMail($notifiable)
     {
         return (new MailMessage)
-            ->subject('Alerte Météo - Né Don Energy')
+            ->subject('Alerte Météo - CREFER')
             ->greeting('Alerte Météo')
             ->line($this->message)
             ->line('Cette alerte est basée sur les conditions météorologiques actuelles de votre installation.')

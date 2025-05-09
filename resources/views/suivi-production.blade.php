@@ -1,13 +1,13 @@
 <x-app-layout>
-    <div class="py-16 mt-16">
+    <div class="py-16 mt-16 bg-gray-900">
         <div class="container mx-auto px-6">
             <div class="text-center mb-12">
-                <h1 class="text-4xl font-bold text-gray-900">Suivi de Production</h1>
-                <p class="mt-4 text-xl text-gray-600">Visualisez et analysez les performances de vos installations solaires en temps réel</p>
+                <h1 class="text-4xl font-bold text-orange-400">Suivi de Production</h1>
+                <p class="mt-4 text-xl text-gray-300">Visualisez et analysez les performances de vos installations solaires en temps réel</p>
                 
                 <!-- Bouton Connecter un onduleur -->
                 <div class="mt-6">
-                    <a href="{{ route('onduleurs.create') }}" class="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                    <a href="{{ route('onduleurs.create') }}" class="inline-flex items-center px-4 py-2 bg-orange-500 rounded-md font-semibold text-white hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 transition duration-300">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
                             <path d="M13 7h-2v2h2V7zm0 4h-2v2h2v-2zm2-1a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-6a1 1 0 0 1 1-1h2V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v6h2zm-6-6v6h4V4h-4z" />
                         </svg>
@@ -17,10 +17,10 @@
             </div>
 
             <!-- Filtres et Export -->
-            <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+            <div class="bg-gray-800 rounded-lg shadow-lg p-6 mb-8 border border-gray-700">
                 <div class="flex flex-wrap items-center justify-between gap-4">
                     <div class="flex items-center space-x-4">
-                        <select id="periode" class="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
+                        <select id="periode" class="rounded-md bg-gray-700 border-gray-600 text-gray-300 focus:border-orange-500 focus:ring focus:ring-orange-200">
                             <option value="24h">Dernières 24 heures</option>
                             <option value="semaine">7 derniers jours</option>
                             <option value="mois">30 derniers jours</option>
@@ -29,18 +29,18 @@
                         </select>
 
                         <div id="dates-personnalisees" class="hidden flex items-center space-x-2">
-                            <input type="datetime-local" id="date-debut" class="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
-                            <span class="text-gray-500">à</span>
-                            <input type="datetime-local" id="date-fin" class="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200">
+                            <input type="datetime-local" id="date-debut" class="rounded-md bg-gray-700 border-gray-600 text-gray-300 focus:border-orange-500 focus:ring focus:ring-orange-200">
+                            <span class="text-gray-400">à</span>
+                            <input type="datetime-local" id="date-fin" class="rounded-md bg-gray-700 border-gray-600 text-gray-300 focus:border-orange-500 focus:ring focus:ring-orange-200">
                         </div>
                     </div>
 
                     <div class="flex items-center space-x-4">
-                        <button onclick="exportData('pdf')" class="inline-flex items-center px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                        <button onclick="exportData('pdf')" class="inline-flex items-center px-4 py-2 bg-orange-600 text-white rounded-md hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 transition duration-300">
                             <i class="fas fa-file-pdf mr-2"></i>
                             Exporter en PDF
                         </button>
-                        <button onclick="exportData('csv')" class="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                        <button onclick="exportData('csv')" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-300">
                             <i class="fas fa-file-csv mr-2"></i>
                             Exporter en CSV
                         </button>
@@ -50,52 +50,52 @@
 
             <!-- Cards de statistiques -->
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                <div class="bg-white rounded-lg shadow-lg p-6">
+                <div class="bg-gray-800 rounded-lg shadow-lg p-6 border-t-4 border-orange-500">
                     <div class="flex items-center justify-between">
-                        <h3 class="text-lg font-semibold text-gray-700">Production Actuelle</h3>
-                        <i class="fas fa-bolt text-yellow-500 text-2xl"></i>
+                        <h3 class="text-lg font-semibold text-gray-300">Production Actuelle</h3>
+                        <i class="fas fa-bolt text-orange-500 text-2xl"></i>
                     </div>
-                    <p class="text-3xl font-bold text-gray-900 mt-4" id="currentProduction">-- kW</p>
+                    <p class="text-3xl font-bold text-orange-400 mt-4" id="currentProduction">-- kW</p>
                 </div>
 
-                <div class="bg-white rounded-lg shadow-lg p-6">
+                <div class="bg-gray-800 rounded-lg shadow-lg p-6 border-t-4 border-blue-500">
                     <div class="flex items-center justify-between">
-                        <h3 class="text-lg font-semibold text-gray-700">Production Moyenne</h3>
+                        <h3 class="text-lg font-semibold text-gray-300">Production Moyenne</h3>
                         <i class="fas fa-chart-line text-blue-500 text-2xl"></i>
                     </div>
-                    <p class="text-3xl font-bold text-gray-900 mt-4" id="averageProduction">-- kW</p>
+                    <p class="text-3xl font-bold text-blue-400 mt-4" id="averageProduction">-- kW</p>
                 </div>
 
-                <div class="bg-white rounded-lg shadow-lg p-6">
+                <div class="bg-gray-800 rounded-lg shadow-lg p-6 border-t-4 border-orange-500">
                     <div class="flex items-center justify-between">
-                        <h3 class="text-lg font-semibold text-gray-700">Production Totale</h3>
-                        <i class="fas fa-solar-panel text-green-500 text-2xl"></i>
+                        <h3 class="text-lg font-semibold text-gray-300">Production Totale</h3>
+                        <i class="fas fa-solar-panel text-orange-500 text-2xl"></i>
                     </div>
-                    <p class="text-3xl font-bold text-gray-900 mt-4" id="totalProduction">-- kWh</p>
+                    <p class="text-3xl font-bold text-orange-400 mt-4" id="totalProduction">-- kWh</p>
                 </div>
 
-                <div class="bg-white rounded-lg shadow-lg p-6">
+                <div class="bg-gray-800 rounded-lg shadow-lg p-6 border-t-4 border-blue-500">
                     <div class="flex items-center justify-between">
-                        <h3 class="text-lg font-semibold text-gray-700">État du Système</h3>
-                        <i class="fas fa-check-circle text-green-500 text-2xl"></i>
+                        <h3 class="text-lg font-semibold text-gray-300">État du Système</h3>
+                        <i class="fas fa-check-circle text-blue-500 text-2xl"></i>
                     </div>
-                    <p class="text-3xl font-bold text-gray-900 mt-4" id="systemStatus">Optimal</p>
+                    <p class="text-3xl font-bold text-blue-400 mt-4" id="systemStatus">Optimal</p>
                 </div>
             </div>
 
             <!-- Graphiques -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
                 <!-- Graphique Production -->
-                <div class="bg-white rounded-lg shadow-lg p-6">
-                    <h3 class="text-lg font-semibold text-gray-700 mb-4">Production</h3>
+                <div class="bg-gray-800 rounded-lg shadow-lg p-6 border border-gray-700">
+                    <h3 class="text-lg font-semibold text-gray-300 mb-4">Production</h3>
                     <div class="chart-container">
                         <canvas id="productionChart"></canvas>
                     </div>
                 </div>
 
                 <!-- Graphique Température et Irradiance -->
-                <div class="bg-white rounded-lg shadow-lg p-6">
-                    <h3 class="text-lg font-semibold text-gray-700 mb-4">Conditions Environnementales</h3>
+                <div class="bg-gray-800 rounded-lg shadow-lg p-6 border border-gray-700">
+                    <h3 class="text-lg font-semibold text-gray-300 mb-4">Conditions Environnementales</h3>
                     <div class="chart-container">
                         <canvas id="environmentChart"></canvas>
                     </div>
@@ -103,80 +103,80 @@
             </div>
 
             <!-- Indicateurs de Performance -->
-            <div class="bg-white rounded-lg shadow-lg p-6">
-                <h3 class="text-lg font-semibold text-gray-700 mb-4">Indicateurs Temps Réel</h3>
+            <div class="bg-gray-800 rounded-lg shadow-lg p-6 border border-gray-700">
+                <h3 class="text-lg font-semibold text-gray-300 mb-4">Indicateurs Temps Réel</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div class="indicator">
-                        <i class="fas fa-battery-three-quarters indicator-icon text-blue-500"></i>
+                    <div class="indicator bg-gray-700 p-4 rounded-lg">
+                        <i class="fas fa-battery-three-quarters text-orange-500 text-2xl mb-2"></i>
                         <div>
-                            <p class="text-sm text-gray-600">Niveau Batterie</p>
-                            <p class="indicator-value" id="batteryLevel">--%</p>
+                            <p class="text-sm text-gray-400">Niveau Batterie</p>
+                            <p class="text-xl font-bold text-orange-400" id="batteryLevel">--%</p>
                         </div>
                     </div>
-                    <div class="indicator">
-                        <i class="fas fa-thermometer-half indicator-icon text-red-500"></i>
+                    <div class="indicator bg-gray-700 p-4 rounded-lg">
+                        <i class="fas fa-thermometer-half text-blue-500 text-2xl mb-2"></i>
                         <div>
-                            <p class="text-sm text-gray-600">Température</p>
-                            <p class="indicator-value" id="temperature">--°C</p>
+                            <p class="text-sm text-gray-400">Température</p>
+                            <p class="text-xl font-bold text-blue-400" id="temperature">--°C</p>
                         </div>
                     </div>
-                    <div class="indicator">
-                        <i class="fas fa-sun indicator-icon text-yellow-500"></i>
+                    <div class="indicator bg-gray-700 p-4 rounded-lg">
+                        <i class="fas fa-sun text-orange-500 text-2xl mb-2"></i>
                         <div>
-                            <p class="text-sm text-gray-600">Irradiance</p>
-                            <p class="indicator-value" id="irradiance">-- W/m²</p>
+                            <p class="text-sm text-gray-400">Irradiance</p>
+                            <p class="text-xl font-bold text-orange-400" id="irradiance">-- W/m²</p>
                         </div>
                     </div>
-                    <div class="indicator">
-                        <i class="fas fa-tachometer-alt indicator-icon text-green-500"></i>
+                    <div class="indicator bg-gray-700 p-4 rounded-lg">
+                        <i class="fas fa-tachometer-alt text-blue-500 text-2xl mb-2"></i>
                         <div>
-                            <p class="text-sm text-gray-600">Rendement</p>
-                            <p class="indicator-value" id="efficiency">--%</p>
+                            <p class="text-sm text-gray-400">Rendement</p>
+                            <p class="text-xl font-bold text-blue-400" id="efficiency">--%</p>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Audit de Performance -->
-            <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
-                <h3 class="text-lg font-semibold text-gray-700 mb-4">Audit de Performance</h3>
+            <div class="bg-gray-800 rounded-lg shadow-lg p-6 mb-8 border border-gray-700">
+                <h3 class="text-lg font-semibold text-gray-300 mb-4">Audit de Performance</h3>
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div class="p-4 border rounded-lg">
+                    <div class="p-4 border border-gray-700 rounded-lg bg-gray-700">
                         <div class="flex items-center justify-between mb-4">
-                            <h4 class="font-medium">Score de Performance</h4>
-                            <span class="text-2xl font-bold text-green-500" id="performanceScore">92%</span>
+                            <h4 class="font-medium text-gray-300">Score de Performance</h4>
+                            <span class="text-2xl font-bold text-orange-400" id="performanceScore">92%</span>
                         </div>
-                        <div class="w-full bg-gray-200 rounded-full h-2.5">
-                            <div class="bg-green-500 h-2.5 rounded-full" style="width: 92%"></div>
+                        <div class="w-full bg-gray-600 rounded-full h-2.5">
+                            <div class="bg-orange-500 h-2.5 rounded-full" style="width: 92%"></div>
                         </div>
                     </div>
-                    <div class="p-4 border rounded-lg">
-                        <h4 class="font-medium mb-3">Points Forts</h4>
+                    <div class="p-4 border border-gray-700 rounded-lg bg-gray-700">
+                        <h4 class="font-medium text-gray-300 mb-3">Points Forts</h4>
                         <ul class="space-y-2 text-sm">
-                            <li class="flex items-center">
-                                <svg class="w-4 h-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <li class="flex items-center text-gray-300">
+                                <svg class="w-4 h-4 text-orange-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
                                     <path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"></path>
                                 </svg>
                                 Rendement optimal des panneaux
                             </li>
-                            <li class="flex items-center">
-                                <svg class="w-4 h-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <li class="flex items-center text-gray-300">
+                                <svg class="w-4 h-4 text-orange-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
                                     <path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"></path>
                                 </svg>
                                 Maintenance régulière
                             </li>
                         </ul>
                     </div>
-                    <div class="p-4 border rounded-lg">
-                        <h4 class="font-medium mb-3">Points d'Amélioration</h4>
+                    <div class="p-4 border border-gray-700 rounded-lg bg-gray-700">
+                        <h4 class="font-medium text-gray-300 mb-3">Points d'Amélioration</h4>
                         <ul class="space-y-2 text-sm">
-                            <li class="flex items-center">
+                            <li class="flex items-center text-gray-300">
                                 <svg class="w-4 h-4 text-yellow-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
                                     <path d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"></path>
                                 </svg>
                                 Nettoyage des panneaux recommandé
                             </li>
-                            <li class="flex items-center">
+                            <li class="flex items-center text-gray-300">
                                 <svg class="w-4 h-4 text-yellow-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
                                     <path d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"></path>
                                 </svg>
@@ -482,6 +482,49 @@
                 updateCharts();
             }
         }, 300000);
+
+        // Mise à jour des options des graphiques pour le thème sombre
+        const chartOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'top',
+                    labels: {
+                        color: '#9ca3af' // text-gray-400
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(75, 85, 99, 0.2)' // gray-600 avec opacité
+                    },
+                    ticks: {
+                        color: '#9ca3af' // text-gray-400
+                    }
+                },
+                x: {
+                    grid: {
+                        color: 'rgba(75, 85, 99, 0.2)' // gray-600 avec opacité
+                    },
+                    ticks: {
+                        color: '#9ca3af' // text-gray-400
+                    }
+                }
+            }
+        };
+
+        // Appliquer les options aux graphiques existants
+        if (window.productionChart) {
+            window.productionChart.options = { ...window.productionChart.options, ...chartOptions };
+            window.productionChart.update();
+        }
+        if (window.environmentChart) {
+            window.environmentChart.options = { ...window.environmentChart.options, ...chartOptions };
+            window.environmentChart.update();
+        }
     </script>
     @endpush
 </x-app-layout>

@@ -173,7 +173,7 @@
                 <p class="text-blue-100 mb-8">
                     <i class="fas fa-phone-alt mr-2"></i> +228 97 73 43 81
                     <span class="mx-4">|</span>
-                    <i class="fas fa-envelope mr-2"></i> formation@ndon-energy.com
+                    <i class="fas fa-envelope mr-2"></i> crefer@gmail.com
                 </p>
                 <div class="flex justify-center gap-4">
                     <a href="{{ route('inscription') }}" class="bg-white text-blue-600 px-8 py-3 rounded-lg hover:bg-blue-50 transition">

@@ -19,8 +19,8 @@
                 box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
             }
             .btn-submit {
-                background-color: #2563eb;
-                color: white;
+                background-color: var(--primary-color, #FFA500);
+                color: var(--secondary-color, #FFFFFF);
                 padding: 0.75rem 2rem;
                 border-radius: 8px;
                 transition: all 0.3s ease;
@@ -29,7 +29,7 @@
                 max-width: 300px;
             }
             .btn-submit:hover {
-                background-color: #1d4ed8;
+                background-color: var(--accent-color, #0000FF);
                 transform: translateY(-2px);
             }
             .form-section {
@@ -40,7 +40,7 @@
             .form-section-title {
                 font-size: 1.25rem;
                 font-weight: 600;
-                color: #1f2937;
+                color: var(--dark-color, #000000);
                 margin-bottom: 1rem;
             }
             .input-group {
@@ -54,7 +54,7 @@
                 transition: all 0.3s ease;
             }
             .file-input-wrapper:hover {
-                border-color: #2563eb;
+                border-color: var(--primary-color, #FFA500);
             }
         </style>
     </head>
@@ -161,7 +161,7 @@
 
                             <div class="input-group">
                                 <label for="cni_path" class="block text-gray-700 font-medium mb-2">
-                                    CNI *
+                                    CNI ou n'importe carte d'identité *
                                     <span class="text-sm text-gray-500">(PDF, JPG, PNG)</span>
                                 </label>
                                 <div class="file-input-wrapper">

@@ -156,4 +156,12 @@ class DimensionnementController extends Controller
             return back()->with('error', 'Une erreur est survenue lors de la suppression de votre demande.');
         }
     }
+
+    /**
+     * Traiter la soumission du formulaire de dimensionnement.
+     */
+    public function submit(DimensionnementRequest $request)
+    {
+        return $this->store($request);
+    }
 }
