@@ -36,5 +36,12 @@ class NotificationController extends Controller
     {
         DatabaseNotification::findOrFail($id)->delete();
         return back()->with('success', 'Notification supprimée avec succès');
+    }    public function destroyAll()
+    {
+        $user = auth()->user();
+        // Supprimer toutes les notifications lues et non lues
+        $user->readNotifications()->delete();
+        $user->unreadNotifications()->delete();
+        return back()->with('success', 'Toutes les notifications ont été supprimées');
     }
 }

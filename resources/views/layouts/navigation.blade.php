@@ -32,10 +32,18 @@
                 @elseif(auth()->user()->role === 'technician')
                     @include('layouts.technician-navigation')
                 @else
-                    <!-- Menu Client -->
-                    <div class="hidden md:flex space-x-10">
-                        <a href="{{ route('home') }}" class="navbar-link {{ request()->routeIs('home') ? 'active' : '' }}">Accueil</a>
-                        <a href="{{ route('fonctionnalite') }}" class="navbar-link {{ request()->routeIs('fonctionnalite') ? 'active' : '' }}">Fonctionnalités</a>
+                    <!-- Menu Client -->                    <div class="hidden md:flex space-x-10">
+                        <a href="{{ route('home') }}" class="navbar-link {{ request()->routeIs('home') ? 'active' : '' }}">Accueil</a>                        <a href="{{ route('fonctionnalite') }}" class="navbar-link {{ request()->routeIs('fonctionnalite') ? 'active' : '' }}">Fonctionnalités</a>
+                        <div class="relative" x-data="{ open: false }">
+                            <button @click="open = !open" class="navbar-link inline-flex items-center {{ request()->routeIs('services.*') || request()->routeIs('client.demandes-services.*') ? 'active' : '' }}">
+                                Services
+                                <i class="fas fa-chevron-down ml-2 text-sm"></i>
+                            </button>
+                            <div x-show="open" @click.away="open = false" class="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
+                                <a href="{{ route('services.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Nos services</a>
+                                <a href="{{ route('client.demandes-services.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Mes demandes</a>
+                            </div>
+                        </div>
                         <a href="{{ route('formation') }}" class="navbar-link {{ request()->routeIs('formation') ? 'active' : '' }}">Formations à CREFER</a>
                         <a href="{{ route('installation') }}" class="navbar-link {{ request()->routeIs('installation') ? 'active' : '' }}">Devis</a>
                         <a href="{{ route('market-place') }}" class="navbar-link {{ request()->routeIs('market-place') ? 'active' : '' }}">Boutique  EGENT</a>
@@ -118,10 +126,19 @@
                         <a href="{{ route('formation') }}" class="navbar-link">Formations à CREFER</a>
                         <a href="{{ route('installation') }}" class="navbar-link">Devis</a>
                         <a href="{{ route('technician.installations') }}" class="navbar-link">Installations</a>
-                        <a href="{{ route('technician.maintenance') }}" class="navbar-link">Maintenance</a>
-                    @elseif (auth()->user()->role === 'client')
+                        <a href="{{ route('technician.maintenance') }}" class="navbar-link">Maintenance</a>                    @elseif (auth()->user()->role === 'client')
                         <a href="{{ route('home') }}" class="navbar-link">Accueil</a>
                         <a href="{{ route('fonctionnalite') }}" class="navbar-link">Fonctionnalités</a>
+                        <div class="relative" x-data="{ open: false }">
+                            <button @click="open = !open" class="flex items-center w-full py-2 text-left navbar-link">
+                                Services
+                                <i class="fas fa-chevron-down ml-2 text-sm"></i>
+                            </button>
+                            <div x-show="open" class="pl-4">
+                                <a href="{{ route('services.index') }}" class="block py-2 navbar-link">Nos services</a>
+                                <a href="{{ route('client.demandes-services.index') }}" class="block py-2 navbar-link">Mes demandes</a>
+                            </div>
+                        </div>
                         <a href="{{ route('formation') }}" class="navbar-link">Formations à CREFER</a>
                         <a href="{{ route('installation') }}" class="navbar-link">Devis</a>
                         <a href="{{ route('market-place') }}" class="navbar-link">Boutique EGENT</a>

@@ -50,8 +50,7 @@
                     </div>
 
                     <div class="mt-6">
-                        <h2 class="text-xl font-semibold mb-4">Mettre à jour le statut</h2>
-                        <form action="{{ route('admin.orders.update-status', $order) }}" method="POST" class="flex items-center gap-4">
+                        <h2 class="text-xl font-semibold mb-4">Mettre à jour le statut</h2>                        <form action="{{ route('admin.orders.update-status', $order) }}" method="POST" class="flex items-center gap-4">
                             @csrf
                             @method('PUT')
                             <select name="status" class="rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
@@ -64,6 +63,18 @@
                                 Mettre à jour
                             </button>
                         </form>
+                        
+                        @if(session('success'))
+                            <div class="mt-4 p-4 text-green-800 bg-green-100 border border-green-200 rounded">
+                                {{ session('success') }}
+                            </div>
+                        @endif
+
+                        @if(session('error'))
+                            <div class="mt-4 p-4 text-red-800 bg-red-100 border border-red-200 rounded">
+                                {{ session('error') }}
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>

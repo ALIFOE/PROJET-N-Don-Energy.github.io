@@ -7,20 +7,14 @@ use App\Mail\DimensionnementRequest as DimensionnementMail;
 use App\Models\Dimensionnement;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 class DimensionnementController extends Controller
 {
-    protected const STATUTS_VALIDES = ['en_attente', 'validé', 'refusé'];
-
-    /**
-     * Afficher le formulaire de dimensionnement.
-     *
-     * @return \Illuminate\View\View
-     */
-    public function showForm()
+    public function __construct()
     {
-        return view('dimensionnements.form');
-    }
+        $this->middleware('auth');
+    }    protected const STATUTS_VALIDES = ['en_attente', 'validé', 'refusé'];
 
     /**
      * Afficher la liste des demandes de dimensionnement.
@@ -38,9 +32,7 @@ class DimensionnementController extends Controller
             Log::error('Erreur lors de la récupération des dimensionnements : ' . $e->getMessage());
             return back()->with('error', 'Une erreur est survenue lors de la récupération de vos demandes.');
         }
-    }
-
-    /**
+    }    /**
      * Afficher le formulaire de création.
      */
     public function create()
@@ -50,44 +42,47 @@ class DimensionnementController extends Controller
 
     /**
      * Enregistrer une nouvelle demande.
-     */
-    public function store(DimensionnementRequest $request)
+     */    public function store(DimensionnementRequest $request)
     {
         try {
-            Log::info('Début de la création du dimensionnement', $request->validated());
+            DB::beginTransaction();
             
+            // Validation et préparation des données
             $validatedData = $request->validated();
             $validatedData['user_id'] = auth()->id();
             $validatedData['statut'] = 'en_attente';
             
-            Log::info('Tentative de sauvegarde du dimensionnement');
+            // Création du dimensionnement
             $dimensionnement = Dimensionnement::create($validatedData);
             
             if (!$dimensionnement) {
                 throw new \Exception('Échec de la création du dimensionnement');
             }
             
-            Log::info('Dimensionnement sauvegardé avec succès', ['id' => $dimensionnement->id]);
-
+            DB::commit();
+            
+            // Envoi de l'email
             try {
-                Log::info('Tentative d\'envoi d\'email à : ' . $request->email);
                 Mail::to($request->email)->send(new DimensionnementMail($dimensionnement));
-                Log::info('Email envoyé avec succès');
             } catch (\Exception $mailException) {
-                Log::error('Erreur lors de l\'envoi de l\'email : ' . $mailException->getMessage(), [
-                    'exception' => $mailException,
+                Log::error('Erreur lors de l\'envoi de l\'email de confirmation', [
+                    'error' => $mailException->getMessage(),
                     'email' => $request->email
                 ]);
                 // On continue même si l'email échoue
             }
 
-            return redirect()
-                ->route('dashboard')
-                ->with('success', 'Votre demande de dimensionnement a été enregistrée avec succès. Un email de confirmation vous a été envoyé.');
+            // Message de succès
+            session()->flash('dimensionnement_success', 'Votre demande de dimensionnement a été enregistrée avec succès.');
+            
+            return redirect()->route('dashboard');
+            
         } catch (\Exception $e) {
-            Log::error('Erreur lors de la création du dimensionnement : ' . $e->getMessage(), [
-                'exception' => $e,
-                'request' => $request->all()
+            DB::rollBack();
+            
+            Log::error('Erreur lors de la création du dimensionnement', [
+                'error' => $e->getMessage(),
+                'user_id' => auth()->id()
             ]);
             return back()
                 ->withInput()

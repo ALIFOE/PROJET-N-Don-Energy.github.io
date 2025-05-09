@@ -55,7 +55,25 @@
         </div>
     </div>
 
-   
+    <div class="relative" x-data="{ open: false }">
+        <button @click="open = !open" class="navbar-link">
+            <i class="fas fa-concierge-bell"></i> Services
+            <i class="fas fa-chevron-down ml-1"></i>
+        </button>
+        <div x-show="open" @click.away="open = false" class="absolute mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
+            <div class="py-1">
+                <a href="{{ route('admin.services.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                    <i class="fas fa-list mr-2"></i>Liste des services
+                </a>
+                <a href="{{ route('admin.services.create') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                    <i class="fas fa-plus mr-2"></i>Nouveau service
+                </a>
+                <a href="{{ route('admin.services.requests') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                    <i class="fas fa-inbox mr-2"></i>Demandes de services
+                </a>
+            </div>
+        </div>
+    </div>
 
     <a href="{{ route('admin.users.index') }}" class="navbar-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
         <i class="fas fa-users"></i> Utilisateurs

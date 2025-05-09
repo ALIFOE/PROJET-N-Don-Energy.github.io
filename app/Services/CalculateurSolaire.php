@@ -5,14 +5,33 @@ namespace App\Services;
 use App\Models\Panneau;
 
 class CalculateurSolaire
-{
-    private const ENSOLEILLEMENT_MOYEN = 1200; // kWh/m²/an (moyenne française)
+{    private const ENSOLEILLEMENT_MOYEN = 1200; // kWh/m²/an (moyenne française)
     private const PRIX_MOYEN_KWC = 2000; // Prix moyen par kWc en euros
     private const PRIX_KWH = 0.1740; // Prix moyen du kWh en France
 
     private function getPanneauOptimal(): Panneau
     {
-        return Panneau::where('type', 'Monocristallin haute performance')->first();
+        $panneau = Panneau::where('type', 'Monocristallin haute performance')->first();
+        
+        if (!$panneau) {
+            // Si aucun panneau monocristallin haute performance n'est trouvé, on prend le premier panneau disponible
+            $panneau = Panneau::first();
+            
+            if (!$panneau) {
+                // Si toujours aucun panneau n'est trouvé, on crée un panneau par défaut
+                $panneau = new Panneau();
+                $panneau->type = 'Monocristallin haute performance';
+                $panneau->capacite_wc = 400; // Valeur typique pour un panneau moderne
+                $panneau->surface = 1.7; // Surface moyenne en m²
+                $panneau->rendement = 0.21; // 21% de rendement
+                $panneau->fabricant = 'Standard';
+                $panneau->modele = 'Modèle standard';
+                $panneau->garantie_annees = 25;
+                $panneau->save();
+            }
+        }
+        
+        return $panneau;
     }
 
     public function evaluerFaisabilite(array $donnees): array

@@ -30,39 +30,71 @@ class DashboardController extends Controller
      */
     public function index(Request $request): View
     {
-        $dimensionnements = Dimensionnement::where('user_id', auth()->id())
-            ->with('user')
+        $user = auth()->user();
+
+        // Récupérer les dimensionnements récents
+        $dimensionnements = $user->dimensionnements()
             ->latest()
             ->take(5)
             ->get();
 
-        $activitesQuery = LogActivite::where('user_id', auth()->id());
+        // Récupérer les onduleurs connectés
+        $onduleurs = $user->onduleurs()
+            ->where('est_connecte', true)
+            ->get();
 
-        // Filtrage par type d'action
+        // Récupérer les données de performances
+        $performanceData = [];
+        foreach ($onduleurs as $onduleur) {
+            $donneeRecente = $onduleur->donneesProduction()
+                ->latest('date_heure')
+                ->first();
+
+            $performanceData[$onduleur->id] = [
+                'production_actuelle' => $donneeRecente ? $donneeRecente->puissance_instantanee : 0,
+                'production_journaliere' => $onduleur->donneesProduction()
+                    ->whereDate('date_heure', today())
+                    ->sum('energie_produite'),
+                'rendement' => $donneeRecente ? ($donneeRecente->puissance_instantanee / $onduleur->puissance_nominale * 100) : 0,
+            ];
+        }
+
+        // Filtrage des activités
+        $activitesQuery = LogActivite::where('user_id', $user->id);
+
         if ($request->has('action')) {
             $activitesQuery->where('action', $request->action);
         }
 
-        // Filtrage par date
         if ($request->has('date')) {
             switch ($request->date) {
                 case 'aujourd\'hui':
                     $activitesQuery->whereDate('created_at', today());
                     break;
                 case 'semaine':
-                    $activitesQuery->whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()]);
+                    $activitesQuery->where('created_at', '>=', now()->startOfWeek());
                     break;
                 case 'mois':
-                    $activitesQuery->whereMonth('created_at', now()->month);
+                    $activitesQuery->where('created_at', '>=', now()->startOfMonth());
                     break;
             }
         }
 
-        // Exclure les actions de type "connexion"
-        $activitesQuery->where('action', '!=', 'connexion');
+        $activites = $activitesQuery->latest()->paginate(10);
 
-        $activites = $activitesQuery->latest()->paginate(10)->withQueryString();
+        // Récupérer les notifications non lues
+        $notifications = $user->notifications()
+            ->whereNull('read_at')
+            ->latest()
+            ->take(5)
+            ->get();
 
-        return view('dashboard', compact('dimensionnements', 'activites'));
+        return view('dashboard', compact(
+            'dimensionnements',
+            'onduleurs',
+            'performanceData',
+            'activites',
+            'notifications'
+        ));
     }
 }

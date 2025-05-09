@@ -159,6 +159,6 @@ class FormationController extends Controller
             abort(404, 'Le flyer demandé n\'existe pas.');
         }
 
-        return Storage::disk('public')->download($formation->flyer);
+        return response()->download(storage_path('app/public/' . $formation->flyer));
     }
 }

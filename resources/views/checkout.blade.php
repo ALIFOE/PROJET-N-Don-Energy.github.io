@@ -6,10 +6,31 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900">
-                    @if(session('success'))
+                <div class="p-6 text-gray-900">                    @if(session('success'))
                         <div class="mb-4 p-4 text-green-800 bg-green-100 border border-green-200 rounded">
                             {{ session('success') }}
+                        </div>
+                    @endif
+
+                    @if(session('error'))
+                        <div class="mb-4 p-4 text-red-800 bg-red-100 border border-red-200 rounded">
+                            {{ session('error') }}
+                        </div>
+                    @endif
+
+                    @if(session('warning'))
+                        <div class="mb-4 p-4 text-yellow-800 bg-yellow-100 border border-yellow-200 rounded">
+                            {{ session('warning') }}
+                        </div>
+                    @endif
+
+                    @if($errors->any())
+                        <div class="mb-4 p-4 text-red-800 bg-red-100 border border-red-200 rounded">
+                            <ul class="list-disc list-inside">
+                                @foreach($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
                         </div>
                     @endif
 

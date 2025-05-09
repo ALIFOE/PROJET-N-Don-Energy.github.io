@@ -68,15 +68,17 @@
                         @endif
                     </div>
                 </div>
-            </div>
-
-            <div class="mt-8">
+            </div>            <div class="mt-8">
                 <h3 class="text-lg font-semibold text-gray-700 mb-4">Objectifs</h3>
                 <div class="bg-gray-50 p-4 rounded-lg">
                     <ul class="list-disc list-inside space-y-2">
-                        @foreach($devis->objectifs as $objectif)
-                            <li class="text-gray-700">{{ $objectif }}</li>
-                        @endforeach
+                        @if(isset($devis->objectifs) && is_array($devis->objectifs))
+                            @foreach($devis->objectifs as $objectif)
+                                <li class="text-gray-700">{{ $objectif }}</li>
+                            @endforeach
+                        @else
+                            <li class="text-gray-500">Aucun objectif spécifié</li>
+                        @endif
                     </ul>
                 </div>
             </div>
@@ -154,24 +156,75 @@
                         </div>
                     @endif
                 </div>
-            </div>
+            </div>            <div class="mt-8">
+                <div class="flex justify-between items-center mb-6">
+                    <div>                        <a href="{{ route('admin.devis.index') }}" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 mr-4">
+                            <i class="fas fa-arrow-left mr-2"></i> Retour
+                        </a>
+                        <span class="text-gray-600">
+                            <i class="far fa-clock mr-1"></i> Créé le: {{ $devis->created_at ? $devis->created_at->format('d/m/Y à H:i') : 'Date inconnue' }}
+                        </span>
+                    </div>                    <div class="flex space-x-4">
+                        <a href="{{ route('admin.devis.download-pdf', ['id' => $devis->id]) }}" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">
+                            <i class="fas fa-download mr-2"></i> Télécharger PDF
+                        </a>
+                        
+                        <a href="#" onclick="window.print()" class="bg-purple-500 text-white px-4 py-2 rounded-lg hover:bg-purple-600">
+                            <i class="fas fa-print mr-2"></i> Imprimer
+                        </a>
 
-            <div class="mt-8 flex justify-between items-center">
-                <a href="{{ route('admin.devis.index') }}" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600">
-                    Retour
-                </a>
-                <div class="flex space-x-4">
-                    <a href="{{ route('devis.download-pdf', $devis) }}" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">
-                        <i class="fas fa-download mr-2"></i> Télécharger PDF
-                    </a>
-                    <form action="{{ route('admin.devis.destroy', $devis) }}" method="POST" class="inline-block">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce devis ?')">
-                            <i class="fas fa-trash mr-2"></i> Supprimer
-                        </button>
-                    </form>
+                        <a href="mailto:{{ $devis->email }}?subject=Suivi de votre devis N°{{ $devis->id }}" class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600">
+                            <i class="fas fa-envelope mr-2"></i> Contacter le client
+                        </a>
+
+                        <form action="{{ route('admin.devis.destroy', ['devis' => $devis->id]) }}" method="POST" class="inline-block">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce devis ?')">
+                                <i class="fas fa-trash mr-2"></i> Supprimer
+                            </button>
+                        </form>
+                    </div>
                 </div>
+
+                @if(isset($devis->analyse_technique['status']) && $devis->analyse_technique['status'] !== 'non_faisable')
+                <div class="bg-blue-50 p-4 rounded-lg mb-6">
+                    <h4 class="text-lg font-semibold text-blue-700 mb-3">Actions recommandées</h4>
+                    <div class="space-y-4">
+                        <div class="flex items-center">
+                            <input type="checkbox" id="contact_client" class="form-checkbox h-5 w-5 text-blue-600">
+                            <label for="contact_client" class="ml-2 text-gray-700">Contacter le client pour un rendez-vous</label>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="checkbox" id="validation_technique" class="form-checkbox h-5 w-5 text-blue-600">
+                            <label for="validation_technique" class="ml-2 text-gray-700">Validation technique sur site</label>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="checkbox" id="preparation_contrat" class="form-checkbox h-5 w-5 text-blue-600">
+                            <label for="preparation_contrat" class="ml-2 text-gray-700">Préparation du contrat</label>
+                        </div>
+                    </div>
+                </div>
+                @endif
+
+                @if(isset($devis->analyse_technique['status']) && $devis->analyse_technique['status'] === 'non_faisable')
+                <div class="bg-red-50 p-4 rounded-lg mb-6">
+                    <h4 class="text-lg font-semibold text-red-700 mb-3">Motifs de non-faisabilité</h4>
+                    <ul class="list-disc list-inside text-red-600">
+                        @if(isset($devis->analyse_technique['raisons_non_faisable']))
+                            @foreach($devis->analyse_technique['raisons_non_faisable'] as $raison)
+                                <li>{{ $raison }}</li>
+                            @endforeach
+                        @endif
+                    </ul>
+                    <div class="mt-4">
+                        <a href="#" class="text-red-600 hover:text-red-800 font-medium">
+                            <i class="fas fa-envelope mr-2"></i> Envoyer un email d'explication au client
+                        </a>
+                    </div>
+                </div>
+                @endif
+            </div>
             </div>
         </div>
     </div>

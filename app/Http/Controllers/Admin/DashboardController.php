@@ -23,57 +23,57 @@ class DashboardController extends Controller
 
     public function index()
     {
-        $now = Carbon::now();
-        $startOfMonth = $now->copy()->startOfMonth();
-        $startOfWeek = $now->copy()->startOfWeek();
+        // Statistiques globales
+        $totalUsers = \App\Models\User::count();
+        $pendingQuotes = Devis::where('statut', 'en_attente')->count();
+        $activeInstallations = Installation::where('status', 'active')->count();
 
-        // Statistiques des installations
-        $installations_count = Installation::count();
-        $installations_this_month = Installation::where('created_at', '>=', $startOfMonth)->count();
-
-        // Statistiques des formations
-        $formations_count = Formation::count();
-        $formations_active = Formation::where('date_fin', '>=', $now)->count();
-        $formations_participants = Formation::where('date_fin', '>=', $now)
-            ->withCount('inscriptions')
-            ->get()
-            ->sum('inscriptions_count');
-
-        // Statistiques des commandes
-        $orders_count = Order::count();
-        $orders_this_month = Order::where('created_at', '>=', $startOfMonth)->count();
-        $revenue_this_month = Order::where('created_at', '>=', $startOfMonth)
-            ->where('status', 'completed')
-            ->sum('total_price');
-
-        // Statistiques des devis
-        $pending_quotes = Devis::where('statut', 'en_attente')->count();
-        $quotes_this_week = Devis::where('created_at', '>=', $startOfWeek)->count();
-
-        // Statistiques des produits et fonctionnalités
-        $products_count = Product::count();
-        $functionalities_count = Functionality::count();
-
-        // Récupération des dernières notifications
-        $notifications = Notification::latest()
+        // Activités récentes
+        $recentActivities = \App\Models\LogActivite::latest()
             ->take(5)
             ->get();
 
-        $stats = compact(
-            'installations_count',
-            'installations_this_month',
-            'formations_count',
-            'formations_active',
-            'formations_participants',
-            'orders_count',
-            'orders_this_month',
-            'revenue_this_month',
-            'pending_quotes',
-            'quotes_this_week',
-            'products_count',
-            'functionalities_count'
-        );
+        // Alertes système
+        $systemAlerts = Notification::where('type', 'system_alert')
+            ->where('read_at', null)
+            ->latest()
+            ->take(5)
+            ->get();
 
-        return view('admin.dashboard', compact('stats', 'notifications'));
+        // Derniers devis
+        $recentQuotes = Devis::with('user')
+            ->latest()
+            ->take(5)
+            ->get()
+            ->map(function($devis) {
+                return (object)[
+                    'client_name' => $devis->user->name,
+                    'created_at' => $devis->created_at,
+                    'status' => $devis->statut
+                ];
+            });
+
+        // Dernières installations
+        $recentInstallations = Installation::with('user')
+            ->latest()
+            ->take(5)
+            ->get()
+            ->map(function($installation) {
+                return (object)[
+                    'client_name' => $installation->user->name,
+                    'type' => $installation->type,
+                    'status' => $installation->status
+                ];
+            });
+
+        return view('admin.dashboard', compact(
+            'totalUsers',
+            'pendingQuotes',
+            'activeInstallations',
+            'recentActivities',
+            'systemAlerts',
+            'recentQuotes',
+            'recentInstallations'
+        ));
     }
 }

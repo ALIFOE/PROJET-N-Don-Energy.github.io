@@ -6,6 +6,7 @@ use App\Models\Product;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 use App\Mail\OrderConfirmationMail;
 use App\Mail\AdminOrderNotificationMail;
 use Illuminate\Support\Facades\Auth;
@@ -60,22 +61,49 @@ class PaymentController extends Controller
             }
 
             $order = Order::create($orderData);
+            $emailSent = true;
 
-            // Envoi de l'email de confirmation au client
-            Mail::to($validated['email'])->send(new OrderConfirmationMail($order));
+            try {
+                // Tentative d'envoi des emails
+                Mail::to($validated['email'])->send(new OrderConfirmationMail($order));
 
-            // Envoi de l'email d'alerte à l'administrateur
-            $adminEmail = config('mail.admin_email');
-            if ($adminEmail) {
-                Mail::to($adminEmail)->send(new AdminOrderNotificationMail($order));
+                $adminEmail = config('mail.admin_email');
+                if ($adminEmail) {
+                    Mail::to($adminEmail)->send(new AdminOrderNotificationMail($order));
+                }
+            } catch (\Exception $mailException) {
+                Log::warning('Erreur lors de l\'envoi des emails: ' . $mailException->getMessage());
+                $emailSent = false;
             }
 
-            // Redirection avec message de succès
-            return redirect()->route('checkout', ['product' => $order->product_id])
-                ->with('success', 'Votre commande a été passée avec succès !');
+            // La commande est créée, on redirige vers la page de succès
+            return redirect()->route('payment.success', ['order' => $order->id])
+                ->with($emailSent ? 'success' : 'warning',
+                    $emailSent 
+                        ? 'Votre commande a été traitée avec succès ! Un email de confirmation vous a été envoyé.'
+                        : 'Votre commande a été enregistrée avec succès, mais nous n\'avons pas pu vous envoyer l\'email de confirmation. Veuillez conserver votre numéro de commande : ' . $order->id
+                );
 
         } catch (\Exception $e) {
-            return back()->with('error', 'Une erreur est survenue lors du traitement du paiement.');
+            // Log l'erreur pour le débogage
+            Log::error('Erreur de paiement: ' . $e->getMessage(), [
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            // Messages d'erreur plus spécifiques pour l'utilisateur
+            $errorMessage = 'Une erreur est survenue lors du traitement du paiement.';
+            
+            if ($e instanceof \Illuminate\Database\Eloquent\ModelNotFoundException) {
+                $errorMessage = 'Le produit demandé n\'existe pas.';
+            } elseif ($e instanceof \Illuminate\Validation\ValidationException) {
+                $errorMessage = 'Veuillez vérifier les informations saisies.';
+            } elseif ($e instanceof \PDOException) {
+                $errorMessage = 'Erreur de connexion à la base de données. Veuillez réessayer plus tard.';
+            }
+
+            return back()->with('error', $errorMessage)->withInput();
         }
     }
 

@@ -59,16 +59,14 @@ class NotifyAdminOfClientActivity
             'contact_form' => "Nouveau message de contact de {$data['name']}",
             default => "Un client a effectué une action sur le site"
         };
-    }
-
-    private function getActionUrl($type, $data)
+    }    private function getActionUrl($type, $data)
     {
         return match($type) {
-            'formation_inscription' => route('admin.formations.inscriptions'),
-            'devis_request' => route('admin.devis.index'),
-            'order_placed' => route('admin.orders.show', $data['id'] ?? ''),
-            'contact_form' => route('admin.contacts.index'),
-            default => route('admin.dashboard')
+            'formation_inscription' => url('/admin/formations/inscriptions'),
+            'devis_request' => url('/admin/devis'),
+            'order_placed' => url('/admin/orders/' . ($data['id'] ?? '')),
+            'contact_form' => url('/admin/contacts'),
+            default => url('/admin/dashboard')
         };
     }
 
