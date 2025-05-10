@@ -2,6 +2,19 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\InverterApiController;
+use App\Http\Controllers\DevisIAController;
+use App\Http\Controllers\DimensionnementIAController;
+use App\Http\Controllers\AnalyseProductionIAController;
+use App\Http\Controllers\MeteoIAController;
+use App\Http\Controllers\RealtimeDataController;
+
+// Routes IA avec authentification API
+Route::middleware('api.auth')->group(function () {
+    Route::post('/devis-ia', [DevisIAController::class, 'generate']);
+    Route::post('/dimensionnement-ia', [DimensionnementIAController::class, 'calculer']);
+    Route::post('/analyse-production-ia', [AnalyseProductionIAController::class, 'analyser']);
+    Route::post('/meteo-ia', [MeteoIAController::class, 'prevoir']);
+});
 
 // Route de scan des onduleurs (accessible sans authentification)
 Route::post('/onduleurs/scan', [InverterApiController::class, 'scan']);
@@ -43,4 +56,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/{inverterName}/reset', 'App\Http\Controllers\InverterController@resetDevice');
         Route::get('/{inverterName}/maintenance', 'App\Http\Controllers\InverterController@getMaintenanceInfo');
     });
+
+    // Route pour les données de production et consommation en temps réel
+    Route::get('/realtime-production', [RealtimeDataController::class, 'production']);
 });

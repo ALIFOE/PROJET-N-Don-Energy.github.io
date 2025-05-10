@@ -54,13 +54,24 @@ Route::prefix('formation')->group(function () {
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     // Route du tableau de bord admin
     Route::get('/dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])
-        ->name('dashboard');    Route::prefix('notifications')->name('notifications.')->group(function () {
+        ->name('dashboard');
+    
+    Route::prefix('notifications')->name('notifications.')->group(function () {
         Route::get('/', [NotificationController::class, 'index'])->name('index');
         Route::put('/{id}/read', [NotificationController::class, 'markAsRead'])->name('read');
         Route::post('/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('markAllAsRead');
         Route::delete('/{id}', [NotificationController::class, 'destroy'])->name('destroy');
         Route::delete('/', [NotificationController::class, 'destroyAll'])->name('destroyAll');
     });
+
+    // Routes pour le monitoring des services IA
+    Route::get('/services/status', [App\Http\Controllers\Admin\ServiceStatusController::class, 'index'])
+        ->name('services.status');
+    Route::post('/services/reset-fallback', [App\Http\Controllers\Admin\ServiceStatusController::class, 'resetFallbackMode'])
+        ->name('services.reset-fallback');
+    Route::post('/services/reset-quota', [App\Http\Controllers\Admin\ServiceStatusController::class, 'resetQuotaCount'])
+        ->name('services.reset-quota');
+
     Route::resource('users', \App\Http\Controllers\Admin\UserController::class);    Route::resource('functionalities', FunctionalityController::class);    Route::resource('devis', \App\Http\Controllers\Admin\DevisController::class);
     Route::get('/devis/download-pdf/{id}', [\App\Http\Controllers\Admin\DevisController::class, 'downloadPdf'])->name('devis.download-pdf');    Route::resource('orders', \App\Http\Controllers\Admin\OrderController::class);
     Route::put('/orders/{order}/update-status', [\App\Http\Controllers\Admin\OrderController::class, 'updateStatus'])
@@ -103,24 +114,15 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // Routes pour les activités
-    Route::get('/activites', [LogActiviteController::class, 'index'])->name('activites.index');
-
-    // Routes pour la maintenance
-    Route::get('/maintenance-predictive', [App\Http\Controllers\MaintenanceController::class, 'index'])->name('maintenance-predictive');
-    Route::post('/maintenance', [App\Http\Controllers\MaintenanceController::class, 'store'])->name('maintenance.store');
-    Route::get('/maintenance/{id}/edit', [App\Http\Controllers\MaintenanceController::class, 'edit'])->name('maintenance.edit');
-    Route::put('/maintenance/{id}', [App\Http\Controllers\MaintenanceController::class, 'update'])->name('maintenance.update');
-    Route::delete('/maintenance/{id}', [App\Http\Controllers\MaintenanceController::class, 'destroy'])->name('maintenance.destroy');
+    // Routes pour les activités    Route::get('/activites', [LogActiviteController::class, 'index'])->name('activites.index');    
     
-    // Routes pour la météo
-    Route::get('/previsions-meteo', [MeteoController::class, 'index'])->name('previsions-meteo');
-    Route::get('/meteo/donnees-actuelles', [MeteoController::class, 'getDonneesActuelles'])->name('meteo.donnees-actuelles');
-    Route::get('/meteo/alertes/configuration', [MeteoController::class, 'showAlerteConfig'])->name('meteo.alertes.config');
-    Route::post('/meteo/alertes/configuration', [MeteoController::class, 'saveAlerteConfig'])->name('meteo.alertes.save');
-
-    // Routes pour les rapports
-    Route::get('/rapports-analyses', [RapportController::class, 'index'])->name('rapports-analyses');
+    // Routes pour la maintenance
+    Route::prefix('maintenance')->group(function () {
+        Route::get('/predictive', [MaintenanceController::class, 'index'])->name('maintenance-predictive');
+        Route::post('/', [MaintenanceController::class, 'store'])->name('maintenance.store');
+        Route::get('/{id}/edit', [MaintenanceController::class, 'edit'])->name('maintenance.edit');
+        Route::put('/{id}', [MaintenanceController::class, 'update'])->name('maintenance.update');
+    });
 
     // Routes pour la configuration des onduleurs
     Route::get('/onduleur/config', [OnduleurConfigController::class, 'show'])->name('onduleur.config');
@@ -237,15 +239,19 @@ Route::middleware(['auth'])->group(function() {
 });
 
 // Routes admin pour les services
-Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/services', [ServiceController::class, 'adminIndex'])->name('services.index');
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {    Route::get('/services', [ServiceController::class, 'adminIndex'])->name('services.index');
     Route::get('/services/create', [ServiceController::class, 'adminCreate'])->name('services.create');
     Route::post('/services', [ServiceController::class, 'adminStore'])->name('services.store');
     Route::get('/services/{service}/edit', [ServiceController::class, 'adminEdit'])->name('services.edit');
     Route::put('/services/{service}', [ServiceController::class, 'adminUpdate'])->name('services.update');
+    Route::delete('/services/{service}', [ServiceController::class, 'adminDestroy'])->name('services.destroy');
     Route::get('/service-requests', [ServiceController::class, 'adminRequests'])->name('services.requests');
     Route::put('/service-requests/{serviceRequest}/status', [ServiceController::class, 'updateRequestStatus'])
         ->name('services.requests.status');
 });
+
+Route::get('/ia-services', function () {
+    return view('ia-services');
+})->name('ia-services');
 
 require __DIR__.'/auth.php';

@@ -31,4 +31,16 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'openweathermap' => [
+        'key' => env('WEATHER_API_KEY'),
+    ],
+
+    'openai' => [
+        'key' => env('OPENAI_API_KEY'),
+    ],
+
+    'api' => [
+        'key' => env('API_KEY', 'ne-don-energy-api-key'),
+    ],
+
 ];

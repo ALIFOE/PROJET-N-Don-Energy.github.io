@@ -35,7 +35,17 @@ class RouteServiceProvider extends ServiceProvider
 
             Route::middleware('web')
                 ->group(base_path('routes/web.php'));
-        });        // Redirection personnalisée après l'authentification
+
+            // Routes d'administration
+            if (file_exists(base_path('routes/admin.php'))) {
+                Route::middleware(['web', 'auth', 'admin'])
+                    ->prefix('admin')
+                    ->name('admin.')
+                    ->group(base_path('routes/admin.php'));
+            }
+        });
+
+        // Redirection personnalisée après l'authentification
         $this->app['router']->matched(function ($event) {
             $request = $event->request;
             if (auth()->check() && $request->is('dashboard')) {

@@ -102,6 +102,11 @@
                 </div>
             </div>
 
+            <!-- Graphique de production et consommation en temps réel -->
+            <div class="my-8">
+                <canvas id="realtimeChart" height="100"></canvas>
+            </div>
+
             <!-- Indicateurs de Performance -->
             <div class="bg-gray-800 rounded-lg shadow-lg p-6 border border-gray-700">
                 <h3 class="text-lg font-semibold text-gray-300 mb-4">Indicateurs Temps Réel</h3>
@@ -526,5 +531,6 @@
             window.environmentChart.update();
         }
     </script>
+        @vite(['resources/js/realtime-monitoring.js'])
     @endpush
 </x-app-layout>

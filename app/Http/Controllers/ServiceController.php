@@ -113,4 +113,16 @@ class ServiceController extends Controller
         return redirect()->back()
             ->with('success', 'Le statut de la demande a été mis à jour avec succès.');
     }
+
+    public function adminDestroy(Service $service)
+    {
+        try {
+            $service->delete();
+            return redirect()->route('admin.services.index')
+                ->with('success', 'Le service a été supprimé avec succès');
+        } catch (\Exception $e) {
+            return redirect()->route('admin.services.index')
+                ->with('error', 'Impossible de supprimer ce service. Il est peut-être utilisé par des demandes existantes.');
+        }
+    }
 }

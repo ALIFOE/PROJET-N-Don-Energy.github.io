@@ -42,6 +42,9 @@
                             <div x-show="open" @click.away="open = false" class="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
                                 <a href="{{ route('services.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Nos services</a>
                                 <a href="{{ route('client.demandes-services.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Mes demandes</a>
+                                <a href="{{ route('ia-services') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                    <i class="fas fa-robot mr-2"></i>Services IA
+                                </a>
                             </div>
                         </div>
                         <a href="{{ route('formation') }}" class="navbar-link {{ request()->routeIs('formation') ? 'active' : '' }}">Formations à CREFER</a>
@@ -137,6 +140,9 @@
                             <div x-show="open" class="pl-4">
                                 <a href="{{ route('services.index') }}" class="block py-2 navbar-link">Nos services</a>
                                 <a href="{{ route('client.demandes-services.index') }}" class="block py-2 navbar-link">Mes demandes</a>
+                                <a href="{{ route('ia-services') }}" class="block py-2 navbar-link">
+                                    <i class="fas fa-robot mr-2"></i>Services IA
+                                </a>
                             </div>
                         </div>
                         <a href="{{ route('formation') }}" class="navbar-link">Formations à CREFER</a>
