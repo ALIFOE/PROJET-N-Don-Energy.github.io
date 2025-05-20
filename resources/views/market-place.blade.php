@@ -75,12 +75,11 @@
                                     @else
                                         <img src="{{ asset('images/default-product.jpg') }}" alt="{{ $product->nom }}" class="w-full h-48 object-cover rounded-t-lg">
                                     @endif
-                                    
-                            <div class="p-4">
+                                      <div class="p-4">
                                         <h3 class="text-xl font-semibold mb-2">{{ $product->nom }}</h3>
                                         <p class="text-gray-600 mb-4">{{ $product->description }}</p>
                                 <div class="flex justify-between items-center">
-                                            <span class="text-2xl font-bold">{{ number_format($product->prix, 0, ',', ' ') }} FCFA</span>
+                                            <span class="text-2xl font-bold">{{ $product->formatted_price }}</span>
                                             <a href="{{ route('checkout', $product->id) }}" class="product-action-btn px-4 py-2 rounded hover:bg-blue-700 transition-colors">
                                                 Commander
                                             </a>

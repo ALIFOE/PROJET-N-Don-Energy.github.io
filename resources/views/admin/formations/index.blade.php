@@ -1,15 +1,13 @@
-<x-app-layout>
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6">
-                    <div class="flex justify-between items-center mb-6">
-        <div>
+@extends('layouts.app')
+
+@section('content')
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">        <div>
             <h2 class="text-2xl font-semibold text-gray-800">Gestion des Formations</h2>
             <p class="mt-1 text-gray-600">Gérez vos formations et consultez les inscriptions</p>
-        </div>
-        <div class="flex space-x-4">
-            <a href="{{ route('admin.formations.inscriptions') }}" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+        </div>        <div class="flex space-x-4">            <a href="{{ route('admin.formations.inscriptions.index') }}" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
                 <i class="fas fa-users mr-2"></i>Voir les inscriptions
             </a>
             <a href="{{ route('admin.formations.create') }}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
@@ -135,8 +133,7 @@
             {{ $formations->links() }}
         </div>
     </div>
-                </div>
-            </div>
+                </div>            </div>
         </div>
     </div>
-</x-app-layout>
+@endsection

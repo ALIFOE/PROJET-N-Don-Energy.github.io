@@ -51,7 +51,7 @@
                 </div>
 
                 <div>
-                    <label for="prix" class="block text-sm font-medium text-gray-700">Prix (€)</label>
+                    <label for="prix" class="block text-sm font-medium text-gray-700">Prix (FCFA)</label>
                     <input type="number" 
                            name="prix" 
                            id="prix" 

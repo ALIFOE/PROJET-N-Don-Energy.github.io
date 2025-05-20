@@ -52,7 +52,7 @@
                         <img src="{{ asset('images/default-formation.jpg') }}" alt="{{ $formation->titre }}" class="w-full h-56 object-cover">
                     @endif
                     <div class="absolute top-4 right-4 bg-blue-600 text-white px-4 py-2 rounded-full">
-                        {{ \Carbon\Carbon::parse($formation->date_debut)->diffInDays($formation->date_fin) }} jours
+                        {{ \Carbon\Carbon::parse($formation->date_debut)->diffInMonths($formation->date_fin) }} Mois
                     </div>
                     <div class="absolute bottom-4 left-4 bg-blue-500 text-white px-4 py-1 rounded-full text-sm">
                         {{ ucfirst($formation->niveau ?? 'Tous niveaux') }}
@@ -62,19 +62,19 @@
                 <div class="p-6">
                     <div class="flex justify-between items-center mb-4">
                         <h3 class="text-xl font-bold text-gray-900">{{ $formation->titre }}</h3>
-                        <span class="text-2xl font-bold text-blue-600">{{ number_format($formation->prix, 0, ',', ' ') }}€</span>
+                        <span class="text-2xl font-bold text-blue-600">{{ number_format($formation->prix, 0, ',', ' ') }}CFA</span>
                     </div>
-                    <p class="text-gray-600 mb-6">{{ Str::limit($formation->description, 100) }}</p>
+                    <p class="text-gray-600 mb-6">{{ Str::limit($formation->description, 500) }}</p>
                     <div class="space-y-3 mb-6">
                         @if($formation->prerequis)
                         <div class="flex items-center text-gray-600">
                             <i class="fas fa-check-circle text-green-500 mr-3"></i>
-                            <span>{{ Str::limit($formation->prerequis, 50) }}</span>
+                            <span>{{ Str::limit($formation->prerequis, 100) }}</span>
                         </div>
                         @endif
                         <div class="flex items-center text-gray-600">
                             <i class="fas fa-calendar text-green-500 mr-3"></i>
-                            <span>Du {{ \Carbon\Carbon::parse($formation->date_debut)->format('d/m/Y') }}</span>
+                            <span> {{ \Carbon\Carbon::parse($formation->date_debut)->format('d/m/Y') }}</span>
                         </div>
                         <div class="flex items-center text-gray-600">
                             <i class="fas fa-users text-green-500 mr-3"></i>

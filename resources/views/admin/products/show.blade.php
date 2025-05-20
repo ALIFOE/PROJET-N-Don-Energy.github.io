@@ -44,7 +44,7 @@
                     </div>
                     <div class="text-right">
                         <p class="text-2xl font-bold text-gray-900">
-                            {{ number_format($product->prix, 2, ',', ' ') }} €
+                            {{ number_format($product->prix, 2, ',', ' ') }} FCFA
                         </p>
                         <span class="px-3 py-1 rounded-full text-xs {{ $product->en_stock ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
                             {{ $product->en_stock ? 'En stock' : 'Rupture de stock' }}
@@ -90,9 +90,7 @@
                 </div>
             </div>
         </div>
-    </div>
-
-    @if($product->orders->count() > 0)
+    </div>    @if(isset($product->orders) && $product->orders->count() > 0)
         <div class="mt-8">
             <h3 class="text-lg font-medium text-gray-900 mb-4">Historique des commandes</h3>
             <div class="overflow-x-auto bg-white rounded-lg shadow">
@@ -118,15 +116,14 @@
                     </thead>
                     <tbody>
                         @foreach($product->orders as $order)
-                            <tr>
-                                <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                            <tr>                                <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                                     <div class="flex items-center">
                                         <div>
                                             <p class="text-gray-900 whitespace-no-wrap font-medium">
-                                                {{ $order->user->name }}
+                                                {{ $order->customer_name ?? ($order->user->name ?? 'Client inconnu') }}
                                             </p>
                                             <p class="text-gray-600 whitespace-no-wrap">
-                                                {{ $order->user->email }}
+                                                {{ $order->customer_email ?? ($order->user->email ?? 'Email inconnu') }}
                                             </p>
                                         </div>
                                     </div>
@@ -146,7 +143,7 @@
                                 </td>
                                 <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                                     <p class="text-gray-900 whitespace-no-wrap font-medium">
-                                        {{ number_format($order->total_price, 2, ',', ' ') }} €
+                                        {{ number_format($order->total_price, 2, ',', ' ') }} FCFA
                                     </p>
                                 </td>
                                 <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">

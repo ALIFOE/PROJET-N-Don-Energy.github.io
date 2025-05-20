@@ -525,12 +525,10 @@
         if (window.productionChart) {
             window.productionChart.options = { ...window.productionChart.options, ...chartOptions };
             window.productionChart.update();
-        }
-        if (window.environmentChart) {
+        }        if (window.environmentChart) {
             window.environmentChart.options = { ...window.environmentChart.options, ...chartOptions };
             window.environmentChart.update();
         }
     </script>
-        @vite(['resources/js/realtime-monitoring.js'])
     @endpush
 </x-app-layout>

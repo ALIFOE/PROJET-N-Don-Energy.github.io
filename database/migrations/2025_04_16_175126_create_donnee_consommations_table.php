@@ -20,11 +20,10 @@ return new class extends Migration
             $table->float('puissance_instantanee')->comment('en W');
             $table->float('energie_jour')->comment('en kWh');
             $table->float('energie_mois')->comment('en kWh');
-            $table->float('energie_annee')->comment('en kWh');
-            $table->float('energie_totale')->comment('en kWh');
-            $table->float('cout_jour')->comment('en euros');
-            $table->float('cout_mois')->comment('en euros');
-            $table->float('cout_annee')->comment('en euros');
+            $table->float('energie_annee')->comment('en kWh');            $table->float('energie_totale')->comment('en kWh');
+            $table->float('cout_jour')->comment('en FCFA');
+            $table->float('cout_mois')->comment('en FCFA');
+            $table->float('cout_annee')->comment('en FCFA');
             $table->timestamps();
         });
     }

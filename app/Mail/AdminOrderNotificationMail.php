@@ -24,7 +24,7 @@ class AdminOrderNotificationMail extends Mailable
     {
         return new Envelope(
             to: [config('mail.admin_email')],
-            subject: 'Nouvelle commande - NE DON ENERGY',
+            subject: 'Nouvelle commande - CREFER',
         );
     }
 

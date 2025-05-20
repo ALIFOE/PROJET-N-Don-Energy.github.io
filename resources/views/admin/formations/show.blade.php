@@ -1,4 +1,4 @@
-@extends('admin.layouts.admin')
+@extends('layouts.app')
 
 @section('content')
     <div class="flex justify-between items-center mb-6">
@@ -25,7 +25,7 @@
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700">Prix</label>
-                            <p class="mt-1">{{ number_format($formation->prix, 2, ',', ' ') }} €</p>
+                            <p class="mt-1">{{ number_format($formation->prix, 2, ',', ' ') }} FCFA</p>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700">Places disponibles</label>

@@ -153,7 +153,7 @@
                         </div>
 
                         <!-- Section Activités Récentes -->
-                        <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
+                        {{-- <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
                             <div class="p-6">
                                 <div class="flex justify-between items-center mb-4">
                                     <h2 class="text-xl font-semibold">{{ __("Mes activités récentes") }}</h2>
@@ -236,7 +236,7 @@
                                     <p class="text-gray-500">{{ __("Aucune activité récente à afficher.") }}</p>
                                 @endif
                             </div>
-                        </div>
+                        </div> --}}
 
                         <!-- Performance des onduleurs en temps réel -->
                         @if(count(Auth::user()->onduleurs()->where('est_connecte', true)->get()) > 0)

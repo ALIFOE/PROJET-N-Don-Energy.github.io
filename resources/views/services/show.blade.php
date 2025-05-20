@@ -2,7 +2,15 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6">                    <div class="mb-8">
+                <div class="p-6">
+                    @if($service->image)
+                        <div class="mb-8">
+                            <img src="{{ Storage::url($service->image) }}" alt="{{ $service->nom }}" 
+                                 class="w-full max-h-96 object-cover rounded-lg shadow-lg">
+                        </div>
+                    @endif
+
+                    <div class="mb-8">
                         <h1 class="text-3xl font-bold text-gray-800 mb-4">{{ $service->nom }}</h1>
                         <div class="prose max-w-none">
                             <p class="text-gray-600">{{ $service->description }}</p>

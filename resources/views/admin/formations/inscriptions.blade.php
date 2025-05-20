@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends('layouts.app')
 
 @section('content')
     <div class="container mx-auto px-6 py-8">
@@ -41,6 +41,9 @@
                             Documents
                         </th>
                         <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                            Statut
+                        </th>
+                        <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                             Date d'inscription
                         </th>
                         <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-xs font-semibold text-gray-600 uppercase tracking-wider text-center">
@@ -78,24 +81,20 @@
                                 <p class="text-gray-600 whitespace-no-wrap">{{ $inscription->telephone }}</p>
                             </td>
                             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                <div class="flex flex-col space-y-1">
-                                    @if($inscription->acte_naissance_path)
-                                        <a href="{{ Storage::url($inscription->acte_naissance_path) }}" 
-                                           target="_blank"
+                                <div class="flex flex-col space-y-1">                                    @if($inscription->acte_naissance_path)
+                                        <a href="{{ route('admin.formations.inscriptions.document.download', ['inscription' => $inscription, 'type' => 'acte_naissance']) }}" 
                                            class="document-link text-blue-600 hover:text-blue-800">
                                             <i class="fas fa-file-alt mr-2"></i>Acte de naissance
                                         </a>
                                     @endif
                                     @if($inscription->cni_path)
-                                        <a href="{{ Storage::url($inscription->cni_path) }}" 
-                                           target="_blank"
+                                        <a href="{{ route('admin.formations.inscriptions.document.download', ['inscription' => $inscription, 'type' => 'cni']) }}" 
                                            class="document-link text-blue-600 hover:text-blue-800">
                                             <i class="fas fa-id-card mr-2"></i>CNI
                                         </a>
                                     @endif
                                     @if($inscription->diplome_path)
-                                        <a href="{{ Storage::url($inscription->diplome_path) }}" 
-                                           target="_blank"
+                                        <a href="{{ route('admin.formations.inscriptions.document.download', ['inscription' => $inscription, 'type' => 'diplome']) }}" 
                                            class="document-link text-blue-600 hover:text-blue-800">
                                             <i class="fas fa-graduation-cap mr-2"></i>Diplôme
                                         </a>
@@ -103,26 +102,75 @@
                                 </div>
                             </td>
                             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                                <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                    @if($inscription->statut === 'acceptee')
+                                        bg-green-100 text-green-800
+                                    @elseif($inscription->statut === 'refusee')
+                                        bg-red-100 text-red-800
+                                    @else
+                                        bg-yellow-100 text-yellow-800
+                                    @endif">
+                                    @if($inscription->statut === 'acceptee')
+                                        Acceptée
+                                    @elseif($inscription->statut === 'refusee')
+                                        Refusée
+                                    @else
+                                        En attente
+                                    @endif
+                                </span>
+                            </td>
+                            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                                 <p class="text-gray-900 whitespace-no-wrap">
                                     {{ $inscription->created_at->format('d/m/Y H:i') }}
                                 </p>
                             </td>
                             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center">
-                                <form action="{{ route('admin.formations.inscriptions.destroy', $inscription) }}" 
-                                      method="POST"
-                                      onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette inscription ?');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" 
-                                            class="text-red-600 hover:text-red-800">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </form>
+                                <div class="flex justify-center space-x-2">
+                                    <form action="{{ route('admin.formations.inscriptions.status', $inscription) }}" method="POST" class="inline-block">
+                                        @csrf
+                                        @method('PUT')
+                                        <input type="hidden" name="statut" value="acceptee">
+                                        <button type="submit" class="text-green-600 hover:text-green-800 px-2" title="Accepter">
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                    </form>
+
+                                    <form action="{{ route('admin.formations.inscriptions.status', $inscription) }}" method="POST" class="inline-block">
+                                        @csrf
+                                        @method('PUT')
+                                        <input type="hidden" name="statut" value="en_attente">
+                                        <button type="submit" class="text-yellow-600 hover:text-yellow-800 px-2" title="Mettre en attente">
+                                            <i class="fas fa-clock"></i>
+                                        </button>
+                                    </form>
+
+                                    <form action="{{ route('admin.formations.inscriptions.status', $inscription) }}" method="POST" class="inline-block">
+                                        @csrf
+                                        @method('PUT')
+                                        <input type="hidden" name="statut" value="refusee">
+                                        <button type="submit" class="text-red-600 hover:text-red-800 px-2" title="Refuser">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </form>
+
+                                    <form action="{{ route('admin.formations.inscriptions.destroy', $inscription) }}" 
+                                          method="POST"
+                                          class="inline-block"
+                                          onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette inscription ?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" 
+                                                class="text-gray-600 hover:text-gray-800 px-2"
+                                                title="Supprimer">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="px-5 py-5 bg-white text-sm text-center">
+                            <td colspan="7" class="px-5 py-5 bg-white text-sm text-center">
                                 Aucune inscription trouvée.
                             </td>
                         </tr>

@@ -387,8 +387,7 @@ document.getElementById('dimensionnementForm').addEventListener('submit', async 
         objectifs: e.target.objectifs.value
     };
     
-    try {
-        const response = await fetch('/api/dimensionnement-ia', {
+    try {                const response = await fetch('/api/dimensionnement-ia', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

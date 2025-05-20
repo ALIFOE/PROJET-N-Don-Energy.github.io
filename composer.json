@@ -9,6 +9,7 @@
         "aldas/modbus-tcp-client": "^3.5",
         "barryvdh/laravel-dompdf": "^2.2",
         "doctrine/dbal": "^3.9",
+        "egulias/email-validator": "^3.2",
         "guzzlehttp/guzzle": "^7.9",
         "intervention/image": "^2.7",
         "laravel/framework": "^9.19",

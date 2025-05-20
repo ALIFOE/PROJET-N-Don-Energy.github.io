@@ -11,11 +11,17 @@ class Service extends Model
 
     protected $fillable = [
         'nom',
-        'description'
+        'description',
+        'image'
     ];
 
     public function requests()
     {
         return $this->hasMany(ServiceRequest::class);
+    }
+
+    public function demandes()
+    {
+        return $this->hasMany(DemandeService::class);
     }
 }

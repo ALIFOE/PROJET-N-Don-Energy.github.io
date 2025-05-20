@@ -1,8 +1,9 @@
-<x-app-layout>
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6">
+@extends('layouts.app')
+
+@section('content')
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+            <div class="p-6">
                     <h1 class="text-3xl font-bold text-gray-800 mb-6">Demandes de Services</h1>
 
                     <div class="overflow-x-auto">
@@ -49,17 +50,24 @@
                                                     <option value="{{ App\Models\DemandeService::STATUT_REFUSE }}" {{ $request->statut === App\Models\DemandeService::STATUT_REFUSE ? 'selected' : '' }}>Refusé</option>
                                                 </select>
                                             </form>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                        </td>                                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-4">
                                             <a href="mailto:{{ $request->email }}" class="text-indigo-600 hover:text-indigo-900">Contacter</a>
+                                            @if($request->statut === App\Models\DemandeService::STATUT_REFUSE || $request->statut === App\Models\DemandeService::STATUT_ACCEPTE)
+                                                <form action="{{ route('admin.services.requests.destroy', $request) }}" method="POST" class="inline-block">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="text-red-600 hover:text-red-900" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette demande ?')">
+                                                        Supprimer
+                                                    </button>
+                                                </form>
+                                            @endif
                                         </td>
                                     </tr>
                                 @endforeach
                             </tbody>
-                        </table>
-                    </div>
+                        </table>                    </div>
                 </div>
             </div>
         </div>
     </div>
-</x-app-layout>
+@endsection

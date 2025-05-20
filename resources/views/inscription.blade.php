@@ -128,7 +128,7 @@
                                     required>
                                     <option value="">Sélectionnez une formation</option>                                    @foreach ($formations as $formation)
                                         <option value="{{ $formation->id }}" {{ old('formation') == $formation->id ? 'selected' : '' }}>
-                                            {{ $formation->titre }} - {{ \Carbon\Carbon::parse($formation->date_debut)->diffInDays($formation->date_fin) }} jours
+                                            {{ $formation->titre }} - {{ \Carbon\Carbon::parse($formation->date_debut)->diffInMonths($formation->date_fin) }} Mois
                                         </option>
                                     @endforeach
                                 </select>

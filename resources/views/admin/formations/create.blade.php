@@ -1,8 +1,9 @@
-<x-admin-layout>
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between mb-6">
-                <h3 class="text-gray-700 text-3xl font-medium">Créer une Formation</h3>
+@extends('layouts.app')
+
+@section('content')
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between mb-6">
+            <h3 class="text-gray-700 text-3xl font-medium">Créer une Formation</h3>
             <a href="{{ route('admin.formations.index') }}" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded">
                 Retour à la liste
             </a>
@@ -56,7 +57,7 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="mb-6">
-                        <label for="prix" class="block text-gray-700 text-sm font-bold mb-2">Prix (€)</label>
+                        <label for="prix" class="block text-gray-700 text-sm font-bold mb-2">Prix (FCFA)</label>
                         <input type="number" name="prix" id="prix" step="0.01" min="0"
                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('prix') border-red-500 @enderror"
                                value="{{ old('prix') }}" required>
@@ -119,9 +120,8 @@
                 <div class="flex items-center justify-end">
                     <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                         Créer la formation
-                    </button>
-                </div>            </form>
-        </div>
+                    </button>                </div>
+            </form>
         </div>
     </div>
-</x-admin-layout>
+@endsection

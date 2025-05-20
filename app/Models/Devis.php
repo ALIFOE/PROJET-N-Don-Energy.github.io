@@ -22,7 +22,8 @@ class Devis extends Model
         'orientation',
         'objectifs',
         'message',
-        'analyse_technique'
+        'analyse_technique',
+        'statut'
     ];
 
     protected $casts = [
@@ -31,4 +32,29 @@ class Devis extends Model
         'facture_mensuelle' => 'decimal:2',
         'consommation_annuelle' => 'decimal:2'
     ];
+
+    public function getStatusLabelAttribute()
+    {
+        return [
+            'en_attente' => 'En attente',
+            'en_cours' => 'En cours',
+            'accepte' => 'Accepté',
+            'refuse' => 'Refusé'
+        ][$this->statut] ?? 'Inconnu';
+    }
+
+    public function getStatusColorAttribute()
+    {
+        return [
+            'en_attente' => 'yellow',
+            'en_cours' => 'blue',
+            'accepte' => 'green',
+            'refuse' => 'red'
+        ][$this->statut] ?? 'gray';
+    }
+
+    public function getNomCompletAttribute()
+    {
+        return "{$this->nom} {$this->prenom}";
+    }
 }

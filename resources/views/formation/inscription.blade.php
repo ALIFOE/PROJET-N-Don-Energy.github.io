@@ -1,4 +1,4 @@
-<x-app-layout>
+{{-- <x-app-layout>
     <head>
         <style>
             body {
@@ -110,4 +110,4 @@
             </div>
         </div>
     </div>
-</x-app-layout>
+</x-app-layout> --}}

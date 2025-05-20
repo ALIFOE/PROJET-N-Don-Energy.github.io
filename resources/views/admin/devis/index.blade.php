@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends('layouts.app')
 
 @section('content')
 <div class="container mx-auto px-4 py-8">
@@ -63,8 +63,7 @@
                         <div class="flex space-x-3">
                             <a href="{{ route('admin.devis.show', $item) }}" class="text-blue-600 hover:text-blue-900">
                                 <i class="fas fa-eye"></i> Voir
-                            </a>
-                            <form action="{{ route('admin.devis.destroy', $item) }}" method="POST" class="inline-block">
+                            </a>                            <form action="{{ route('admin.devis.destroy', ['devi' => $item]) }}" method="POST" class="inline-block">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="text-red-600 hover:text-red-900" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce devis ?')">

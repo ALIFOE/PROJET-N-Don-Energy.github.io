@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
+use App\Services\EmailValidationService;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -30,9 +31,27 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        $emailValidator = new EmailValidationService();
+
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
+            'email' => [
+                'required', 
+                'string', 
+                'email:rfc,dns',
+                'max:255', 
+                'unique:'.User::class,
+                function ($attribute, $value, $fail) use ($emailValidator) {
+                    if (!$emailValidator->isAllowedDomain($value)) {
+                        $fail('Seules les adresses email de Google (Gmail), Microsoft (Outlook, Hotmail, Live) ou Yahoo sont acceptées.');
+                        return;
+                    }
+
+                    if (!$emailValidator->verifyEmailExists($value)) {
+                        $fail("Cette adresse email n'existe pas. Veuillez fournir une adresse email valide et active.");
+                    }
+                },
+            ],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 

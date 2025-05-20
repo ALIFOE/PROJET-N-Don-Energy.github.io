@@ -1,4 +1,4 @@
-resources/views/admin/formations/form.blade.php@extends('admin.layouts.admin')
+resources/views/admin/formations/form.blade.php@extends('layouts.app')
 
 @section('content')
     <div class="flex justify-between items-center mb-6">
@@ -35,7 +35,7 @@ resources/views/admin/formations/form.blade.php@extends('admin.layouts.admin')
                 </div>
 
                 <div>
-                    <label for="prix" class="block text-sm font-medium text-gray-700">Prix (€)</label>
+                    <label for="prix" class="block text-sm font-medium text-gray-700">Prix (FCFA)</label>
                     <input type="number" 
                            name="prix" 
                            id="prix" 

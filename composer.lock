@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ce35e384c5a236d7ddc255cef3f036ca",
+    "content-hash": "e6724770b39687450d5c4681ebc9b3d7",
     "packages": [
         {
             "name": "aldas/modbus-tcp-client",

@@ -6,6 +6,7 @@ use App\Models\Dimensionnement;
 use App\Models\Order;
 use App\Policies\DimensionnementPolicy;
 use App\Policies\OrderPolicy;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider
@@ -22,9 +23,13 @@ class AuthServiceProvider extends ServiceProvider
 
     /**
      * Register any authentication / authorization services.
-     */
-    public function boot(): void
+     */    public function boot(): void
     {
         $this->registerPolicies();
+
+        // Définir la Gate pour la gestion de la galerie
+        Gate::define('manage-gallery', function ($user) {
+            return $user->is_admin;
+        });
     }
 }

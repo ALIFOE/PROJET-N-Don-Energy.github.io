@@ -21,15 +21,17 @@
                     <div class="space-y-4">
                         <div class="flex items-start">
                             <i class="fas fa-map-marker-alt text-blue-500 mt-1 mr-3"></i>
-                            <span class="text-gray-600">Rue KOPEGA 56.GB Lomé, Togo</span>
+                            <span class="text-gray-600">Lomé-TOGO,<br>
+Siège Social situé à Lomé-TOGO<br> quartier Totsi Gblenkomé <br>près de la salle de réunion des témoins de Jéhovah
+<br>Annexe au bord des pavés de Totsi non loin de l'agence TogoCom</span>
                         </div>
                         <div class="flex items-center">
                             <i class="fas fa-phone text-blue-500 mr-3"></i>
-                            <span class="text-gray-600">+228 97 73 43 81</span>
+                            <span class="text-gray-600">(+228)91 20 43 73<br>(+228)92 53 14 55</span>
                         </div>
                         <div class="flex items-center">
                             <i class="fas fa-envelope text-blue-500 mr-3"></i>
-                            <span class="text-gray-600">contact@CREFER.com</span>
+                            <span class="text-gray-600">ecole.crefer@gmail.com</span>
                         </div>
                     </div>
                 </div>
@@ -41,12 +43,12 @@
                             <span class="text-gray-600">Lundi - Vendredi</span>
                             <span class="text-gray-800 font-medium">9h00 - 18h00</span>
                         </div>
-                        <div class="flex justify-between">
+                        {{-- <div class="flex justify-between">
                             <span class="text-gray-600">Samedi</span>
                             <span class="text-gray-800 font-medium">10h00 - 16h00</span>
-                        </div>
+                        </div> --}}
                         <div class="flex justify-between">
-                            <span class="text-gray-600">Dimanche</span>
+                            <span class="text-gray-600">Samedi - Dimanche</span>
                             <span class="text-gray-800 font-medium">Fermé</span>
                         </div>
                     </div>

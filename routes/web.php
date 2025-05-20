@@ -28,40 +28,75 @@ use App\Http\Controllers\Admin\FormationController as AdminFormationController;
 use App\Http\Controllers\Admin\NotificationController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\FormationController;
+use App\Http\Controllers\Admin\FormationInscriptionController;
 use App\Http\Controllers\MaintenanceController;
 use App\Http\Controllers\OptimisationController;
 use App\Http\Controllers\SupportController;
 use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\RapportsController;
+use App\Http\Controllers\Admin\ServiceRequestController;
+use App\Http\Controllers\CommandeController;
 
 // Routes publiques
 Route::get('/', function () {
     return view('home');
 })->name('home');
 
-Route::get('/service', function () {
-    return view('service');
-})->name('service');
+// Route de raccourci pour le dimensionnement
+Route::get('/dimensionnement', [DimensionnementController::class, 'create'])->name('dimensionnement');
+
+Route::get('/services', [ServiceController::class, 'index'])->name('services.index');
+
+Route::get('/marketplace', [MarketplaceController::class, 'index'])->name('marketplace');
+Route::get('/mes-commandes', [CommandeController::class, 'index'])->middleware(['auth'])->name('mes-commandes');
 
 // Routes pour les formations
 Route::prefix('formation')->group(function () {
     Route::get('/', [FormationController::class, 'index'])->name('formation');
     Route::get('/inscription', [FormationController::class, 'show'])->name('inscription');
     Route::post('/inscription', [FormationController::class, 'inscription'])->middleware(['auth'])->name('formation.inscription');
+    Route::get('/mes-inscriptions', [FormationController::class, 'mesInscriptions'])->middleware(['auth'])->name('formations.mes-inscriptions');
+    Route::get('/inscription/{inscription}/document/{type}', [FormationController::class, 'downloadDocument'])
+        ->middleware(['auth'])
+        ->name('formation.document.download');
     Route::get('/{formation}/flyer', [FormationController::class, 'downloadFlyer'])->name('formation.flyer.download');
 });
 
 // Routes d'administration
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     // Route du tableau de bord admin
-    Route::get('/dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])
+    Route::get('/dashboard', [AdminDashboardController::class, 'index'])
         ->name('dashboard');
     
+    // Routes pour les notifications
     Route::prefix('notifications')->name('notifications.')->group(function () {
         Route::get('/', [NotificationController::class, 'index'])->name('index');
         Route::put('/{id}/read', [NotificationController::class, 'markAsRead'])->name('read');
         Route::post('/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('markAllAsRead');
         Route::delete('/{id}', [NotificationController::class, 'destroy'])->name('destroy');
         Route::delete('/', [NotificationController::class, 'destroyAll'])->name('destroyAll');
+    });
+
+    // Routes pour les formations et inscriptions
+    Route::prefix('formations')->group(function () {
+        // Routes pour les inscriptions aux formations
+        Route::get('/inscriptions', [AdminFormationController::class, 'inscriptions'])->name('formations.inscriptions.index');
+        Route::prefix('inscriptions')->group(function () {
+            Route::get('/{inscription}', [FormationInscriptionController::class, 'show'])->name('formations.inscriptions.show');
+            Route::put('/{inscription}/status', [FormationInscriptionController::class, 'updateStatus'])->name('formations.inscriptions.status');
+            Route::delete('/{inscription}', [FormationInscriptionController::class, 'destroy'])->name('formations.inscriptions.destroy');
+            Route::get('/{inscription}/document/{type}', [FormationInscriptionController::class, 'downloadDocument'])->name('formations.inscriptions.document.download');
+        });
+
+        // Routes principales des formations
+        Route::get('/', [AdminFormationController::class, 'index'])->name('formations.index');
+        Route::get('/create', [AdminFormationController::class, 'create'])->name('formations.create');
+        Route::post('/', [AdminFormationController::class, 'store'])->name('formations.store');
+        Route::get('/{formation}', [AdminFormationController::class, 'show'])->name('formations.show');
+        Route::get('/{formation}/edit', [AdminFormationController::class, 'edit'])->name('formations.edit');
+        Route::put('/{formation}', [AdminFormationController::class, 'update'])->name('formations.update');
+        Route::delete('/{formation}', [AdminFormationController::class, 'destroy'])->name('formations.destroy');
+        Route::get('/{formation}/flyer', [AdminFormationController::class, 'downloadFlyer'])->name('formations.flyer.download');
     });
 
     // Routes pour le monitoring des services IA
@@ -73,18 +108,14 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
         ->name('services.reset-quota');
 
     Route::resource('users', \App\Http\Controllers\Admin\UserController::class);    Route::resource('functionalities', FunctionalityController::class);    Route::resource('devis', \App\Http\Controllers\Admin\DevisController::class);
-    Route::get('/devis/download-pdf/{id}', [\App\Http\Controllers\Admin\DevisController::class, 'downloadPdf'])->name('devis.download-pdf');    Route::resource('orders', \App\Http\Controllers\Admin\OrderController::class);
+    Route::get('/devis/download-pdf/{id}', [\App\Http\Controllers\Admin\DevisController::class, 'downloadPdf'])->name('devis.download-pdf');    Route::resource('orders', \AppHttp\Controllers\Admin\OrderController::class);
     Route::put('/orders/{order}/update-status', [\App\Http\Controllers\Admin\OrderController::class, 'updateStatus'])
         ->name('orders.update-status');  // Le nom de la route inclut déjà le préfixe 'admin.' du groupe
-    
-    Route::get('formations/inscriptions', [AdminFormationController::class, 'inscriptions'])->name('formations.inscriptions');
-    Route::delete('formations/inscriptions/{inscription}', [AdminFormationController::class, 'destroyInscription'])->name('formations.inscriptions.destroy');
-    Route::get('formations/{formation}/flyer', [AdminFormationController::class, 'downloadFlyer'])->name('formations.flyer.download');
-    
+      Route::get('formations/{formation}/flyer', [AdminFormationController::class, 'downloadFlyer'])->name('formations.flyer.download');
     Route::resource('formations', AdminFormationController::class);
     Route::resource('installations', InstallationController::class);
-    Route::get('installations/pending', [InstallationController::class, 'pending'])->name('installations.pending');
-    Route::resource('products', ProductController::class);
+    Route::get('installations/pending', [InstallationController::class, 'pending'])->name('installations.pending');Route::resource('products', ProductController::class);
+    Route::patch('devis/{devis}/status', [\App\Http\Controllers\Admin\DevisController::class, 'updateStatus'])->name('devis.update-status');
 });
 
 // Routes protégées par authentification
@@ -97,7 +128,18 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/performances-regionales', [RegionalPerformanceController::class, 'index'])->name('performances.regionales');
     Route::get('/api/performances-regionales/data', [RegionalPerformanceController::class, 'getData'])->name('performances.regionales.data');
 
-    // Routes pour onduleurs
+    // Routes pour la galerie
+Route::get('/gallery', [App\Http\Controllers\GalleryController::class, 'index'])->name('gallery');
+
+// Routes admin pour la galerie
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('/admin/gallery', [App\Http\Controllers\Admin\GalleryController::class, 'manage'])->name('admin.gallery.manage');
+    Route::post('/admin/gallery', [App\Http\Controllers\Admin\GalleryController::class, 'store'])->name('admin.gallery.store');
+    Route::delete('/admin/gallery/{media}', [App\Http\Controllers\Admin\GalleryController::class, 'destroy'])->name('admin.gallery.destroy');
+    Route::post('/admin/gallery/{media}/toggle-featured', [App\Http\Controllers\Admin\GalleryController::class, 'toggleFeatured'])->name('admin.gallery.toggle-featured');
+});
+
+// Routes pour onduleurs
     Route::get('/onduleurs', [OnduleurController::class, 'index'])->name('onduleurs.index');
     Route::get('/onduleurs/create', [OnduleurController::class, 'create'])->name('onduleurs.create');
     Route::post('/onduleurs', [OnduleurController::class, 'store'])->name('onduleurs.store');
@@ -155,6 +197,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/maintenance', [MaintenanceController::class, 'index'])->name('maintenance');
     Route::get('/optimisation', [OptimisationController::class, 'index'])->name('optimisation');
     Route::get('/support', [SupportController::class, 'index'])->name('support');
+
+    // Nouvelles routes pour les fonctionnalités
+    Route::get('/previsions-meteo', [MeteoController::class, 'index'])->name('previsions-meteo');
+    Route::get('/rapports-analyses', [RapportsController::class, 'index'])->name('rapports-analyses');
 });
 
 // Routes pour le blog
@@ -170,7 +216,8 @@ Route::get('/fonctionnalite', function () {
     return view('fonctionnalite');
 })->name('fonctionnalite');
 
-Route::get('/market-place', [MarketplaceController::class, 'index'])->name('market-place');
+Route::get('/market-place', [MarketplaceController::class, 'index'])->name('marketplace');
+Route::get('/mes-commandes', [CommandeController::class, 'index'])->middleware(['auth'])->name('mes-commandes');
 
 Route::get('/about', function () {
     return view('about');
@@ -227,7 +274,10 @@ Route::middleware(['auth', 'role:technicien'])->name('technicien.')->prefix('tec
 Route::prefix('services')->group(function () {
     Route::get('/', [ServiceController::class, 'index'])->name('services.index');
     Route::get('/{service}', [ServiceController::class, 'show'])->name('services.show');
-    Route::post('/{service}/request', [ServiceController::class, 'submitRequest'])
+    Route::get('/{service}/demande', [ServiceController::class, 'showRequestForm'])
+        ->middleware(['auth'])
+        ->name('services.request.form');
+    Route::post('/{service}/demande', [ServiceController::class, 'submitRequest'])
         ->middleware(['auth'])
         ->name('services.request.submit');
 });
@@ -239,15 +289,21 @@ Route::middleware(['auth'])->group(function() {
 });
 
 // Routes admin pour les services
-Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {    Route::get('/services', [ServiceController::class, 'adminIndex'])->name('services.index');
-    Route::get('/services/create', [ServiceController::class, 'adminCreate'])->name('services.create');
-    Route::post('/services', [ServiceController::class, 'adminStore'])->name('services.store');
-    Route::get('/services/{service}/edit', [ServiceController::class, 'adminEdit'])->name('services.edit');
-    Route::put('/services/{service}', [ServiceController::class, 'adminUpdate'])->name('services.update');
-    Route::delete('/services/{service}', [ServiceController::class, 'adminDestroy'])->name('services.destroy');
-    Route::get('/service-requests', [ServiceController::class, 'adminRequests'])->name('services.requests');
-    Route::put('/service-requests/{serviceRequest}/status', [ServiceController::class, 'updateRequestStatus'])
-        ->name('services.requests.status');
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::prefix('services')->name('services.')->group(function () {
+        Route::get('/', [ServiceController::class, 'adminIndex'])->name('index');
+        Route::get('/create', [ServiceController::class, 'adminCreate'])->name('create');
+        Route::post('/', [ServiceController::class, 'adminStore'])->name('store');
+        Route::get('/{service}/edit', [ServiceController::class, 'adminEdit'])->name('edit');
+        Route::put('/{service}', [ServiceController::class, 'adminUpdate'])->name('update');
+        Route::delete('/{service}', [ServiceController::class, 'adminDestroy'])->name('destroy');
+        
+        // Routes pour les demandes de services
+        Route::get('/requests', [ServiceController::class, 'adminRequests'])->name('requests');
+        Route::get('/requests/{request}/details', [ServiceController::class, 'requestDetails'])->name('requests.details');
+        Route::put('/requests/{request}/status', [ServiceController::class, 'updateRequestStatus'])->name('requests.status');
+        Route::delete('/requests/{request}', [ServiceController::class, 'deleteRequest'])->name('requests.destroy');
+    });
 });
 
 Route::get('/ia-services', function () {

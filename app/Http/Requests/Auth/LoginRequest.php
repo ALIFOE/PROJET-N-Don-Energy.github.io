@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Services\EmailValidationService;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
@@ -23,11 +24,26 @@ class LoginRequest extends FormRequest
      * Get the validation rules that apply to the request.
      *
      * @return array<string, \Illuminate\Contracts\Validation\Rule|array|string>
-     */
-    public function rules(): array
+     */    public function rules(): array
     {
+        $emailValidator = new EmailValidationService();
+
         return [
-            'email' => ['required', 'string', 'email'],
+            'email' => [
+                'required', 
+                'string', 
+                'email:rfc,dns',
+                function ($attribute, $value, $fail) use ($emailValidator) {
+                    if (!$emailValidator->isAllowedDomain($value)) {
+                        $fail('Seules les adresses email de Google (Gmail), Microsoft (Outlook, Hotmail, Live) ou Yahoo sont acceptées.');
+                        return;
+                    }
+
+                    if (!$emailValidator->verifyEmailExists($value)) {
+                        $fail("Cette adresse email n'existe pas. Veuillez fournir une adresse email valide et active.");
+                    }
+                },
+            ],
             'password' => ['required', 'string'],
         ];
     }

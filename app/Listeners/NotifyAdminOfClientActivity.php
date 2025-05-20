@@ -10,25 +10,23 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 class NotifyAdminOfClientActivity
-{
+{    use \App\Traits\NotifiesAdmins;
+
     public function handle(ClientActivity $event)
     {
         try {
-            // Trouver tous les administrateurs
-            $admins = User::where('role', 'admin')->get();
-            
             $title = $this->getNotificationTitle($event->type);
             $message = $this->getNotificationMessage($event->type, $event->data);
             $actionUrl = $this->getActionUrl($event->type, $event->data);
-            $actionText = $this->getActionText($event->type);            foreach ($admins as $admin) {
-                // Envoyer une notification dans l'application
-                $admin->notify(new AdminActivityNotification(
-                    $title,
-                    $message,
-                    $actionUrl,
-                    $actionText
-                ));
-            }            // Envoyer un email à tous les administrateurs
+            $actionText = $this->getActionText($event->type);
+
+            $this->notifyAdmins(
+                $title,
+                $message,
+                $actionUrl,
+                $actionText,
+                $event->data
+            );// Envoyer un email à tous les administrateurs
             Mail::to(AdminActivityMail::getAdminEmails())
                 ->queue(new AdminActivityMail($event->type, $event->data));
         } catch (\Exception $e) {

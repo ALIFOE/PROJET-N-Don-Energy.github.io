@@ -20,12 +20,13 @@ return new class extends Migration
             $table->text('adresse');
             $table->string('type_batiment');
             $table->decimal('facture_mensuelle', 10, 2)->nullable();
-            $table->decimal('consommation_annuelle', 10, 2);
-            $table->string('type_toiture');
-            $table->string('orientation');
-            $table->json('objectifs');
+            $table->decimal('consommation_annuelle', 10, 2)->nullable();
+            $table->string('type_toiture')->nullable();
+            $table->string('orientation')->nullable();
+            $table->json('objectifs')->nullable();
             $table->text('message')->nullable();
             $table->json('analyse_technique')->nullable();
+            $table->string('statut')->default('en_attente');
             $table->timestamps();
         });
     }

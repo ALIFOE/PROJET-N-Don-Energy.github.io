@@ -3,11 +3,17 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>CREFER - Gestion d'installations solaires photovoltaïques</title>
+        <title>CREFER - Formations et Gestion d'installations solaires photovoltaïques</title>
+        <!-- Charger d'abord Font Awesome -->
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
         <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+        <!-- Charger Chart.js depuis CDN avec une version spécifique -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+        <!-- Ajouter le plugin d'annotations pour Chart.js -->
+        <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@2.1.0/dist/chartjs-plugin-annotation.min.js"></script>
+        <!-- Charger Alpine.js -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.10.2/cdn.min.js" defer></script>
         
         <style>
             body {
@@ -52,7 +58,7 @@
                 background-color: #0d47a1;
             }
             .hero-section {
-                min-height: 500px;
+                min-height: 700px;
                 background-image: url('{{ asset('images/image-2.jpg')}}');
                 background-size: cover;
                 background-position: center;
@@ -74,11 +80,13 @@
             .hero-section::before {
                 content: '';
                 position: absolute;
-                top: 2;
+                top: 0;
                 left: 0;
-                width: 99%;
+                width: 100%;
                 height: 100%;
-                background-image: url('{{ asset('images/4813.jpg') }}');
+                background-image: url('{{ asset('images/12.jpg') }}');
+                background-size: cover;
+                background-position: center;
                 /* animation: overlayFade 3s ease-in-out infinite alternate; */
             }
 
@@ -303,40 +311,53 @@
                 </div>
             </div>
         </div>
-    </section>
-
-    <section class="py-12 bg-white">
+    </section>    <section class="py-12 bg-white">
         <div class="container mx-auto px-6">
             <div class="text-center mb-12">
-                <h2 class="text-3xl font-bold text-gray-800">Graphiques et données en temps réel</h2>
-                <p class="mt-4 text-xl text-gray-600">Aperçu des fonctionnalités de visualisation</p>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div class="card bg-white p-6">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Production journalière</h3>
-                    <p id="lastUpdate" class="text-sm text-gray-600 mb-2"></p>
-                    <div class="h-80">
-                        <canvas id="dailyProductionChart"></canvas>
+                <h2 class="text-3xl font-bold text-gray-800">Galerie</h2>
+                @auth
+                    <p class="mt-4 text-xl text-gray-600">Découvrez nos réalisations en images et en vidéos</p>
+                    <div class="mt-8">
+                        <a href="{{ route('gallery') }}" class="bg-orange-500 text-white py-3 px-8 rounded-md text-lg font-medium hover:bg-orange-600 transition duration-300 inline-flex items-center">
+                            <i class="fas fa-images mr-2"></i>
+                            Voir la galerie complète
+                        </a>
+                        @if (Auth::user()->is_admin)
+                            <a href="{{ route('admin.gallery.manage') }}" class="ml-4 bg-blue-500 text-white py-3 px-8 rounded-md text-lg font-medium hover:bg-blue-600 transition duration-300 inline-flex items-center">
+                                <i class="fas fa-cog mr-2"></i>
+                                Gérer la galerie
+                            </a>
+                        @endif
                     </div>
-                </div>
-                
-                <div class="card bg-white p-6">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Comparaison Production vs Consommation</h3>
-                    <p id="lastUpdateComparison" class="text-sm text-gray-600 mb-2"></p>
-                    <div class="h-80">
-                        <canvas id="comparisonChart"></canvas>
+                    
+                    @if(!empty($featuredMedia))
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+                            @foreach($featuredMedia as $media)
+                                <div class="card bg-white overflow-hidden">
+                                    <div class="relative aspect-w-16 aspect-h-9">
+                                        @if($media->type === 'image')
+                                            <img src="{{ asset('storage/' . $media->path) }}" alt="{{ $media->title }}" class="object-cover w-full h-full">
+                                        @else
+                                            <video src="{{ asset('storage/' . $media->path) }}" class="object-cover w-full h-full" controls></video>
+                                        @endif
+                                    </div>
+                                    <div class="p-4">
+                                        <h3 class="text-lg font-semibold text-gray-800">{{ $media->title }}</h3>
+                                        <p class="text-sm text-gray-600">{{ $media->description }}</p>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
+                @else
+                    <p class="mt-4 text-xl text-gray-600">Connectez-vous pour découvrir nos réalisations en images et en vidéos</p>
+                    <div class="mt-8">
+                        <a href="{{ route('login') }}" class="bg-orange-500 text-white py-3 px-8 rounded-md text-lg font-medium hover:bg-orange-600 transition duration-300 inline-flex items-center">
+                            <i class="fas fa-sign-in-alt mr-2"></i>
+                            Se connecter pour voir la galerie
+                        </a>
                     </div>
-                </div>
-            </div>
-            
-            <div class="mt-8">
-                <div class="card bg-white p-6">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Performance mensuelle</h3>
-                    <div class="h-80">
-                        <canvas id="monthlyPerformanceChart"></canvas>
-                    </div>
-                </div>
+                @endauth
             </div>
         </div>
     </section>
@@ -420,298 +441,363 @@
         </div>
     </section>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.10.2/cdn.min.js" defer></script>
     <script>
-        // Fonction pour générer des données aléatoires basées sur l'heure
-        function generateHourlyData(baseData, variance) {
-            const hour = new Date().getHours();
-            const newData = [...baseData];
-            // Ajout d'une variation aléatoire pour l'heure actuelle
-            newData[hour] = Math.max(0, baseData[hour] + (Math.random() - 0.5) * variance);
-            return newData;
-        }
+        // Attendre que le DOM soit complètement chargé
+        document.addEventListener('DOMContentLoaded', function() {
+            // Vérifier que les éléments canvas existent
+            const dailyProductionCanvas = document.getElementById('dailyProductionChart');
+            const comparisonCanvas = document.getElementById('comparisonChart');
+            const monthlyPerformanceCanvas = document.getElementById('monthlyPerformanceChart');
 
-        // Données de base
-        const togoBaseData = [0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 0.5, 1.8, 3.2, 4.5, 5.4, 5.8, 5.9, 5.7, 5.2, 4.3, 3.1, 1.9, 0.7, 0.2, 0.0, 0.0, 0.0, 0.0];
-        const worldBaseData = [0.0, 0.0, 0.0, 0.0, 0.0, 0.2, 0.8, 2.1, 3.8, 5.2, 6.1, 6.5, 6.7, 6.4, 5.8, 4.9, 3.7, 2.3, 1.1, 0.4, 0.1, 0.0, 0.0, 0.0];
-
-        // Graphique de production journalière
-        const dailyProductionCtx = document.getElementById('dailyProductionChart').getContext('2d');
-        const dailyProductionChart = new Chart(dailyProductionCtx, {
-            type: 'line',
-            data: {
-                labels: ['00h', '01h', '02h', '03h', '04h', '05h', '06h', '07h', '08h', '09h', '10h', '11h', '12h', '13h', '14h', '15h', '16h', '17h', '18h', '19h', '20h', '21h', '22h', '23h'],
-                datasets: [{
-                    label: 'Production Togo (kW)',
-                    data: togoBaseData,
-                    borderColor: '#FFA500',
-                    backgroundColor: 'rgba(255, 165, 0, 0.1)',
-                    borderWidth: 2,
-                    fill: true,
-                    tension: 0.4
-                },
-                {
-                    label: 'Moyenne Mondiale (kW)',
-                    data: worldBaseData,
-                    borderColor: '#0000FF',
-                    backgroundColor: 'rgba(0, 0, 255, 0.1)',
-                    borderWidth: 2,
-                    fill: true,
-                    tension: 0.4
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'top',
-                    },
-                    tooltip: {
-                        mode: 'index',
-                        intersect: false,
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        title: {
-                            display: true,
-                            text: 'Puissance (kW)'
-                        },
-                        suggestedMax: 7
-                    },
-                    x: {
-                        title: {
-                            display: true,
-                            text: 'Heure'
-                        }
-                    }
-                },
-                interaction: {
-                    mode: 'nearest',
-                    axis: 'x',
-                    intersect: false
-                }
+            if (!dailyProductionCanvas || !comparisonCanvas || !monthlyPerformanceCanvas) {
+                console.error('Un ou plusieurs éléments canvas sont manquants');
+                return;
             }
-        });
 
-        // Fonction de mise à jour du graphique
-        function updateChart() {
-            const currentHour = new Date().getHours();
-            const currentMinute = new Date().getMinutes();
-            
-            // Mettre à jour les données avec une variation aléatoire
-            dailyProductionChart.data.datasets[0].data = generateHourlyData(togoBaseData, 0.8);
-            dailyProductionChart.data.datasets[1].data = generateHourlyData(worldBaseData, 0.5);
-            
-            // Ajouter un indicateur visuel de l'heure actuelle
-            dailyProductionChart.options.plugins.annotation = {
-                annotations: {
-                    currentTime: {
-                        type: 'line',
-                        xMin: currentHour,
-                        xMax: currentHour,
-                        borderColor: 'rgba(255, 0, 0, 0.5)',
+            // Fonction pour générer des données aléatoires basées sur l'heure
+            function generateHourlyData(baseData, variance) {
+                const hour = new Date().getHours();
+                const newData = [...baseData];
+                // Ajout d'une variation aléatoire pour l'heure actuelle
+                newData[hour] = Math.max(0, baseData[hour] + (Math.random() - 0.5) * variance);
+                return newData;
+            }
+
+            // Données de base
+            const togoBaseData = [0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 0.5, 1.8, 3.2, 4.5, 5.4, 5.8, 5.9, 5.7, 5.2, 4.3, 3.1, 1.9, 0.7, 0.2, 0.0, 0.0, 0.0, 0.0];
+            const worldBaseData = [0.0, 0.0, 0.0, 0.0, 0.0, 0.2, 0.8, 2.1, 3.8, 5.2, 6.1, 6.5, 6.7, 6.4, 5.8, 4.9, 3.7, 2.3, 1.1, 0.4, 0.1, 0.0, 0.0, 0.0];
+
+            // Configuration globale de Chart.js
+            Chart.defaults.font.family = "'Poppins', sans-serif";
+            Chart.defaults.font.size = 12;
+            Chart.defaults.color = '#666';
+
+            // Initialiser les graphiques
+            // Graphique de production journalière
+            const dailyProductionCtx = dailyProductionCanvas.getContext('2d');
+            const dailyProductionChart = new Chart(dailyProductionCtx, {
+                type: 'line',
+                data: {
+                    labels: ['00h', '01h', '02h', '03h', '04h', '05h', '06h', '07h', '08h', '09h', '10h', '11h', '12h', '13h', '14h', '15h', '16h', '17h', '18h', '19h', '20h', '21h', '22h', '23h'],
+                    datasets: [{
+                        label: 'Production Togo (kW)',
+                        data: togoBaseData,
+                        borderColor: '#FFA500',
+                        backgroundColor: 'rgba(255, 165, 0, 0.1)',
                         borderWidth: 2,
-                        label: {
-                            content: 'Heure actuelle',
-                            enabled: true
-                        }
-                    }
-                }
-            };
-            
-            // Mettre à jour le graphique
-            dailyProductionChart.update();
-            
-            // Afficher l'heure de la dernière mise à jour
-            const updateTime = document.getElementById('lastUpdate');
-            if (updateTime) {
-                updateTime.textContent = `Dernière mise à jour : ${currentHour}h${currentMinute.toString().padStart(2, '0')}`;
-            }
-        }
-
-        // Mettre à jour immédiatement et toutes les heures
-        updateChart();
-        setInterval(updateChart, 3600000); // 3600000 ms = 1 heure
-
-        // Mise à jour plus fréquente pour la démo (toutes les 30 secondes)
-        setInterval(() => {
-            const now = new Date();
-            if (now.getSeconds() === 0 || now.getSeconds() === 30) {
-                updateChart();
-            }
-        }, 1000);
-
-        // Données de base pour la comparaison Production vs Consommation
-        const productionBaseData = {
-            'Lundi': 28,
-            'Mardi': 32,
-            'Mercredi': 35,
-            'Jeudi': 27,
-            'Vendredi': 30,
-            'Samedi': 25,
-            'Dimanche': 22
-        };
-
-        const consommationBaseData = {
-            'Lundi': 22,
-            'Mardi': 24,
-            'Mercredi': 25,
-            'Jeudi': 26,
-            'Vendredi': 23,
-            'Samedi': 30,
-            'Dimanche': 28
-        };
-
-        // Fonction pour générer des variations aléatoires
-        function generateDailyVariation(baseValue, variance) {
-            return Math.max(0, baseValue + (Math.random() - 0.5) * variance);
-        }
-
-        // Fonction pour obtenir le jour de la semaine en français
-        function getFrenchDayOfWeek(date) {
-            const days = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
-            return days[date.getDay()];
-        }
-
-        // Graphique de comparaison production vs consommation
-        const comparisonCtx = document.getElementById('comparisonChart').getContext('2d');
-        const comparisonChart = new Chart(comparisonCtx, {
-            type: 'bar',
-            data: {
-                labels: Object.keys(productionBaseData),
-                datasets: [
-                    {
-                        label: 'Production (kWh)',
-                        data: Object.values(productionBaseData),
-                        backgroundColor: 'rgba(30, 136, 229, 0.8)',
+                        fill: true,
+                        tension: 0.4
                     },
                     {
-                        label: 'Consommation (kWh)',
-                        data: Object.values(consommationBaseData),
-                        backgroundColor: 'rgba(255, 152, 0, 0.8)',
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'top',
-                    },
-                    tooltip: {
-                        mode: 'index',
-                        intersect: false,
-                    }
+                        label: 'Moyenne Mondiale (kW)',
+                        data: worldBaseData,
+                        borderColor: '#0000FF',
+                        backgroundColor: 'rgba(0, 0, 255, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4
+                    }]
                 },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        title: {
-                            display: true,
-                            text: 'Énergie (kWh)'
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
                         }
                     },
-                    x: {
-                        title: {
-                            display: true,
-                            text: 'Jour'
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Puissance (kW)'
+                            },
+                            suggestedMax: 7
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Heure'
+                            }
                         }
+                    },
+                    interaction: {
+                        mode: 'nearest',
+                        axis: 'x',
+                        intersect: false
                     }
                 }
+            });
+
+            // Fonction de mise à jour du graphique
+            function updateChart() {
+                const currentHour = new Date().getHours();
+                const currentMinute = new Date().getMinutes();
+                
+                // Mettre à jour les données avec une variation aléatoire
+                dailyProductionChart.data.datasets[0].data = generateHourlyData(togoBaseData, 0.8);
+                dailyProductionChart.data.datasets[1].data = generateHourlyData(worldBaseData, 0.5);
+                
+                // Ajouter un indicateur visuel de l'heure actuelle
+                dailyProductionChart.options.plugins.annotation = {
+                    annotations: {
+                        currentTime: {
+                            type: 'line',
+                            xMin: currentHour,
+                            xMax: currentHour,
+                            borderColor: 'rgba(255, 0, 0, 0.5)',
+                            borderWidth: 2,
+                            label: {
+                                content: 'Heure actuelle',
+                                enabled: true
+                            }
+                        }
+                    }
+                };
+                
+                // Mettre à jour le graphique
+                dailyProductionChart.update();
+                
+                // Afficher l'heure de la dernière mise à jour
+                const updateTime = document.getElementById('lastUpdate');
+                if (updateTime) {
+                    updateTime.textContent = `Dernière mise à jour : ${currentHour}h${currentMinute.toString().padStart(2, '0')}`;
+                }
             }
+
+            // Mettre à jour immédiatement et toutes les heures
+            updateChart();
+            setInterval(updateChart, 3600000); // 3600000 ms = 1 heure
+
+            // Mise à jour plus fréquente pour la démo (toutes les 30 secondes)
+            setInterval(() => {
+                const now = new Date();
+                if (now.getSeconds() === 0 || now.getSeconds() === 30) {
+                    updateChart();
+                }
+            }, 1000);
+
+            // Données de base pour la comparaison Production vs Consommation
+            const productionBaseData = {
+                'Lundi': 28,
+                'Mardi': 32,
+                'Mercredi': 35,
+                'Jeudi': 27,
+                'Vendredi': 30,
+                'Samedi': 25,
+                'Dimanche': 22
+            };
+
+            const consommationBaseData = {
+                'Lundi': 22,
+                'Mardi': 24,
+                'Mercredi': 25,
+                'Jeudi': 26,
+                'Vendredi': 23,
+                'Samedi': 30,
+                'Dimanche': 28
+            };
+
+            // Fonction pour générer des variations aléatoires
+            function generateDailyVariation(baseValue, variance) {
+                return Math.max(0, baseValue + (Math.random() - 0.5) * variance);
+            }
+
+            // Fonction pour obtenir le jour de la semaine en français
+            function getFrenchDayOfWeek(date) {
+                const days = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
+                return days[date.getDay()];
+            }
+
+            // Graphique de comparaison production vs consommation
+            const comparisonCtx = comparisonCanvas.getContext('2d');
+            const comparisonChart = new Chart(comparisonCtx, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(productionBaseData),
+                    datasets: [
+                        {
+                            label: 'Production (kWh)',
+                            data: Object.values(productionBaseData),
+                            backgroundColor: 'rgba(30, 136, 229, 0.8)',
+                        },
+                        {
+                            label: 'Consommation (kWh)',
+                            data: Object.values(consommationBaseData),
+                            backgroundColor: 'rgba(255, 152, 0, 0.8)',
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Énergie (kWh)'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Jour'
+                            }
+                        }
+                    }
+                });
+
+            // Fonction de mise à jour du graphique de comparaison
+            function updateComparisonChart() {
+                const currentDay = getFrenchDayOfWeek(new Date());
+                const currentHour = new Date().getHours();
+                const currentMinute = new Date().getMinutes();
+
+                // Mettre à jour les données avec des variations
+                comparisonChart.data.datasets[0].data = Object.keys(productionBaseData).map(day => {
+                    const baseValue = productionBaseData[day];
+                    return day === currentDay ? generateDailyVariation(baseValue, 6) : baseValue;
+                });
+
+                comparisonChart.data.datasets[1].data = Object.keys(consommationBaseData).map(day => {
+                    const baseValue = consommationBaseData[day];
+                    return day === currentDay ? generateDailyVariation(baseValue, 4) : baseValue;
+                });
+
+                // Mettre en évidence le jour actuel
+                comparisonChart.data.datasets.forEach(dataset => {
+                    dataset.backgroundColor = Object.keys(productionBaseData).map(day => 
+                        day === currentDay 
+                            ? (dataset.label.includes('Production') ? 'rgba(30, 136, 229, 1)' : 'rgba(255, 152, 0, 1)')
+                            : (dataset.label.includes('Production') ? 'rgba(30, 136, 229, 0.6)' : 'rgba(255, 152, 0, 0.6)')
+                    );
+                });
+
+                // Mettre à jour le graphique
+                comparisonChart.update();
+
+                // Afficher l'heure de la dernière mise à jour
+                const updateTimeComparison = document.getElementById('lastUpdateComparison');
+                if (updateTimeComparison) {
+                    updateTimeComparison.textContent = `Dernière mise à jour : ${currentHour}h${currentMinute.toString().padStart(2, '0')}`;
+                }
+            }
+
+            // Mettre à jour immédiatement et toutes les heures
+            updateComparisonChart();
+            setInterval(updateComparisonChart, 3600000); // 3600000 ms = 1 heure
+
+            // Mise à jour plus fréquente pour la démo (toutes les 30 secondes)
+            setInterval(() => {
+                const now = new Date();
+                if (now.getSeconds() === 0 || now.getSeconds() === 30) {
+                    updateComparisonChart();
+                }
+            }, 1000);
+
+            // Graphique de performance mensuelle
+            const monthlyPerformanceCtx = monthlyPerformanceCanvas.getContext('2d');
+            const monthlyPerformanceChart = new Chart(monthlyPerformanceCtx, {
+                type: 'radar',
+                data: {
+                    labels: ['Production', 'Efficacité', 'Maintenance', 'Météo', 'Rendement'],
+                    datasets: [{
+                        label: 'Performance',
+                        data: [85, 90, 75, 80, 88],
+                        backgroundColor: 'rgba(30, 136, 229, 0.2)',
+                        borderColor: '#1e88e5',
+                        borderWidth: 2,
+                        pointBackgroundColor: '#1e88e5',
+                        pointBorderColor: '#fff',
+                        pointHoverRadius: 5,
+                        pointHoverBackgroundColor: '#1e88e5',
+                        pointHoverBorderColor: '#fff',
+                        pointHitRadius: 10,
+                        pointBorderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    },
+                    scales: {
+                        r: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                stepSize: 20
+                            }
+                        }
+                    }
+                });
         });
 
-        // Fonction de mise à jour du graphique de comparaison
-        function updateComparisonChart() {
-            const currentDay = getFrenchDayOfWeek(new Date());
-            const currentHour = new Date().getHours();
-            const currentMinute = new Date().getMinutes();
-
-            // Mettre à jour les données avec des variations
-            comparisonChart.data.datasets[0].data = Object.keys(productionBaseData).map(day => {
-                const baseValue = productionBaseData[day];
-                return day === currentDay ? generateDailyVariation(baseValue, 6) : baseValue;
-            });
-
-            comparisonChart.data.datasets[1].data = Object.keys(consommationBaseData).map(day => {
-                const baseValue = consommationBaseData[day];
-                return day === currentDay ? generateDailyVariation(baseValue, 4) : baseValue;
-            });
-
-            // Mettre en évidence le jour actuel
-            comparisonChart.data.datasets.forEach(dataset => {
-                dataset.backgroundColor = Object.keys(productionBaseData).map(day => 
-                    day === currentDay 
-                        ? (dataset.label.includes('Production') ? 'rgba(30, 136, 229, 1)' : 'rgba(255, 152, 0, 1)')
-                        : (dataset.label.includes('Production') ? 'rgba(30, 136, 229, 0.6)' : 'rgba(255, 152, 0, 0.6)')
-                );
-            });
-
-            // Mettre à jour le graphique
-            comparisonChart.update();
-
-            // Afficher l'heure de la dernière mise à jour
-            const updateTimeComparison = document.getElementById('lastUpdateComparison');
-            if (updateTimeComparison) {
-                updateTimeComparison.textContent = `Dernière mise à jour : ${currentHour}h${currentMinute.toString().padStart(2, '0')}`;
+    </script>        <!-- Scripts pour les graphiques -->
+    <script>
+        // Attendre que le DOM soit chargé
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof Chart === 'undefined') {
+                console.error('Chart.js n\'est pas chargé');
+                return;
             }
-        }
 
-        // Mettre à jour immédiatement et toutes les heures
-        updateComparisonChart();
-        setInterval(updateComparisonChart, 3600000); // 3600000 ms = 1 heure
-
-        // Mise à jour plus fréquente pour la démo (toutes les 30 secondes)
-        setInterval(() => {
-            const now = new Date();
-            if (now.getSeconds() === 0 || now.getSeconds() === 30) {
-                updateComparisonChart();
-            }
-        }, 1000);
-
-        // Graphique de performance mensuelle
-        const monthlyPerformanceCtx = document.getElementById('monthlyPerformanceChart').getContext('2d');
-        const monthlyPerformanceChart = new Chart(monthlyPerformanceCtx, {
-            type: 'radar',
-            data: {
-                labels: ['Production', 'Efficacité', 'Maintenance', 'Météo', 'Rendement'],
-                datasets: [{
-                    label: 'Performance',
-                    data: [85, 90, 75, 80, 88],
-                    backgroundColor: 'rgba(30, 136, 229, 0.2)',
-                    borderColor: '#1e88e5',
-                    borderWidth: 2,
-                    pointBackgroundColor: '#1e88e5',
-                    pointBorderColor: '#fff',
-                    pointHoverRadius: 5,
-                    pointHoverBackgroundColor: '#1e88e5',
-                    pointHoverBorderColor: '#fff',
-                    pointHitRadius: 10,
-                    pointBorderWidth: 2
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'top',
-                    }
-                },
-                scales: {
-                    r: {
-                        beginAtZero: true,
-                        max: 100,
-                        ticks: {
-                            stepSize: 20
-                        }
-                    }
-                }
-            }
+            // Initialiser les graphiques
+            initializeCharts();
+            
+            // Mettre à jour les graphiques périodiquement
+            setInterval(updateCharts, 30000);
         });
     </script>
+
+        <!-- Bouton WhatsApp flottant -->
+        <a href="https://wa.me/+22897734381" class="whatsapp-float" target="_blank" rel="noopener noreferrer">
+            <i class="fab fa-whatsapp"></i>
+        </a>
+
+        <style>
+            .whatsapp-float {
+                position: fixed;
+            bottom: 40px;
+            right: 40px;
+            background-color: #25d366;
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            text-align: center;
+            font-size: 30px;
+            box-shadow: 2px 2px 3px rgba(0,0,0,0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+
+        .whatsapp-float:hover {
+            background-color: #128C7E;
+            color: white;
+            transform: scale(1.1);
+        }
+    </style>
 </x-app-layout>

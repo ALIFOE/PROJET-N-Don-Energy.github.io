@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\HasCurrency;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
 {
-    use HasFactory;
+    use HasFactory, HasCurrency;
 
     protected $fillable = [
         'product_id',
@@ -26,6 +27,13 @@ class Order extends Model
         'total_price' => 'decimal:2',
         'quantity' => 'integer',
     ];
+
+    protected $appends = ['formatted_total_price'];
+
+    public function getFormattedTotalPriceAttribute()
+    {
+        return self::formatAmount($this->total_price);
+    }
 
     public function user()
     {

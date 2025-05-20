@@ -13,12 +13,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tarif_electricites', function (Blueprint $table) {
-            $table->id();
+        Schema::create('tarif_electricites', function (Blueprint $table) {            $table->id();
             $table->string('fournisseur');
             $table->string('offre');
-            $table->float('prix_kwh')->comment('en euros');
-            $table->float('prix_abonnement')->comment('en euros/mois');
+            $table->float('prix_kwh')->comment('en FCFA');
+            $table->float('prix_abonnement')->comment('en FCFA/mois');
             $table->date('date_debut');
             $table->date('date_fin')->nullable();
             $table->string('statut')->default('actif');

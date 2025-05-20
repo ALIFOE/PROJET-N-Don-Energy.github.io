@@ -1,7 +1,7 @@
 @component('mail::message')
 # Nouvelle Commande
 
-Une nouvelle commande a été passée sur NE DON ENERGY.
+Une nouvelle commande a été passée sur CREFER.
 
 **Détails de la commande :**
 - Numéro de commande : {{ $order->id }}

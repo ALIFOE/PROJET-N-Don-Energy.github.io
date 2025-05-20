@@ -38,10 +38,8 @@
                                     <p class="mb-1"><span class="font-medium">Adresse :</span> {{ $order->customer_address }}</p>
                                 </div>
                             </div>
-                        </div>
-
-                        <div class="flex justify-center space-x-4">
-                            <a href="{{ route('market-place') }}" class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700">
+                        </div>                        <div class="flex justify-center space-x-4">
+                            <a href="{{ route('marketplace') }}" class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700">
                                 Retour à la boutique
                             </a>
                             <a href="{{ route('home') }}" class="bg-gray-600 text-white px-6 py-2 rounded-md hover:bg-gray-700">

@@ -127,23 +127,21 @@ class FormationController extends Controller
             ->paginate(10);
             
         return view('admin.formations.inscriptions', compact('inscriptions'));
-    }
-
-    public function destroyInscription(FormationInscription $inscription)
+    }    public function destroyInscription(FormationInscription $inscription)
     {
         // Supprimer les fichiers associés
         if ($inscription->acte_naissance_path) {
-            Storage::delete($inscription->acte_naissance_path);
+            Storage::disk('public')->delete($inscription->acte_naissance_path);
         }
         if ($inscription->cni_path) {
-            Storage::delete($inscription->cni_path);
+            Storage::disk('public')->delete($inscription->cni_path);
         }
         if ($inscription->diplome_path) {
-            Storage::delete($inscription->diplome_path);
+            Storage::disk('public')->delete($inscription->diplome_path);
         }
         if ($inscription->autres_documents_paths) {
             foreach ($inscription->autres_documents_paths as $path) {
-                Storage::delete($path);
+                Storage::disk('public')->delete($path);
             }
         }
 
