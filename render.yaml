@@ -1,14 +1,16 @@
 services:
   - type: web
     name: don-energy    env: php
+    runtime: php
     buildCommand: |
+      mkdir -p storage/framework/{sessions,views,cache} &&
       composer install --no-dev --optimize-autoloader &&
       npm install &&
       npm run build &&
-      php artisan config:cache &&
-      php artisan route:cache &&
-      php artisan view:cache
-    startCommand: bash -c "php artisan migrate --force && vendor/bin/heroku-php-apache2 public/"
+      cp .env.example .env &&
+      php artisan key:generate &&
+      chmod -R 777 storage bootstrap/cache
+    startCommand: bash -c "php artisan storage:link && php artisan migrate --force && vendor/bin/heroku-php-apache2 public/"
     envVars:
       - key: APP_ENV
         value: production
