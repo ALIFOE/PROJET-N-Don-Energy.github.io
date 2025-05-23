@@ -10,7 +10,7 @@ services:
       cp .env.example .env &&
       php artisan key:generate &&
       chmod -R 777 storage bootstrap/cache
-    startCommand: bash -c "php artisan storage:link && php artisan migrate --force && vendor/bin/heroku-php-apache2 public/"
+    startCommand: bash -c "php artisan storage:link && php artisan migrate --force && php -S 0.0.0.0:$PORT -t public"
     envVars:
       - key: APP_ENV
         value: production
