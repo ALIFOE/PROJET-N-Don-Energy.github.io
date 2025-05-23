@@ -1,7 +1,7 @@
 services:
   - type: web
-    name: don-energy
-    env: php    buildCommand: |      mkdir -p storage/framework/{sessions,views,cache} &&
+    name: crefer-togo
+    env: phpbuildCommand: |      mkdir -p storage/framework/{sessions,views,cache} &&
       mkdir -p public/storage &&
       composer install --no-dev --optimize-autoloader &&
       npm ci &&

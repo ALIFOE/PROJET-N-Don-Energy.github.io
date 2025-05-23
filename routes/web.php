@@ -311,4 +311,9 @@ Route::get('/ia-services', function () {
     return view('ia-services');
 })->name('ia-services');
 
+// Health check route
+Route::get('/healthz', function() {
+    return response('OK', 200);
+});
+
 require __DIR__.'/auth.php';
