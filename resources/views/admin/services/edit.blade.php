@@ -4,9 +4,9 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
             <div class="p-6">
-                    <h1 class="text-3xl font-bold text-gray-800 mb-6">Modifier le service</h1>
+                <h1 class="text-3xl font-bold text-gray-800 mb-6">Modifier le service</h1>
 
-                    <form action="{{ route('admin.services.update', $service) }}" method="POST" class="max-w-2xl" enctype="multipart/form-data">
+                <form action="{{ route('admin.services.update', $service) }}" method="POST" class="max-w-2xl" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
                         
@@ -47,12 +47,10 @@
                             <div class="flex items-center justify-end mt-4">
                                 <button type="submit" class="inline-flex items-center px-4 py-2 bg-orange-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-orange-600 active:bg-orange-700 focus:outline-none focus:border-orange-700 focus:ring ring-orange-300 disabled:opacity-25 transition ease-in-out duration-150">
                                     Mettre à jour le service
-                                </button>
-                            </div>
+                                </button>                            </div>
                         </div>
                     </form>
-                </div>
             </div>
         </div>
     </div>
-</x-app-layout>
+@endsection

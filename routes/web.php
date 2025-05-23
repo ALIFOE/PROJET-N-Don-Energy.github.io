@@ -36,6 +36,7 @@ use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\RapportsController;
 use App\Http\Controllers\Admin\ServiceRequestController;
 use App\Http\Controllers\CommandeController;
+use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 
 // Routes publiques
 Route::get('/', function () {
@@ -108,7 +109,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
         ->name('services.reset-quota');
 
     Route::resource('users', \App\Http\Controllers\Admin\UserController::class);    Route::resource('functionalities', FunctionalityController::class);    Route::resource('devis', \App\Http\Controllers\Admin\DevisController::class);
-    Route::get('/devis/download-pdf/{id}', [\App\Http\Controllers\Admin\DevisController::class, 'downloadPdf'])->name('devis.download-pdf');    Route::resource('orders', \AppHttp\Controllers\Admin\OrderController::class);
+    Route::get('/devis/download-pdf/{id}', [\App\Http\Controllers\Admin\DevisController::class, 'downloadPdf'])->name('devis.download-pdf');    Route::resource('orders', \App\Http\Controllers\Admin\OrderController::class);
     Route::put('/orders/{order}/update-status', [\App\Http\Controllers\Admin\OrderController::class, 'updateStatus'])
         ->name('orders.update-status');  // Le nom de la route inclut déjà le préfixe 'admin.' du groupe
       Route::get('formations/{formation}/flyer', [AdminFormationController::class, 'downloadFlyer'])->name('formations.flyer.download');
