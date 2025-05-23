@@ -1,16 +1,17 @@
 services:
   - type: web
-    name: crefer-togo
-    env: phpbuildCommand: |      mkdir -p storage/framework/{sessions,views,cache} &&
-      mkdir -p public/storage &&
+    name: crefer-togo    env: php    buildCommand: |
       composer install --no-dev --optimize-autoloader &&
       npm ci &&
       npm run build &&
       cp env.production .env &&
+      mkdir -p storage/framework/{sessions,views,cache} storage/app/public &&
+      php artisan storage:link &&
       php artisan key:generate &&
       chmod +x post-build.sh &&
       ./post-build.sh
-    startCommand: php artisan serve --host=0.0.0.0 --port=$PORT
+    startCommand: |
+      php -S 0.0.0.0:$PORT -t public
     envVars:
       - key: APP_ENV
         value: production
