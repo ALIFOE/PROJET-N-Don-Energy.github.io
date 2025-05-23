@@ -2,15 +2,18 @@ services:
   - type: web
     name: don-energy
     env: php
-    buildCommand: |
-      mkdir -p storage/framework/{sessions,views,cache} &&
+    buildCommand: |      mkdir -p storage/framework/{sessions,views,cache} &&
       composer install --no-dev --optimize-autoloader &&
-      npm install &&
+      php artisan storage:link &&
+      npm ci &&
       npm run build &&
-      cp .env.example .env &&
+      cp env.production .env &&
       php artisan key:generate &&
+      php artisan config:cache &&
+      php artisan route:cache &&
+      php artisan view:cache &&
       chmod -R 777 storage bootstrap/cache
-    startCommand: chmod +x start.sh && ./start.sh
+    startCommand: php artisan serve --host=0.0.0.0 --port=$PORT
     envVars:
       - key: APP_ENV
         value: production
