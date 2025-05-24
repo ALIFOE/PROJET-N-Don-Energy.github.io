@@ -1,16 +1,19 @@
 services:
   - type: web
     name: ne-don-energy
-    env: php
-    buildCommand: |
-      # Préparation de l'environnement
-      export PATH="/usr/local/bin:$PATH"
-      export COMPOSER_ALLOW_SUPERUSER=1
-      export COMPOSER_HOME="/tmp/composer"
-      # Donner les permissions d'exécution au script
-      chmod +x build.sh
-      # Exécuter le script
-      ./build.sh
+    env: docker
+    dockerfilePath: Dockerfile
+    region: frankfurt
+    plan: free
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: false
+      - key: COMPOSER_ALLOW_SUPERUSER
+        value: 1
+      - key: NODE_ENV
+        value: production
     envVars:
       - key: APP_ENV
         value: production
