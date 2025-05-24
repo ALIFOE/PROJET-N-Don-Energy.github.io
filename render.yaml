@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: ne-don-energy
+    env: php
+    buildCommand: chmod +x build.sh && ./build.sh
+    startCommand: heroku-php-apache2 public/
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: false
+      - key: COMPOSER_MEMORY_LIMIT
+        value: -1
+      - key: COMPOSER_ALLOW_SUPERUSER
+        value: 1
+      - key: NODE_ENV
+        value: production

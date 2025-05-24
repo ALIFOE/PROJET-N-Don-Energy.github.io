@@ -1,7 +1,14 @@
 #!/bin/bash
 set -e
 
+# Ensure we're in the project directory
+cd "${0%/*}"
+
+# Add Composer's vendor bin to PATH
+export PATH="$PATH:vendor/bin"
+
 echo "🔍 Checking PHP version..."
+which php
 php -v
 
 echo "📦 Installing PHP dependencies..."
