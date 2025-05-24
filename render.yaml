@@ -3,10 +3,14 @@ services:
     name: ne-don-energy
     env: php
     buildCommand: |
+      # Préparation de l'environnement
+      export PATH="/usr/local/bin:$PATH"
+      export COMPOSER_ALLOW_SUPERUSER=1
+      export COMPOSER_HOME="/tmp/composer"
       # Donner les permissions d'exécution au script
       chmod +x build.sh
-      # Exécuter avec sudo pour avoir les permissions nécessaires
-      sudo ./build.sh
+      # Exécuter le script
+      ./build.sh
     envVars:
       - key: APP_ENV
         value: production

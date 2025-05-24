@@ -6,8 +6,15 @@ cd "${BASH_SOURCE%/*}" || exit
 
 # Installation de PHP et ses dépendances
 echo "🔧 Installing PHP and dependencies..."
-sudo apt-get update
-sudo apt-get install -y php8.0-cli php8.0-common php8.0-mysql php8.0-zip php8.0-gd php8.0-mbstring php8.0-curl php8.0-xml php8.0-bcmath
+apt-get update || { echo "Failed to update package list"; exit 1; }
+apt-get install -y php8.0-cli php8.0-common php8.0-mysql php8.0-zip php8.0-gd php8.0-mbstring php8.0-curl php8.0-xml php8.0-bcmath || {
+    echo "Failed to install PHP. Trying alternative method..."
+    curl -o php-setup.sh https://packages.sury.org/php/apt.gpg
+    apt-key add php-setup.sh
+    echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/php.list
+    apt-get update
+    apt-get install -y php8.0-cli php8.0-common php8.0-mysql php8.0-zip php8.0-gd php8.0-mbstring php8.0-curl php8.0-xml php8.0-bcmath
+}
 
 # Installation de Composer si nécessaire
 if ! [ -x "$(command -v composer)" ]; then
@@ -22,9 +29,17 @@ if ! [ -x "$(command -v composer)" ]; then
         exit 1
     fi
 
-    sudo php composer-setup.php --install-dir=/usr/local/bin --filename=composer
+    php composer-setup.php --install-dir=/usr/local/bin --filename=composer || {
+        echo "Failed to install Composer in /usr/local/bin, trying alternate location..."
+        mkdir -p "$HOME/bin"
+        php composer-setup.php --install-dir="$HOME/bin" --filename=composer
+        export PATH="$HOME/bin:$PATH"
+    }
     rm composer-setup.php
 fi
+
+# Vérifier que composer est dans le PATH
+export PATH="/usr/local/bin:$HOME/bin:$PATH"
 
 echo "🔍 Checking system..."
 php -v || echo "PHP not installed"
