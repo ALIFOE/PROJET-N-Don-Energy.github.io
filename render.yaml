@@ -1,8 +1,12 @@
 services:
   - type: web
     name: ne-don-energy
-    env: docker
-    dockerfilePath: ./Dockerfile
+    env: php
+    buildCommand: |
+      # Donner les permissions d'exécution au script
+      chmod +x build.sh
+      # Exécuter avec sudo pour avoir les permissions nécessaires
+      sudo ./build.sh
     envVars:
       - key: APP_ENV
         value: production

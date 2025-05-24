@@ -4,11 +4,33 @@ set -e
 echo "📂 Setting up project..."
 cd "${BASH_SOURCE%/*}" || exit
 
+# Installation de PHP et ses dépendances
+echo "🔧 Installing PHP and dependencies..."
+sudo apt-get update
+sudo apt-get install -y php8.0-cli php8.0-common php8.0-mysql php8.0-zip php8.0-gd php8.0-mbstring php8.0-curl php8.0-xml php8.0-bcmath
+
+# Installation de Composer si nécessaire
+if ! [ -x "$(command -v composer)" ]; then
+    echo "📥 Installing Composer..."
+    EXPECTED_CHECKSUM="$(php -r 'copy("https://composer.github.io/installer.sig", "php://stdout");')"
+    php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+    ACTUAL_CHECKSUM="$(php -r "echo hash_file('sha384', 'composer-setup.php');")"
+
+    if [ "$EXPECTED_CHECKSUM" != "$ACTUAL_CHECKSUM" ]; then
+        >&2 echo 'ERROR: Invalid installer checksum'
+        rm composer-setup.php
+        exit 1
+    fi
+
+    sudo php composer-setup.php --install-dir=/usr/local/bin --filename=composer
+    rm composer-setup.php
+fi
+
 echo "🔍 Checking system..."
-php --version
-composer --version
-node --version
-npm --version
+php -v || echo "PHP not installed"
+composer -V || echo "Composer not installed"
+node -v || echo "Node not installed"
+npm -v || echo "NPM not installed"
 
 echo "📦 Installing Composer dependencies..."
 composer install --no-dev --optimize-autoloader --no-interaction
