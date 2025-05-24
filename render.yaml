@@ -1,25 +1,17 @@
 services:
   - type: web
     name: ne-don-energy
-    env: php
-    buildCommand: |
-      # Installation de PHP et des extensions nécessaires
-      curl -sSL https://packages.sury.org/php/README.txt | sudo bash -x
-      apt-get update
-      apt-get install -y php8.0-cli php8.0-common php8.0-fpm php8.0-mysql \
-        php8.0-zip php8.0-gd php8.0-mbstring php8.0-curl php8.0-xml php8.0-bcmath \
-        unzip git curl
-
-      # Installation de Composer
-      curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-
-      # Vérification des installations
-      php -v
-      composer --version
-
-      # Exécution du script de build
-      chmod +x build.sh 
-      ./build.sh
+    env: docker
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: false
+      - key: COMPOSER_MEMORY_LIMIT
+        value: -1
+      - key: COMPOSER_ALLOW_SUPERUSER
+        value: 1
     startCommand: vendor/bin/heroku-php-apache2 -C apache2-render-config.conf public/
     envVars:
       - key: APP_ENV
