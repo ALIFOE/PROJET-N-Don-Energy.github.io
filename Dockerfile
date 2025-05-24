@@ -1,7 +1,14 @@
 FROM php:8.0-apache
 
-# Installation des dépendances système
-RUN apt-get update && apt-get install -y \
+# Création des répertoires nécessaires
+RUN mkdir -p /var/lib/apt/lists/partial
+
+# Installation des dépendances système avec gestion des erreurs
+RUN set -e; \
+    mkdir -p /var/lib/apt/lists/partial && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* && \
+    apt-get update && apt-get install -y \
     git \
     curl \
     libpng-dev \
@@ -18,7 +25,7 @@ RUN curl -fsSL https://deb.nodesource.com/setup_16.x | bash - && \
 RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
 
 # Installation de Composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 
 # Configuration d'Apache
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
@@ -30,12 +37,16 @@ RUN a2enmod rewrite
 WORKDIR /var/www/html
 COPY . /var/www/html
 
-# Installation des dépendances
-RUN composer install --no-dev --optimize-autoloader --no-interaction
-RUN npm install && npm run build
+# Installation des dépendances avec des permissions appropriées
+RUN set -e; \
+    composer install --no-dev --optimize-autoloader --no-interaction && \
+    npm install && npm run build && \
+    chown -R www-data:www-data /var/www/html
 
-# Permissions
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+# Permissions avec gestion des erreurs
+RUN set -e; \
+    chmod -R 755 /var/www/html/storage /var/www/html/bootstrap/cache && \
+    chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
 # Optimisations Laravel
 RUN php artisan config:cache && \
