@@ -1,52 +1,59 @@
-# Utiliser une image de base plus légère
-FROM php:8.0-apache-slim-bullseye
+# Utiliser une image Alpine pour éviter les problèmes de système de fichiers
+FROM php:8.0-fpm-alpine3.14
 
-# Installation des extensions PHP nécessaires
+# Installation des dépendances essentielles
+RUN apk add --no-cache \
+    apache2 \
+    apache2-proxy \
+    apache2-ssl \
+    nodejs \
+    npm \
+    git \
+    libpng-dev \
+    zip \
+    unzip \
+    && rm -rf /var/cache/apk/*
+
+# Installation des extensions PHP
 RUN docker-php-ext-install pdo_mysql bcmath
 
-# Installation des dépendances système requises sans utiliser apt
+# Installation de Composer
 COPY --from=composer:2.5 /usr/bin/composer /usr/bin/composer
-COPY --from=node:16-bullseye-slim /usr/local/bin/node /usr/local/bin/node
-COPY --from=node:16-bullseye-slim /usr/local/lib/node_modules /usr/local/lib/node_modules
 
-# Configuration de npm
-RUN ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm
-
-# Configuration d'Apache
-ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
-RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf && \
-    sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf && \
-    a2enmod rewrite
-
-# Préparation du répertoire de travail
+# Configuration
 WORKDIR /var/www/html
 
-# Configuration de Composer
+# Copie des fichiers de configuration
+COPY docker/apache.conf /etc/apache2/conf.d/custom.conf
+COPY docker/start.sh /start.sh
+RUN chmod +x /start.sh
+
+# Configuration de l'environnement
 ENV COMPOSER_ALLOW_SUPERUSER=1
 ENV COMPOSER_NO_INTERACTION=1
 ENV COMPOSER_MEMORY_LIMIT=-1
 
-# Copie des fichiers de configuration
+# Copie des fichiers de dépendances
 COPY composer.* ./
 COPY package*.json ./
 
 # Installation des dépendances
 RUN composer install --no-dev --no-scripts --no-autoloader --prefer-dist
-RUN npm ci --production
+RUN npm ci --production --no-audit
 
-# Copie du reste des fichiers
+# Copie de l'application
 COPY . .
 
-# Finalisation de l'installation
-RUN set -e; \
-    composer dump-autoload --optimize --classmap-authoritative; \
-    npm run build; \
-    php artisan config:cache; \
-    php artisan route:cache; \
-    php artisan view:cache; \
-    chown -R www-data:www-data storage bootstrap/cache; \
-    chmod -R 775 storage bootstrap/cache
+# Finalisation
+RUN composer dump-autoload --optimize --classmap-authoritative && \
+    npm run build && \
+    php artisan config:cache && \
+    php artisan route:cache && \
+    php artisan view:cache && \
+    chown -R apache:apache storage bootstrap/cache && \
+    chmod -R 775 storage bootstrap/cache && \
+    mkdir -p /run/apache2
 
 EXPOSE 80
 
-CMD ["apache2-foreground"]
+CMD ["/start.sh"]
