@@ -2,8 +2,17 @@ services:
   - type: web
     name: ne-don-energy
     env: php
-    buildCommand: chmod +x build.sh && ./build.sh
-    startCommand: heroku-php-apache2 public/
+    buildCommand: |
+      apt-get update && apt-get install -y \
+        php-cli \
+        php-fpm \
+        php-mbstring \
+        php-xml \
+        php-zip \
+        unzip
+      chmod +x build.sh 
+      ./build.sh
+    startCommand: vendor/bin/heroku-php-apache2 -C apache2-render-config.conf public/
     envVars:
       - key: APP_ENV
         value: production
@@ -13,5 +22,17 @@ services:
         value: -1
       - key: COMPOSER_ALLOW_SUPERUSER
         value: 1
+      - key: PHP_VERSION
+        value: 8.0.2
       - key: NODE_ENV
         value: production
+    healthCheckPath: /
+    buildFilter:
+      paths:
+        - app/**/*.php
+        - config/**/*.php
+        - public/**/*
+        - resources/**/*
+        - routes/**/*.php
+        - composer.*
+        - package.json

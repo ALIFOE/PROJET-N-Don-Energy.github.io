@@ -1,15 +1,23 @@
 #!/bin/bash
 set -e
 
-# Ensure we're in the project directory
-cd "${0%/*}"
+echo "📂 Setting up project..."
+cd "${BASH_SOURCE%/*}" || exit
 
-# Add Composer's vendor bin to PATH
-export PATH="$PATH:vendor/bin"
+# Configuration PHP
+echo "🔧 PHP Configuration..."
+export PATH="/usr/local/bin:$PATH"
+export PATH="$HOME/.php/bin:$PATH"
+export PATH="$HOME/.composer/vendor/bin:$PATH"
 
-echo "🔍 Checking PHP version..."
-which php
-php -v
+if ! command -v php &> /dev/null; then
+    echo "❌ PHP not found. Using alternative path..."
+    export PATH="/opt/php/bin:$PATH"
+fi
+
+echo "🔍 PHP Location and Version:"
+which php || echo "PHP not found in PATH"
+php -v || echo "Cannot get PHP version"
 
 echo "📦 Installing PHP dependencies..."
 COMPOSER_MEMORY_LIMIT=-1 composer install --no-dev --optimize-autoloader --no-interaction
