@@ -5,6 +5,7 @@ services:
     dockerfilePath: Dockerfile
     region: frankfurt
     plan: free
+    buildCommand: docker build --build-arg BUILDKIT_INLINE_CACHE=1 .
     envVars:
       - key: APP_ENV
         value: production
@@ -12,31 +13,14 @@ services:
         value: false
       - key: COMPOSER_ALLOW_SUPERUSER
         value: 1
-      - key: NODE_ENV
-        value: production
-    envVars:
-      - key: APP_ENV
-        value: production
-      - key: APP_DEBUG
-        value: false
       - key: COMPOSER_MEMORY_LIMIT
         value: -1
-      - key: COMPOSER_ALLOW_SUPERUSER
-        value: 1
-    startCommand: vendor/bin/heroku-php-apache2 -C apache2-render-config.conf public/
-    envVars:
-      - key: APP_ENV
-        value: production
-      - key: APP_DEBUG
-        value: false
-      - key: COMPOSER_MEMORY_LIMIT
-        value: -1
-      - key: COMPOSER_ALLOW_SUPERUSER
-        value: 1
       - key: PHP_VERSION
         value: 8.0.2
       - key: NODE_ENV
         value: production
+      - key: DOCKER_BUILDKIT
+        value: 1
     healthCheckPath: /
     buildFilter:
       paths:
