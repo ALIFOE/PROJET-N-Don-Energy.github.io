@@ -7,6 +7,7 @@ use App\Http\Controllers\DimensionnementIAController;
 use App\Http\Controllers\AnalyseProductionIAController;
 use App\Http\Controllers\MeteoIAController;
 use App\Http\Controllers\RealtimeDataController;
+use App\Http\Controllers\Admin\RealtimeProductionController;
 
 // Routes IA avec authentification API
 Route::middleware('api.auth')->group(function () {
@@ -59,4 +60,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Route pour les données de production et consommation en temps réel
     Route::get('/realtime-production', [RealtimeDataController::class, 'production']);
+});
+
+Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function () {
+    Route::get('/realtime-production', [RealtimeProductionController::class, 'getData']);
 });

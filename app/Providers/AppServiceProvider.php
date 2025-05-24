@@ -35,5 +35,6 @@ class AppServiceProvider extends ServiceProvider
         \Illuminate\Support\Facades\Blade::component('admin-layout', \App\View\Components\AdminLayout::class);
         Blade::component('admin.stats-card', StatsCard::class);
         Blade::component('admin.action-card', ActionCard::class);
+        Blade::component('logout-form', \App\View\Components\LogoutForm::class);
     }
 }

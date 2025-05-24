@@ -2,8 +2,45 @@ import Chart from 'chart.js/auto';
 
 // Fonction pour récupérer les données de l'API Laravel
 async function fetchRealtimeData() {
-    const response = await fetch('/api/realtime-production');
-    return await response.json();
+    try {
+        // Vérifier si le token CSRF est disponible
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+        if (!csrfToken) {
+            console.error('Token CSRF non trouvé dans le document');
+        }
+
+        const response = await fetch('/api/admin/realtime-production', {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken
+            },
+            credentials: 'same-origin'
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => null);
+            throw new Error(
+                `Erreur HTTP ${response.status}: ${response.statusText}\n` +
+                `Message: ${errorData?.message || 'Aucun détail disponible'}`
+            );
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error('Erreur détaillée lors de la récupération des données:', {
+            message: error.message,
+            stack: error.stack,
+            token: !!document.querySelector('meta[name="csrf-token"]')
+        });
+        return {
+            labels: [],
+            production: [],
+            consommation: []
+        };
+    }
 }
 
 // Fonction pour afficher le graphique
