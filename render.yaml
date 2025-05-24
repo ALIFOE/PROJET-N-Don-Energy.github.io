@@ -1,6 +1,8 @@
 services:
   - type: web
-    name: crefer-togo    env: php    buildCommand: |
+    name: crefer-togo
+    env: php
+    buildCommand: |
       composer install --no-dev --optimize-autoloader &&
       npm ci &&
       npm run build &&
