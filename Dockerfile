@@ -13,40 +13,44 @@ COPY . .
 RUN npm run build
 
 # Stage 3: Final image
-FROM php:8.0-apache-buster
+FROM bitnami/php-fpm:8.0 AS builder
 
-# Copie des fichiers nécessaires du builder
-COPY --from=vendor /app/vendor /var/www/html/vendor
-COPY --from=node /app/public/build /var/www/html/public/build
-COPY --from=node /app/public/js /var/www/html/public/js
-COPY --from=node /app/public/css /var/www/html/public/css
+# Pas besoin d'apt-get, l'image Bitnami inclut déjà les outils nécessaires
+COPY --from=composer:2.5 /usr/bin/composer /usr/bin/composer
+COPY --from=node:16-alpine /usr/local/bin/node /usr/local/bin/node
+COPY --from=node:16-alpine /usr/local/lib/node_modules /usr/local/lib/node_modules
+RUN ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm
 
-# Installation des extensions PHP uniquement
-RUN docker-php-ext-install pdo_mysql bcmath
+WORKDIR /app
 
-# Configuration d'Apache
-ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
+# Copie et installation des dépendances
+COPY composer.* ./
+RUN composer install --no-dev --no-scripts --prefer-dist
 
-# Activation du module rewrite
-RUN a2enmod rewrite
+COPY package*.json ./
+RUN npm ci --production
 
-# Configuration du DocumentRoot
-RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf && \
-    sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
+# Copie du reste de l'application et build
+COPY . .
+RUN npm run build
 
-# Copie de l'application
-COPY . /var/www/html/
+# Image finale
+FROM bitnami/php-fpm:8.0
 
-WORKDIR /var/www/html
+# Configuration Apache
+ENV APACHE_HTTP_PORT_NUMBER=80
+ENV APACHE_DOCUMENT_ROOT=/app/public
 
-# Configuration des permissions sans utiliser chown
-RUN mkdir -p storage/framework/{sessions,views,cache} && \
-    mkdir -p bootstrap/cache && \
-    chmod -R 777 storage bootstrap/cache && \
+# Copie des fichiers depuis le builder
+COPY --from=builder /app /app
+WORKDIR /app
+
+# Configuration finale
+RUN chmod -R 777 storage bootstrap/cache && \
     php artisan config:cache && \
     php artisan route:cache && \
     php artisan view:cache
 
 EXPOSE 80
 
-CMD ["apache2-foreground"]
+CMD ["php-fpm"]

@@ -5,8 +5,6 @@ services:
     dockerfilePath: Dockerfile
     region: frankfurt
     plan: free
-    buildCommand: docker build --no-cache .
-    startCommand: ""
     envVars:
       - key: APP_ENV
         value: production
@@ -18,21 +16,8 @@ services:
         value: "512M"
       - key: NODE_ENV
         value: production
-      - key: DOCKER_BUILDKIT
-        value: "1"
-      - key: APACHE_DOCUMENT_ROOT
-        value: /var/www/html/public
     disk:
       name: data
-      mountPath: /var/www/html/storage
+      mountPath: /app/storage
       sizeGB: 1
     healthCheckPath: /
-    buildFilter:
-      paths:
-        - app/**/*.php
-        - config/**/*.php
-        - public/**/*
-        - resources/**/*
-        - routes/**/*.php
-        - composer.*
-        - package.json
