@@ -1,48 +1,41 @@
-# Utiliser l'image officielle PHP avec Apache
+# Stage 1: Dependencies
+FROM composer:2.5 as vendor
+WORKDIR /app
+COPY composer.json composer.lock ./
+RUN composer install --no-dev --no-scripts --no-autoloader --prefer-dist
+
+# Stage 2: Node modules
+FROM node:16-alpine as node
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --production --no-audit
+COPY . .
+RUN npm run build
+
+# Stage 3: Final image
 FROM php:8.0-apache
+COPY --from=vendor /app/vendor /var/www/html/vendor
+COPY --from=node /app/public/build /var/www/html/public/build
+COPY --from=node /app/public/js /var/www/html/public/js
+COPY --from=node /app/public/css /var/www/html/public/css
 
-# Activation des modules Apache nécessaires
-RUN a2enmod rewrite
-
-# Installation des extensions PHP nécessaires
+# PHP extensions
 RUN docker-php-ext-install pdo_mysql bcmath
 
-# Installation de Node.js
-RUN curl -fsSL https://deb.nodesource.com/setup_16.x | bash - && \
-    apt-get install -y nodejs
-
-# Installation de Composer
-COPY --from=composer:2.5 /usr/bin/composer /usr/bin/composer
-
-# Configuration d'Apache
+# Apache configuration
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
-RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf && \
+RUN a2enmod rewrite && \
+    sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf && \
     sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
-# Copie de la configuration Apache personnalisée
+# Copy application
+COPY . /var/www/html/
 COPY apache2-render-config.conf /etc/apache2/sites-available/000-default.conf
 
 WORKDIR /var/www/html
 
-# Configuration de l'environnement
-ENV COMPOSER_ALLOW_SUPERUSER=1
-ENV COMPOSER_NO_INTERACTION=1
-ENV COMPOSER_MEMORY_LIMIT=-1
-ENV NODE_ENV=production
-
-# Copie des fichiers de dépendances
-COPY composer.* ./
-RUN composer install --no-dev --no-scripts --no-autoloader --prefer-dist
-
-COPY package*.json ./
-RUN npm ci --production --no-audit
-
-# Copie du reste de l'application
-COPY . .
-
-# Finalisation de l'installation
+# Optimize and cache
 RUN composer dump-autoload --optimize --classmap-authoritative && \
-    npm run build && \
     php artisan config:cache && \
     php artisan route:cache && \
     php artisan view:cache && \

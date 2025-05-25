@@ -5,7 +5,8 @@ services:
     dockerfilePath: Dockerfile
     region: frankfurt
     plan: free
-    buildCommand: docker build --build-arg BUILDKIT_INLINE_CACHE=1 .
+    buildCommand: ""
+    startCommand: ""
     envVars:
       - key: APP_ENV
         value: production
@@ -15,12 +16,12 @@ services:
         value: 1
       - key: COMPOSER_MEMORY_LIMIT
         value: -1
-      - key: PHP_VERSION
-        value: 8.0.2
       - key: NODE_ENV
         value: production
       - key: DOCKER_BUILDKIT
         value: 1
+      - key: DOCKER_BUILDKIT_PROGRESS
+        value: plain
     healthCheckPath: /
     buildFilter:
       paths:
