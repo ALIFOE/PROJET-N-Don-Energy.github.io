@@ -94,3 +94,19 @@ php artisan route:cache
 php artisan view:cache
 
 echo "✅ Build completed successfully!"
+
+# Mise en place des permissions
+mkdir -p bootstrap/cache
+chmod -R 775 storage bootstrap/cache
+
+# Installation des dépendances
+composer install --no-dev --optimize-autoloader
+npm install
+
+# Compilation des assets
+npm run build
+
+# Configuration de Laravel
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
