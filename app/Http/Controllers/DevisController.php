@@ -7,7 +7,9 @@ use App\Models\User;
 use App\Services\DevisAnalyzer;
 use App\Notifications\NewDevisNotification;
 use App\Events\ClientActivity;
+use App\Mail\DevisConfirmationMail;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class DevisController extends Controller
 {
@@ -45,7 +47,12 @@ class DevisController extends Controller
 
         // Sauvegarder le devis avec l'analyse
         $devisData = array_merge($validated, ['analyse_technique' => json_encode($analyse)]);
-        $devis = Devis::create($devisData);        // Envoyer une notification à tous les administrateurs
+        $devis = Devis::create($devisData);
+
+        // Envoyer le mail de confirmation au client
+        Mail::to($validated['email'])->send(new DevisConfirmationMail($devis));
+
+        // Envoyer une notification à tous les administrateurs
         $admins = User::where('role', 'admin')->get();
         foreach ($admins as $admin) {
             $admin->notify(new NewDevisNotification($devis));

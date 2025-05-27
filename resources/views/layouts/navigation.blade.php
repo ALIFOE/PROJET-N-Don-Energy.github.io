@@ -1,29 +1,90 @@
-<nav x-data="{ open: false, mobileMenu: false }" class="bg-white border-b border-gray-100 fixed top-0 left-0 right-0 z-50">
+<nav x-data="{ open: false, mobileMenu: false }" class="fixed top-0 left-0 right-0 z-50">
     <head>
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
         <link href="{{ asset('css/styles.css') }}" rel="stylesheet">
         <style>
+            nav {
+                background: rgba(255, 255, 255, 0.7);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            }
+
             .nav-icon {
                 color: var(--primary-color, #FFA500);
             }
+
             .nav-brand {
                 color: var(--dark-color, #000000);
+                text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
             }
-            .dropdown-item:hover {
-                background-color: rgba(255, 165, 0, 0.1);
-                color: var(--primary-color, #FFA500);
+
+            .navbar-link {
+                color: #1a1a1a;
+                transition: all 0.3s ease;
+                position: relative;
             }
+
+            .navbar-link::after {
+                content: '';
+                position: absolute;
+                width: 0;
+                height: 2px;
+                bottom: -2px;
+                left: 0;
+                background-color: var(--primary-color, #FFA500);
+                transition: width 0.3s ease;
+            }
+
+            .navbar-link:hover::after {
+                width: 100%;
+            }
+
+            .navbar-link.active::after {
+                width: 100%;
+            }
+
+            .dropdown-menu {
+                background: rgba(255, 255, 255, 0.8);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.3);
+                box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            }
+
+            .btn-primary {
+                background-color: var(--primary-color, #FFA500);
+                color: white;
+                padding: 0.5rem 1rem;
+                border-radius: 0.375rem;
+                transition: all 0.3s ease;
+            }
+
+            .btn-primary:hover {
+                background-color: var(--accent-color, #0000FF);
+                transform: translateY(-1px);
+            }
+
             .mobile-menu {
                 transform: translateY(-100%);
                 transition: transform 0.3s ease-in-out;
             }
+            
             .mobile-menu.active {
                 transform: translateY(0);
             }
+
+            /* Style pour les menus déroulants */
+            [x-show="open"] {
+                background: rgba(255, 255, 255, 0.8);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.3);
+                box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            }
         </style>
-    </head>
-    <div class="container mx-auto px-6 py-3">
+    </head>    <div class="container mx-auto px-6 py-6">
         <div class="flex justify-between items-center">
             <!-- Bouton Menu Mobile -->
             <button @click="mobileMenu = !mobileMenu" class="md:hidden text-gray-500 hover:text-gray-600">
@@ -32,8 +93,7 @@
             <!-- Logo et Nom -->
             <div class="flex items-center">
                 <a href="{{ route('home') }}" class="flex items-center">
-                    <i class="fas fa-solar-panel nav-icon text-2xl mr-2"></i>
-                    <span class="text-xl font-bold nav-brand">CREFER</span>
+                    <i class="fas fa-solar-panel nav-icon text-2xl mr-2"></i>                    <span class="text-xl font-bold nav-brand">CREFER</span>
                 </a>
             </div>
             <!-- Navigation Links -->

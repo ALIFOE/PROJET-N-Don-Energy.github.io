@@ -27,7 +27,7 @@ class UserAccountNotification extends Notification implements ShouldQueue
     public function toMail($notifiable): MailMessage
     {
         $mail = (new MailMessage)
-            ->subject("Activité compte utilisateur - Né Don Energy");
+            ->subject("Activité compte utilisateur - CREFER");
 
         switch ($this->action) {
             case 'created':

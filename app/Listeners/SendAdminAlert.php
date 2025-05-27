@@ -4,6 +4,7 @@ namespace App\Listeners;
 
 use App\Events\FormationInscriptionCreated;
 use App\Mail\AdminNotification;
+use App\Mail\FormationConfirmationMail;
 use App\Events\ClientActivity;
 use App\Mail\AdminActivityMail;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -22,16 +23,27 @@ class SendAdminAlert implements ShouldQueue
      */    public function handle(FormationInscriptionCreated $event)
     {
         try {
-            $inscription = $event->inscription;
+            $inscription = $event->inscription;            try {
+                // Envoi de l'e-mail à l'administrateur
+                Mail::to(AdminActivityMail::getAdminEmails())
+                    ->send(new AdminNotification($inscription));
 
-            // Envoi de l'e-mail à l'administrateur
-            Mail::to(AdminActivityMail::getAdminEmails())
-                ->send(new AdminNotification($inscription));
+                // Envoi de l'e-mail de confirmation au participant
+                Mail::to($inscription->email)
+                    ->send(new FormationConfirmationMail($inscription));
 
-            \Log::info('Email envoyé à l\'administrateur', [
-                'email' => env('MAIL_ADMIN_EMAIL'),
-                'formation' => $inscription->formation->titre
-            ]);
+                \Log::info('Emails envoyés avec succès', [
+                    'admin_email' => env('MAIL_ADMIN_EMAIL'),
+                    'participant_email' => $inscription->email,
+                    'formation' => $inscription->formation->titre
+                ]);
+            } catch (\Exception $e) {
+                \Log::error('Erreur lors de l\'envoi des emails', [
+                    'error' => $e->getMessage(),
+                    'participant_email' => $inscription->email,
+                    'formation' => $inscription->formation->titre
+                ]);
+            }
 
             // Déclencher l'événement pour la notification des administrateurs
             event(new ClientActivity('formation_inscription', [

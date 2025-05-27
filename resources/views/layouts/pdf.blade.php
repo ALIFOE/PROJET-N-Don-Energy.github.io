@@ -32,19 +32,18 @@
             margin-bottom: 15px;
             border-bottom: 1px solid #e2e8f0;
             padding-bottom: 5px;
-        }
-        h3 {
+        }        h3 {
             color: #4a5568;
             font-size: 18px;
-            margin-top: 20px;
-            margin-bottom: 10px;
+            margin-top: 15px;
+            margin-bottom: 8px;
         }
         .info-grid {
             display: block;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
         .info-grid > div {
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
         strong {
             color: #2d3748;

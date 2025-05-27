@@ -1,16 +1,15 @@
 <x-app-layout>
     <head>
-        <style>
-            .form-container {
-                max-width: 800px;
+        <style>            .form-container {
+                max-width: 900px;
                 margin: 0 auto;
-                padding: 2rem;
+                padding: 1.5rem;
             }
             .form-section {
                 background: white;
                 border-radius: 12px;
-                padding: 2rem;
-                margin-bottom: 2rem;
+                padding: 1.5rem;
+                margin-bottom: 1.5rem;
                 box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             }
             .form-title {

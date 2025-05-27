@@ -201,7 +201,9 @@ Route::middleware(['auth'])->group(function () {
 
     // Nouvelles routes pour les fonctionnalités
     Route::get('/previsions-meteo', [MeteoController::class, 'index'])->name('previsions-meteo');
-    Route::get('/rapports-analyses', [RapportsController::class, 'index'])->name('rapports-analyses');
+    Route::get('/rapports-analyses', [RapportController::class, 'index'])->name('rapports-analyses');
+    Route::get('/rapports/export-pdf', [RapportController::class, 'exportPDF'])->name('rapports.export-pdf');
+    Route::get('/rapports/export-excel', [RapportController::class, 'exportExcel'])->name('rapports.export-excel');
 });
 
 // Routes pour le blog

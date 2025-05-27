@@ -2,35 +2,44 @@
 
 namespace App\Mail;
 
+use App\Models\FormationInscription;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Content;
+use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
 class FormationConfirmationMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $details;
-
     /**
      * Create a new message instance.
-     *
-     * @param array $details
      */
-    public function __construct($details)
+    public function __construct(protected FormationInscription $inscription)
     {
-        $this->details = $details;
     }
 
     /**
-     * Build the message.
-     *
-     * @return $this
+     * Get the message envelope.
      */
-    public function build()
+    public function envelope(): Envelope
     {
-        return $this->subject('Confirmation de votre inscription à la formation')
-                    ->view('emails.formation-confirmation')
-                    ->with('details', $this->details);
+        return new Envelope(
+            subject: 'Confirmation de votre inscription à la formation - Né Don Energy',
+        );
+    }
+
+    /**
+     * Get the message content definition.
+     */
+    public function content(): Content
+    {
+        return new Content(
+            view: 'emails.formation-confirmation',
+            with: [
+                'inscription' => $this->inscription
+            ]
+        );
     }
 }

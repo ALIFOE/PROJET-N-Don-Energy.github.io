@@ -105,16 +105,15 @@ return [
     | theme and component paths here, allowing you to customize the design
     | of the emails. Or, you may simply stick with the Laravel defaults!
     |
-    */
-
-    'markdown' => [
+    */    'markdown' => [
         'theme' => 'default',
 
         'paths' => [
             resource_path('views/vendor/mail'),
+            resource_path('views/components'),
         ],
     ],
 
-    'admin_email' => env('MAIL_ADMIN_EMAIL', 'admin@example.com'),
+    'admin_email' => env('MAIL_ADMIN_EMAIL', 'alifoebaudoin228@gmail.com'),
 
 ];

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Contact;
 use App\Mail\ContactFormMail;
+use App\Mail\ContactFormConfirmationMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use App\Events\ClientActivity;
@@ -38,10 +39,14 @@ class ContactController extends Controller
         // Ajouter le téléphone seulement s'il est présent
         if (isset($validated['telephone'])) {
             $contactData['telephone'] = $validated['telephone'];
-        }        $contact = Contact::create($contactData);
+        }        
+        $contact = Contact::create($contactData);
 
-        // Envoi de l'email
+        // Envoi de l'email à l'administrateur
         Mail::to(config('mail.from.address'))->send(new ContactFormMail($validated));
+        
+        // Envoi de l'email de confirmation au client
+        Mail::to($validated['email'])->send(new ContactFormConfirmationMail($validated));
 
         // Déclencher l'événement pour notifier les administrateurs
         event(new ClientActivity('contact_form', [

@@ -67,8 +67,7 @@
                         @endforeach
                     @endif
 
-                    <div class="flex justify-end space-x-4">
-                        <a href="{{ route('services.show', $service) }}" 
+                    <div class="flex justify-end space-x-4">                        <a href="{{ route('services.index') }}" 
                            class="inline-flex justify-center rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
                             Annuler
                         </a>

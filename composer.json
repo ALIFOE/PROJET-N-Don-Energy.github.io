@@ -11,14 +11,13 @@
         "doctrine/dbal": "^3.9",
         "egulias/email-validator": "^3.2",
         "guzzlehttp/guzzle": "^7.9",
+        "heroku/heroku-buildpack-php": "^231.0.0",
         "intervention/image": "^2.7",
         "laravel/framework": "^9.19",
         "laravel/sanctum": "^3.3",
         "laravel/tinker": "^2.7",
         "laravel/ui": "^4.6",
-        "maatwebsite/excel": "^1.1",
-        "spatie/laravel-activitylog": "^4.7",
-        "heroku/heroku-buildpack-php": "^231.0.0"
+        "spatie/laravel-activitylog": "^4.7"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",

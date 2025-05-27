@@ -321,15 +321,13 @@ document.addEventListener('DOMContentLoaded', () => {
                                                 <h3 class="font-semibold text-gray-300">Rapport mensuel - Avril 2025</h3>
                                                 <p class="text-sm text-gray-400">Généré le 28/04/2025</p>
                                             </div>
-                                        </div>
-                                        <button class="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600 transition duration-300 download-report" data-type="pdf" data-period="mensuel">
+                                        </div>                                        <a href="{{ route('rapports.export-pdf') }}" class="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600 transition duration-300">
                                             <i class="fas fa-download mr-2"></i>
                                             Télécharger
-                                        </button>
+                                        </a>
                                     </div>
                                 </div>
-                                <div class="p-4 hover:bg-gray-600 transition duration-150">
-                                    <div class="flex items-center justify-between">
+                                <div class="p-4 hover:bg-gray-600 transition duration-150">                                    <div class="flex items-center justify-between">
                                         <div class="flex items-center">
                                             <i class="fas fa-file-excel text-blue-500 text-xl mr-3"></i>
                                             <div>
@@ -337,10 +335,11 @@ document.addEventListener('DOMContentLoaded', () => {
                                                 <p class="text-sm text-gray-400">Format Excel</p>
                                             </div>
                                         </div>
-                                        <button class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300 download-report" data-type="excel" data-period="mensuel">
+                                        <a href="{{ route('rapports.export-excel') }}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300">
                                             <i class="fas fa-download mr-2"></i>
                                             Télécharger
-                                        </button>
+                                        </a>
+                                        </a>
                                     </div>
                                 </div>
                             </div>
@@ -393,7 +392,8 @@ document.addEventListener('DOMContentLoaded', () => {
                                 </button>
                             </div>
                         </div>
-                    </div>
+                    </div>                    <!-- Les boutons d'exportation sont déjà disponibles dans la section "Rapports disponibles" -->
+                    <!-- Suppression de cette section pour éviter la duplication -->
                 </div>
             </div>
         </div>

@@ -150,6 +150,75 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>                        <!-- Section Rapports et Analyses -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                                <div class="p-6">
+                                    <h2 class="text-xl font-semibold mb-4">{{ __("Rapports et Analyses") }}</h2>
+                                    <p class="mb-4">{{ __("Consultez et générez des rapports détaillés sur vos installations.") }}</p>
+                                    
+                                    <div class="grid grid-cols-1 gap-4">
+                                        @if(count(Auth::user()->onduleurs()->where('est_connecte', true)->get()) > 0)
+                                            <a href="{{ route('rapports-analyses') }}" 
+                                               class="inline-flex items-center justify-center px-4 py-4 bg-green-600 border border-transparent rounded-lg font-semibold text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-300 ease-in-out">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                </svg>
+                                                {{ __("Accéder aux Rapports") }}
+                                            </a>
+                                        @else
+                                            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded">
+                                                <div class="flex">
+                                                    <div class="flex-shrink-0">
+                                                        <svg class="h-5 w-5 text-yellow-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                                                        </svg>
+                                                    </div>
+                                                    <div class="ml-3">
+                                                        <p class="text-sm text-yellow-700">
+                                                            {{ __("Vous devez d'abord connecter au moins un onduleur pour accéder aux rapports et analyses.") }}
+                                                        </p>
+                                                        <div class="mt-4">
+                                                            <a href="{{ route('onduleurs.create') }}" class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                                                                <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                                                                </svg>
+                                                                {{ __("Connecter un onduleur") }}
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endif<div class="mt-4 p-4 bg-blue-50 rounded-lg">
+                                            <h3 class="font-medium text-blue-800 mb-2">{{ __("Rapports disponibles") }}</h3>
+                                            <ul class="list-disc list-inside text-sm text-blue-700 space-y-1">
+                                                <li>{{ __("Rapports de production") }}
+                                                    <ul class="ml-6 mt-1 list-disc list-inside text-sm text-blue-600">
+                                                        <li>{{ __("Production journalière") }}</li>
+                                                        <li>{{ __("Production mensuelle") }}</li>
+                                                        <li>{{ __("Production annuelle") }}</li>
+                                                    </ul>
+                                                </li>
+                                                <li class="mt-2">{{ __("Analyses de performance") }}
+                                                    <ul class="ml-6 mt-1 list-disc list-inside text-sm text-blue-600">
+                                                        <li>{{ __("Rendement des onduleurs") }}</li>
+                                                        <li>{{ __("Efficacité énergétique") }}</li>
+                                                        <li>{{ __("Comparaison périodique") }}</li>
+                                                    </ul>
+                                                </li>
+                                                <li class="mt-2">{{ __("Statistiques détaillées") }}
+                                                    <ul class="ml-6 mt-1 list-disc list-inside text-sm text-blue-600">
+                                                        <li>{{ __("Économies réalisées (XOF)") }}</li>
+                                                        <li>{{ __("Impact environnemental") }}</li>
+                                                        <li>{{ __("Prévisions de maintenance") }}</li>
+                                                        <li>{{ __("Historique des incidents") }}</li>
+                                                    </ul>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <!-- Section Activités Récentes -->
@@ -310,26 +379,29 @@
                     @push('scripts')
                     <script>
                         document.addEventListener('DOMContentLoaded', function() {
-                            // Fonction pour simuler les données en temps réel (à remplacer par de vraies API)
+                            // Fonction pour simuler les données en temps réel
                             function fetchOnduleurData() {
                                 @foreach(Auth::user()->onduleurs()->where('est_connecte', true)->get() as $onduleur)
-                                    // Simuler des données pour cet onduleur
-                                    const production{{ $onduleur->id }} = (Math.random() * 5 + 2).toFixed(2);
-                                    const daily{{ $onduleur->id }} = (Math.random() * 20 + 10).toFixed(1);
-                                    const efficiency{{ $onduleur->id }} = (Math.random() * 10 + 85).toFixed(1);
-                                    
-                                    // Mettre à jour les valeurs
-                                    document.getElementById('production-{{ $onduleur->id }}').textContent = production{{ $onduleur->id }};
-                                    document.getElementById('daily-{{ $onduleur->id }}').textContent = daily{{ $onduleur->id }};
-                                    document.getElementById('efficiency-{{ $onduleur->id }}').textContent = efficiency{{ $onduleur->id }};
-                                    
-                                    // Simuler un statut aléatoire (en ligne ou alerte)
-                                    if (Math.random() > 0.9) {
-                                        document.getElementById('status-{{ $onduleur->id }}').textContent = 'Alerte';
-                                        document.getElementById('status-{{ $onduleur->id }}').className = 'px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800';
+                                    // Simuler la production actuelle (entre 2 et 7 kW)
+                                    const production = (Math.random() * 5 + 2).toFixed(2);
+                                    document.getElementById('production-{{ $onduleur->id }}').textContent = production;
+
+                                    // Simuler la production journalière (entre 10 et 30 kWh)
+                                    const daily = (Math.random() * 20 + 10).toFixed(1);
+                                    document.getElementById('daily-{{ $onduleur->id }}').textContent = daily;
+
+                                    // Simuler l'efficacité (entre 85% et 95%)
+                                    const efficiency = (Math.random() * 10 + 85).toFixed(1);
+                                    document.getElementById('efficiency-{{ $onduleur->id }}').textContent = efficiency;
+
+                                    // Simuler le statut (en ligne/hors ligne)
+                                    const status = document.getElementById('status-{{ $onduleur->id }}');
+                                    if (Math.random() > 0.1) { // 90% de chance d'être en ligne
+                                        status.textContent = "{{ __('En ligne') }}";
+                                        status.className = "px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800";
                                     } else {
-                                        document.getElementById('status-{{ $onduleur->id }}').textContent = '{{ __("En ligne") }}';
-                                        document.getElementById('status-{{ $onduleur->id }}').className = 'px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800';
+                                        status.textContent = "{{ __('Hors ligne') }}";
+                                        status.className = "px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800";
                                     }
                                 @endforeach
                             }
@@ -337,8 +409,6 @@
                             // Mettre à jour toutes les 5 secondes
                             fetchOnduleurData();
                             setInterval(fetchOnduleurData, 5000);
-                            
-                            // Ici, vous pourriez ajouter du code pour créer des graphiques avec Chart.js ou D3.js
                         });
                     </script>
                     @endpush

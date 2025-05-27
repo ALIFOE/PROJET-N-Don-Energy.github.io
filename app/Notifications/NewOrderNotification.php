@@ -24,7 +24,7 @@ class NewOrderNotification extends Notification implements ShouldQueue
     public function toMail($notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject('Nouvelle commande - Né Don Energy')
+            ->subject('Nouvelle commande - CREFER')
             ->line("Une nouvelle commande a été passée par {$this->order->user->name}.")
             ->line("Montant total : {$this->order->total} FCFA")
             ->action('Voir la commande', route('admin.orders.show', $this->order))

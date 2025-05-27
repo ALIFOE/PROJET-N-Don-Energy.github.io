@@ -24,7 +24,7 @@ class NewServiceRequestNotification extends Notification implements ShouldQueue
     public function toMail($notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject('Nouvelle demande de service - Né Don Energy')
+            ->subject('Nouvelle demande de service - CREFER')
             ->line("Une nouvelle demande de service a été soumise par {$this->demande->nom}.")
             ->line("Service demandé : {$this->demande->service->nom}")
             ->line("Description : {$this->demande->details}")

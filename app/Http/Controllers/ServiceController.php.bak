@@ -12,67 +12,38 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 
-class ServiceController extends Controller 
-{     
+class ServiceController extends Controller
+{
     public function __construct()
-    {         
-        $this->middleware('auth')->only(['submitRequest', 'showRequestForm']);     
-    }      
-    
-    public function index()
-    {         
-        $services = Service::all();         
-        return view('services.index', compact('services'));     
-    }      
-    
-    public function show(Service $service)
-    {         
-        return view('services.show', compact('service'));     
-    }      
-    
-    public function showRequestForm(Service $service)
-    {         
-        // Récupérer les champs supplémentaires du service
-        $champs_supplementaires = $service->champs_supplementaires ?? [];
-        return view('services.request-form', compact('service', 'champs_supplementaires'));     
+    {
+        $this->middleware('auth')->only(['submitRequest', 'showRequestForm']);
     }
-    
-    public function submitRequest(Request $request, Service $service)     
-    {         
-        // Règles de validation de base
-        $rules = [
+
+    public function index()
+    {
+        $services = Service::all();
+        return view('services.index', compact('services'));
+    }
+
+    public function show(Service $service)
+    {
+        return view('services.show', compact('service'));
+    }
+
+    public function showRequestForm(Service $service)
+    {
+        return view('services.request-form', compact('service'));
+    }
+
+    public function submitRequest(Request $request, Service $service)
+    {
+        $validated = $request->validate([
             'nom' => 'required|string|max:255',
             'email' => 'required|email',
             'telephone' => 'required|string|max:20',
-            'description' => 'required|string'
-        ];
-
-        // Ajouter des règles de validation pour les champs supplémentaires
-        $champs_supplementaires = $service->champs_supplementaires ?? [];
-        foreach ($champs_supplementaires as $champ) {
-            $rule = $champ['required'] ? 'required' : 'nullable';
-            
-            switch ($champ['type']) {
-                case 'email':
-                    $rule .= '|email';
-                    break;
-                case 'number':
-                    $rule .= '|numeric';
-                    break;
-                case 'file':
-                    $rule .= '|file|mimes:pdf,doc,docx|max:2048';
-                    break;
-                case 'select':
-                    $rule .= '|in:' . implode(',', $champ['options']);
-                    break;
-                default:
-                    $rule .= '|string';
-            }
-            
-            $rules['champs_supplementaires.' . $champ['name']] = $rule;
-        }
-
-        $validated = $request->validate($rules);
+            'description' => 'required|string',
+            'details' => 'array|nullable'
+        ]);
 
         $serviceRequest = new DemandeService();
         $serviceRequest->service_id = $service->id;
@@ -80,10 +51,11 @@ class ServiceController extends Controller
         $serviceRequest->nom = $validated['nom'];
         $serviceRequest->email = $validated['email'];
         $serviceRequest->telephone = $validated['telephone'];
-        $serviceRequest->description = $validated['description'];
-        $serviceRequest->details = $validated['description'];         // Sauvegarder les champs supplémentaires spécifiques au service
-        if (isset($validated['champs_supplementaires'])) {
-            $serviceRequest->champs_specifiques = $validated['champs_supplementaires'];
+        $serviceRequest->details = $validated['description'];
+        
+        // Sauvegarder les champs supplémentaires spécifiques au service
+        if (isset($validated['details'])) {
+            $serviceRequest->champs_specifiques = $validated['details'];
         }
         
         $serviceRequest->statut = 'en_attente';
@@ -114,7 +86,7 @@ class ServiceController extends Controller
 
     public function adminCreate()
     {
-        return view('admin.services.form');
+        return view('admin.services.create');
     }
 
     public function adminStore(Request $request)
@@ -125,7 +97,7 @@ class ServiceController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'champs_supplementaires' => 'nullable|array'
         ]);
-        
+
         $service = new Service();
         $service->nom = $validated['nom'];
         $service->description = $validated['description'];
@@ -135,20 +107,11 @@ class ServiceController extends Controller
         }
         
         if (isset($validated['champs_supplementaires'])) {
-            // Traitement des options pour les champs de type select
-            $champs = $validated['champs_supplementaires'];
-            foreach ($champs as &$champ) {
-                if ($champ['type'] === 'select' && isset($champ['options'])) {
-                    // Convertir le texte des options en tableau
-                    $champ['options'] = array_filter(explode("\n", $champ['options']));
-                }
-                // Convertir la valeur required en booléen
-                $champ['required'] = $champ['required'] === '1';
-            }
-            $service->champs_supplementaires = $champs;
+            $service->champs_supplementaires = $validated['champs_supplementaires'];
         }
         
         $service->save();
+
         return redirect()->route('admin.services.index')
             ->with('success', 'Service créé avec succès');
     }
@@ -178,12 +141,13 @@ class ServiceController extends Controller
             }
             $data['image'] = $request->file('image')->store('services', 'public');
         }
-
+        
         if (isset($validated['champs_supplementaires'])) {
             $data['champs_supplementaires'] = $validated['champs_supplementaires'];
         }
 
         $service->update($data);
+
         return redirect()->route('admin.services.index')
             ->with('success', 'Service mis à jour avec succès');
     }
@@ -229,7 +193,7 @@ class ServiceController extends Controller
             if ($service->image) {
                 Storage::disk('public')->delete($service->image);
             }
-
+            
             $service->delete();
             return redirect()->route('admin.services.index')
                 ->with('success', 'Service supprimé avec succès');

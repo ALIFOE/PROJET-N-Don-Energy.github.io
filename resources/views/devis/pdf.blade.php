@@ -2,33 +2,171 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Résultats de l'analyse - Don Energy</title>
-    <style>
-        body { font-family: DejaVu Sans, sans-serif; }
-        .header { 
-            border-bottom: 2px solid #1e88e5;
-            padding-bottom: 20px;
-            margin-bottom: 30px;
+    <title>Résultats de l'analyse - Don Energy</title>    <style>
+        :root {
+            --primary-color: #008037;
+            --secondary-color: #4CAF50;
+            --accent-color: #FFC107;
+            --text-color: #333333;
+            --background-light: #F5F5F5;
+            --white: #FFFFFF;
         }
+        
+        body { 
+            font-family: DejaVu Sans, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: var(--background-light);
+        }
+        
+        .header { 
+            border-bottom: 3px solid var(--primary-color);
+            padding: 25px;
+            margin-bottom: 40px;
+            background: var(--white);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-radius: 12px;
+        }
+        
         .company-info {
             display: flex;
             justify-content: space-between;
+            align-items: flex-start;
             margin-bottom: 20px;
         }
+        
         .logo {
-            font-size: 24px;
+            font-size: 32px;
             font-weight: bold;
-            color: #1e88e5;
+            color: var(--primary-color);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
+        
+        .logo i {
+            color: var(--accent-color);
+        }
+        
         .contact-info {
             text-align: right;
             font-size: 14px;
+            color: var(--text-color);
+            line-height: 1.8;
+            background-color: var(--background-light);
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary-color);
         }
-        .section { margin-bottom: 20px; }
-        .section-title { font-size: 18px; font-weight: bold; margin-bottom: 10px; color: #1e88e5; }
-        .info-box { padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; }
-        .success { color: #0f5132; }
-        .warning { color: #664d03; }
+        
+        .section { 
+            margin-bottom: 30px;
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 25px;
+            border: 1px solid rgba(0,128,55,0.1);
+        }
+        
+        .section-title { 
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--secondary-color);
+            padding-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .info-box { 
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(0,128,55,0.2);
+            border-radius: 8px;
+            background-color: var(--white);
+            transition: all 0.3s ease;
+        }
+        
+        .info-box:hover {
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+        
+        .info-box h3 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            font-size: 18px;
+            border-left: 4px solid var(--accent-color);
+            padding-left: 10px;
+        }
+        
+        .info-box ul {
+            list-style: none;
+            padding-left: 0;
+            margin: 0;
+        }
+        
+        .info-box ul li {
+            margin-bottom: 12px;
+            padding-left: 25px;
+            position: relative;
+            color: var(--text-color);
+        }
+        
+        .info-box ul li:before {
+            content: "✓";
+            color: var(--secondary-color);
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+        
+        .success { 
+            color: var(--primary-color);
+            font-weight: bold;
+            font-size: 1.3em;
+            background: rgba(0,128,55,0.1);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .warning { 
+            color: #D32F2F;
+            background-color: #FFEBEE;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #D32F2F;
+            margin: 20px 0;
+        }
+        
+        h1 {
+            color: var(--primary-color);
+            text-align: center;
+            margin: 40px 0;
+            font-size: 28px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: relative;
+            padding-bottom: 15px;
+        }
+        
+        h1:after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: var(--accent-color);
+        }
     </style>
 </head>
 <body>
@@ -38,10 +176,13 @@
                 <i class="fas fa-solar-panel"></i> CREFER
             </div>
             <div class="contact-info">
-                <p>Rue KOPEGA 56.GB<br>
+                <p>Lomé-TOGO,
+Siège Social situé à Lomé-TOGO quartier Totsi Gblenkomé près de la salle de réunion des témoins de Jéhovah
+Annexe au bord des pavés de Totsi non loin de l'agence TogoCom<br>
                 Lomé, Togo<br>
-                Tél: +228 97 73 43 81<br>
-                Email: contact@nedonenergy.com</p>
+                Tél: (+228)91 20 43 73<br>
+                     (+228)92 53 14 55<br>
+                Email: contact@crefer.com</p>
             </div>
         </div>
     </div>
@@ -84,17 +225,15 @@
         <!-- Analyse financière -->
         <div class="section">
             <div class="section-title">Analyse financière</div>
-            <div class="info-box">
-                <h3>Investissement</h3>
+            <div class="info-box">                <h3>Investissement</h3>
                 <ul>
-                    <li>Coût estimé : {{ number_format($analyseData['analyse_financiere']['cout_installation'], 0) }} €</li>
-                    <li>Économies annuelles : {{ number_format($analyseData['analyse_financiere']['economies_annuelles'], 0) }} €</li>
+                    <li>Coût estimé : {{ number_format($analyseData['analyse_financiere']['cout_installation'], 0) }} XOF</li>
+                    <li>Économies annuelles : {{ number_format($analyseData['analyse_financiere']['economies_annuelles'], 0) }} XOF</li>
                     <li>Retour sur investissement : {{ $analyseData['analyse_financiere']['retour_investissement_annees'] }} ans</li>
                 </ul>
             </div>
-            <div class="info-box">
-                <h3>Rentabilité à 20 ans</h3>
-                <p>{{ number_format($analyseData['analyse_financiere']['rentabilite_20_ans'], 0) }} €</p>
+            <div class="info-box">                <h3>Rentabilité à 20 ans</h3>
+                <p>{{ number_format($analyseData['analyse_financiere']['rentabilite_20_ans'], 0) }} XOF</p>
             </div>
         </div>
 

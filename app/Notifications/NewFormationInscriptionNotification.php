@@ -24,7 +24,7 @@ class NewFormationInscriptionNotification extends Notification implements Should
     public function toMail($notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject('Nouvelle inscription à une formation - Né Don Energy')
+            ->subject('Nouvelle inscription à une formation - CREFER')
             ->line("Nouvelle inscription à la formation {$this->inscription->formation->titre}")
             ->line("Participant : {$this->inscription->nom}")            ->line("Email : {$this->inscription->email}")
             ->action('Voir les inscriptions', route('admin.formations.inscriptions.index'))
