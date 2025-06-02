@@ -4,14 +4,16 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Traits\NotificationMarkable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 
 class UserController extends Controller
 {
-    public function index()
+    use NotificationMarkable;    public function index()
     {
+        $this->markNotificationsAsRead('App\Notifications\NewUserRegistrationNotification');
         $users = User::orderBy('created_at', 'desc')->paginate(10);
         return view('admin.users.index', compact('users'));
     }

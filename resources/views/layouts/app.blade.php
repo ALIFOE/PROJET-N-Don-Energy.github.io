@@ -14,12 +14,13 @@
     
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-      <!-- ChartJS -->
+    <!-- ChartJS -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <!-- Scripts -->
+    <!-- Styles -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    
+    @livewireStyles
+
     <!-- Styles supplémentaires -->
     @stack('styles')
 
@@ -221,5 +222,6 @@
 
     <!-- Scripts supplémentaires -->
     @stack('scripts')
+    @livewireScripts
 </body>
 </html>

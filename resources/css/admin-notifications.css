@@ -1,0 +1,26 @@
+.notification-badge {
+    position: absolute;
+    top: 0;
+    right: 0;
+    transform: translate(50%, -50%);
+    background-color: #EF4444;
+    color: white;
+    border-radius: 9999px;    padding: 0.1rem 0.25rem;
+    font-size: 0.6rem;
+    font-weight: bold;
+    line-height: 1;
+    min-width: 1rem;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {    0%, 100% {
+        opacity: 1;
+        transform: translate(50%, -50%) scale(1);
+    }
+    50% {
+        opacity: 0.95;
+        transform: translate(50%, -50%) scale(1.03);
+    }
+}

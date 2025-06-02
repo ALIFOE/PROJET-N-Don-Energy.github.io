@@ -11,9 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable, HasRoles;
-
-    protected $fillable = [
+    use HasApiTokens, HasFactory, Notifiable, HasRoles;    protected $fillable = [
         'name',
         'email',
         'password',
@@ -25,7 +23,9 @@ class User extends Authenticatable
         'theme_preference',
         'language',
         'two_factor_enabled',
-        'two_factor_secret'
+        'two_factor_secret',
+        'verification_code',
+        'is_verified'
     ];
 
     protected $hidden = [

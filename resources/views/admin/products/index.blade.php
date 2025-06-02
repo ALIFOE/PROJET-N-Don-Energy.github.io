@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
+    <div class="pt-16">
     <div class="flex justify-between items-center mb-6">
         <div>
             <h2 class="text-2xl font-semibold text-gray-800">Gestion des Produits</h2>
@@ -13,10 +14,8 @@
             <a href="{{ route('admin.products.create') }}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
                 <i class="fas fa-plus mr-2"></i>Ajouter un produit
             </a>
-        </div>
-    </div>
-
-    <div class="overflow-x-auto bg-white rounded-lg shadow">
+        </div>    </div>
+    <div class="overflow-x-auto bg-white rounded-lg shadow mb-6">
         <table class="min-w-full leading-normal">
             <thead>
                 <tr>

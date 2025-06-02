@@ -10,6 +10,11 @@ class Order extends Model
 {
     use HasFactory, HasCurrency;
 
+    const STATUS_EN_ATTENTE = 'en_attente';
+    const STATUS_EN_COURS = 'en_cours';
+    const STATUS_TERMINE = 'termine';
+    const STATUS_ANNULE = 'annule';
+
     protected $fillable = [
         'product_id',
         'user_id',
@@ -21,6 +26,7 @@ class Order extends Model
         'customer_email',
         'customer_phone',
         'customer_address',
+        'hidden',
     ];
 
     protected $casts = [
@@ -29,6 +35,28 @@ class Order extends Model
     ];
 
     protected $appends = ['formatted_total_price'];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($order) {
+            if (!$order->status) {
+                $order->status = self::STATUS_EN_ATTENTE;
+            }
+        });
+    }
+
+    public function getStatusLabelAttribute()
+    {
+        return match($this->status) {
+            self::STATUS_EN_ATTENTE => 'En attente',
+            self::STATUS_EN_COURS => 'En cours',
+            self::STATUS_TERMINE => 'Terminé',
+            self::STATUS_ANNULE => 'Annulé',
+            default => ucfirst($this->status)
+        };
+    }
 
     public function getFormattedTotalPriceAttribute()
     {

@@ -49,7 +49,13 @@ Route::get('/dimensionnement', [DimensionnementController::class, 'create'])->na
 Route::get('/services', [ServiceController::class, 'index'])->name('services.index');
 
 Route::get('/marketplace', [MarketplaceController::class, 'index'])->name('marketplace');
-Route::get('/mes-commandes', [CommandeController::class, 'index'])->middleware(['auth'])->name('mes-commandes');
+
+// Routes pour les commandes
+Route::middleware(['auth'])->group(function () {
+    Route::get('/mes-commandes', [CommandeController::class, 'index'])->name('mes-commandes');
+    Route::get('/commandes/{commande}', [CommandeController::class, 'show'])->name('commandes.show');
+    Route::delete('/commandes/{commande}', [CommandeController::class, 'delete'])->name('commandes.delete');
+});
 
 // Routes pour les formations
 Route::prefix('formation')->group(function () {
@@ -61,6 +67,9 @@ Route::prefix('formation')->group(function () {
         ->middleware(['auth'])
         ->name('formation.document.download');
     Route::get('/{formation}/flyer', [FormationController::class, 'downloadFlyer'])->name('formation.flyer.download');
+    Route::put('/inscription/{inscription}/cancel', [FormationController::class, 'cancelInscription'])
+        ->middleware(['auth'])
+        ->name('formation.inscription.cancel');
 });
 
 // Routes d'administration
@@ -68,7 +77,19 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     // Route du tableau de bord admin
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])
         ->name('dashboard');
-    
+
+    // Routes pour les commandes
+    Route::get('/orders', [AdminOrderController::class, 'index'])->name('orders.index');
+    Route::get('/orders/{order}', [AdminOrderController::class, 'show'])->name('orders.show');
+    Route::put('/orders/{order}/update-status', [AdminOrderController::class, 'updateStatus'])->name('orders.update-status');
+    Route::delete('/orders/{order}', [AdminOrderController::class, 'destroy'])->name('orders.destroy');
+
+    // Routes pour les devis
+    Route::resource('devis', \App\Http\Controllers\Admin\DevisController::class);
+    Route::delete('/devis/{devis}', [\App\Http\Controllers\Admin\DevisController::class, 'destroy'])->name('devis.destroy');
+    Route::get('/devis/download-pdf/{id}', [\App\Http\Controllers\Admin\DevisController::class, 'downloadPdf'])->name('devis.download-pdf');
+    Route::post('/devis/{devis}/supprimer', [\App\Http\Controllers\Admin\DevisController::class, 'destroy'])->name('devis.supprimer');
+
     // Routes pour les notifications
     Route::prefix('notifications')->name('notifications.')->group(function () {
         Route::get('/', [NotificationController::class, 'index'])->name('index');
@@ -302,7 +323,8 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
         Route::delete('/{service}', [ServiceController::class, 'adminDestroy'])->name('destroy');
         
         // Routes pour les demandes de services
-        Route::get('/requests', [ServiceController::class, 'adminRequests'])->name('requests');
+        Route::get('/requests', [ServiceRequestController::class, 'adminRequests'])->name('requests');
+        Route::put('/requests/{demandeService}/status', [ServiceRequestController::class, 'updateStatus'])->name('requests.status');
         Route::get('/requests/{request}/details', [ServiceController::class, 'requestDetails'])->name('requests.details');
         Route::put('/requests/{request}/status', [ServiceController::class, 'updateRequestStatus'])->name('requests.status');
         Route::delete('/requests/{request}', [ServiceController::class, 'deleteRequest'])->name('requests.destroy');

@@ -40,11 +40,11 @@
                                                 {{ Str::limit($request->description, 100) }}
                                             </div>
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <form action="{{ route('admin.services.requests.status', $request) }}" method="POST">
+                                        <td class="px-6 py-4 whitespace-nowrap">                                            <form action="{{ route('admin.services.requests.status', $request) }}" method="POST">
                                                 @csrf
                                                 @method('PUT')
-                                                <select name="statut" class="rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" onchange="this.form.submit()">                                                    <option value="{{ App\Models\DemandeService::STATUT_EN_ATTENTE }}" {{ $request->statut === App\Models\DemandeService::STATUT_EN_ATTENTE ? 'selected' : '' }}>En attente</option>
+                                                <select name="statut" class="rounded-md shadow-sm border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" onchange="this.form.submit()">
+                                                    <option value="{{ App\Models\DemandeService::STATUT_EN_ATTENTE }}" {{ $request->statut === App\Models\DemandeService::STATUT_EN_ATTENTE ? 'selected' : '' }}>En attente</option>
                                                     <option value="{{ App\Models\DemandeService::STATUT_EN_COURS }}" {{ $request->statut === App\Models\DemandeService::STATUT_EN_COURS ? 'selected' : '' }}>En cours</option>
                                                     <option value="{{ App\Models\DemandeService::STATUT_ACCEPTE }}" {{ $request->statut === App\Models\DemandeService::STATUT_ACCEPTE ? 'selected' : '' }}>Accepté</option>
                                                     <option value="{{ App\Models\DemandeService::STATUT_REFUSE }}" {{ $request->statut === App\Models\DemandeService::STATUT_REFUSE ? 'selected' : '' }}>Refusé</option>
@@ -66,6 +66,10 @@
                                 @endforeach
                             </tbody>
                         </table>                    </div>
+                    
+                    <div class="mt-4">
+                    {{ $requests->links() }}
+                </div>
                 </div>
             </div>
         </div>

@@ -17,6 +17,7 @@
         "laravel/sanctum": "^3.3",
         "laravel/tinker": "^2.7",
         "laravel/ui": "^4.6",
+        "livewire/livewire": "^2.12",
         "spatie/laravel-activitylog": "^4.7"
     },
     "require-dev": {
