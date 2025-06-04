@@ -97,7 +97,7 @@ class ServiceController extends Controller
             $admin->notify(new NewServiceRequestNotification($serviceRequest));
         });
 
-        return redirect()->route('services.show', $service)
+        return redirect()->route('client.demandes-services.index')
             ->with('success', 'Votre demande a été envoyée avec succès. Nous vous contacterons prochainement.');
     }
 

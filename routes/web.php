@@ -48,10 +48,10 @@ Route::get('/dimensionnement', [DimensionnementController::class, 'create'])->na
 
 Route::get('/services', [ServiceController::class, 'index'])->name('services.index');
 
-Route::get('/marketplace', [MarketplaceController::class, 'index'])->name('marketplace');
-
-// Routes pour les commandes
+// Routes protégées par authentification
 Route::middleware(['auth'])->group(function () {
+    // Marketplace et commandes
+    Route::get('/marketplace', [MarketplaceController::class, 'index'])->name('marketplace');
     Route::get('/mes-commandes', [CommandeController::class, 'index'])->name('mes-commandes');
     Route::get('/commandes/{commande}', [CommandeController::class, 'show'])->name('commandes.show');
     Route::delete('/commandes/{commande}', [CommandeController::class, 'delete'])->name('commandes.delete');
@@ -240,8 +240,7 @@ Route::get('/fonctionnalite', function () {
     return view('fonctionnalite');
 })->name('fonctionnalite');
 
-Route::get('/market-place', [MarketplaceController::class, 'index'])->name('marketplace');
-Route::get('/mes-commandes', [CommandeController::class, 'index'])->middleware(['auth'])->name('mes-commandes');
+// Pages statiques
 
 Route::get('/about', function () {
     return view('about');

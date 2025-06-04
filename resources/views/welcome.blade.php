@@ -55,7 +55,7 @@
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="flex justify-between h-16">
                         <div class="flex items-center">
-                            <a href="{{ url('/') }}" class="text-2xl font-bold text-orange-500">N'Don Energy</a>
+                            <a href="{{ url('/') }}" class="text-2xl font-bold text-orange-500">CREFER</a>
                         </div>
                         
                         <div class="flex items-center space-x-4">
@@ -140,7 +140,7 @@
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                         <div>
-                            <h4 class="text-xl font-bold text-orange-400 mb-4">N'Don Energy</h4>
+                            <h4 class="text-xl font-bold text-orange-400 mb-4">CREFER</h4>
                             <p class="mb-4">Solutions solaires innovantes pour un avenir durable.</p>
                         </div>
                         <div>
@@ -158,7 +158,7 @@
                         </div>
                     </div>
                     <div class="border-t border-gray-800 mt-8 pt-8 text-center">
-                        <p>&copy; {{ date('Y') }} N'Don Energy. Tous droits réservés.</p>
+                        <p>&copy; {{ date('Y') }} CREFER. Tous droits réservés.</p>
                     </div>
                 </div>
             </footer>

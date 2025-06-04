@@ -77,9 +77,9 @@
 </head>
 <body>
     <div class="header">
-        <img src="{{ public_path('images/logo.png') }}" alt="N'Don Energy Logo" class="logo">
+        <img src="{{ public_path('images/logo.png') }}" alt="CREFER Logo" class="logo">
         <div class="company-info">
-            <div class="company-name">N'Don Energy</div>
+            <div class="company-name">CREFER</div>
             <div>Expert en Solutions d'Énergie Solaire</div>
             <div>123 Avenue de l'Énergie Verte</div>
             <div>75000 Paris, France</div>
@@ -111,7 +111,7 @@
 
     <div class="footer">
         <div>{{ __("Document généré le") }} {{ now()->format('d/m/Y H:i') }}</div>
-        <div>N'Don Energy - SIRET: 123 456 789 00001 - TVA: FR12 123456789</div>
+        <div>CREFER - SIRET: 123 456 789 00001 - TVA: FR12 123456789</div>
         <div>www.ndon-energy.com</div>
     </div>
 </body>

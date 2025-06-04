@@ -17,4 +17,5 @@ return [
     'Manage Products' => 'Gérer les Produits',
     'Add Product' => 'Ajouter un Produit',
     'Orders' => 'Commandes',
+    
 ];

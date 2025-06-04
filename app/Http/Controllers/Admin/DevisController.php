@@ -33,6 +33,13 @@ class DevisController extends Controller
             $devis->objectifs = json_decode($devis->objectifs, true);
         }
 
+        // Débogage des données
+        \Log::info('Données du devis:', [
+            'devis' => $devis->toArray(),
+            'objectifs' => $devis->objectifs,
+            'analyse_technique' => $devis->analyse_technique
+        ]);
+
         return view('admin.devis.show', compact('devis'));
     }
 
@@ -79,15 +86,25 @@ class DevisController extends Controller
         ]);
         
         return $pdf->download('analyse-projet-solaire-devis-' . $devis->id . '.pdf');
-    }
-
-    public function updateStatus(Request $request, Devis $devis)
+    }    public function updateStatus(Request $request, Devis $devis)
     {
         $validatedData = $request->validate([
-            'status' => 'required|string|in:en_attente,en_cours,accepte,refuse'
+            'status' => 'required|string|in:en_attente,pending,en_cours,in_progress,accepte,accepted,refuse,rejected'
         ]);
 
-        $devis->update(['statut' => $validatedData['status']]);
+        // Map les anciens status aux nouveaux
+        $statusMap = [
+            'en_attente' => 'pending',
+            'en_cours' => 'in_progress',
+            'accepte' => 'accepted',
+            'refuse' => 'rejected'
+        ];
+
+        $newStatus = $statusMap[$validatedData['status']] ?? $validatedData['status'];
+        $devis->update([
+            'statut' => $validatedData['status'],
+            'status' => $newStatus
+        ]);
 
         if ($request->ajax()) {
             return response()->json([

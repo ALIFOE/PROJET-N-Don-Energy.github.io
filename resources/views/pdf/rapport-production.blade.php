@@ -103,7 +103,7 @@
     </div>
 
     <div class="footer">
-        <p>N'Don Energy - Rapport généré le {{ $date }}</p>
+        <p>CREFER - Rapport généré le {{ $date }}</p>
     </div>
 </body>
 </html>

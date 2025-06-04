@@ -1,8 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="flex justify-between items-center mb-6">
-        <h2 class="text-2xl font-semibold text-gray-800">Détails de la formation</h2>
+    <div class="container mx-auto px-4 pt-16">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-semibold text-gray-800">Détails de la formation</h2>
         <div class="space-x-2">
             <a href="{{ route('admin.formations.edit', $formation) }}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
                 <i class="fas fa-edit mr-2"></i>Modifier

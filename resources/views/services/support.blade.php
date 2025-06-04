@@ -78,7 +78,9 @@
                     </div>
                     <div class="flex items-center">
                         <i class="fas fa-map-marker-alt text-orange-500 mr-3"></i>
-                        <span>Rue KOPEGA 56.GB Lomé, Togo</span>
+                        <span>Lomé-TOGO,
+Siège Social situé à Lomé-TOGO quartier Totsi Gblenkomé près de la salle de réunion des témoins de Jéhovah
+Annexe au bord des pavés de Totsi non loin de l'agence TogoCom</span>
                     </div>
                 </div>
             </div>

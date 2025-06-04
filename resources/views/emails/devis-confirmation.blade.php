@@ -1,21 +1,46 @@
-<x-mail::message>
-# Confirmation de votre demande de devis
+@extends('emails.layouts.devis-mail')
 
-Bonjour {{ $devis->nom }} {{ $devis->prenom }},
+@section('content')
+<h1>Confirmation de votre demande de devis - CREFER</h1>
 
-Nous avons bien reçu votre demande de devis et nous vous en remercions.
+<p>Cher(e) {{ $devis->nom }} {{ $devis->prenom }},</p>
 
-## Récapitulatif de votre demande :
-- Type de bâtiment : {{ $devis->type_batiment }}
-- Consommation annuelle : {{ $devis->consommation_annuelle }} kWh
-- Type de toiture : {{ $devis->type_toiture }}
-- Orientation : {{ $devis->orientation }}
+<p>Nous avons bien reçu votre demande de devis pour une installation solaire photovoltaïque. Nous vous remercions de votre confiance.</p>
 
-Notre équipe va étudier votre demande dans les plus brefs délais et vous recontactera avec un devis détaillé.
+<h2>Détails de votre demande :</h2>
+<ul>
+    <li><strong>Type de bâtiment :</strong> {{ $devis->type_batiment }}</li>
+    <li><strong>Consommation annuelle :</strong> {{ $devis->consommation_annuelle }} kWh</li>
+    <li><strong>Type de toiture :</strong> {{ $devis->type_toiture }}</li>
+    <li><strong>Orientation :</strong> {{ $devis->orientation }}</li>
+</ul>
 
-Si vous avez des questions entre-temps, n'hésitez pas à nous contacter.
+@if($devis->objectifs && count($devis->objectifs) > 0)
+<h2>Vos objectifs :</h2>
+<ul>
+    @foreach($devis->objectifs as $objectif)
+    <li>{{ $objectif }}</li>
+    @endforeach
+</ul>
+@endif
 
-Cordialement,
-L'équipe CREFER
+<p>Nous allons étudier votre demande dans les plus brefs délais et nous vous contacterons pour vous présenter notre proposition détaillée.</p>
 
-</x-mail::message>
+@if($devis->message)
+<h2>Votre message :</h2>
+<p>{{ $devis->message }}</p>
+@endif
+
+<p>
+    <a href="{{ route('devis.resultats', $devis->id) }}" class="btn-primary">
+        Voir les résultats de l'analyse
+    </a>
+</p>
+
+<p>Pour toute question, n'hésitez pas à nous contacter.</p>
+
+<p>
+    Cordialement,<br>
+    L'équipe CREFER
+</p>
+@endsection

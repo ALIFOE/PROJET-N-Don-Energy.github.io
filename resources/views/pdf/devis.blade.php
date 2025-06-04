@@ -156,7 +156,7 @@
     @endif
 
     <div class="footer">
-        <p>N'Don Energy - Solutions d'énergie solaire</p>
+        <p>CREFER - Solutions d'énergie solaire</p>
         <p>Tel: +XXX XXX XXX - Email: contact@ndonenergy.com</p>
     </div>
 </body>
