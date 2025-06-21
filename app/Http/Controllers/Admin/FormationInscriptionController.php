@@ -71,23 +71,14 @@ class FormationInscriptionController extends Controller
         };
 
         return back()->with('success', 'Le statut de l\'inscription a été mis à jour.');
-    }    public function destroy(FormationInscription $inscription)
+    }
+
+    public function destroy(FormationInscription $inscription)
     {
-        if (!in_array($inscription->statut, ['refusee', 'acceptee'])) {
+        if (!in_array($inscription->statut, ['refusee', 'validee'])) {
             return back()->with('error', 'Cette inscription ne peut pas être supprimée.');
         }
 
-        // Suppression des fichiers associés
-        if ($inscription->acte_naissance_path) {
-            Storage::delete($inscription->acte_naissance_path);
-        }
-        if ($inscription->cni_path) {
-            Storage::delete($inscription->cni_path);
-        }
-        if ($inscription->diplome_path) {
-            Storage::delete($inscription->diplome_path);
-        }
-        
         $inscription->delete();
 
         return back()->with('success', 'L\'inscription a été supprimée avec succès.');

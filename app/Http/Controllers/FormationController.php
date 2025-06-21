@@ -2,10 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use App\Models\Formation;
 use App\Models\FormationInscription;
-use App\Notifications\FormationInscriptionCanceled;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Events\FormationInscriptionCreated;
@@ -113,27 +111,5 @@ class FormationController extends Controller
         }
 
         // Retourner le fichier
-        return response()->download(storage_path('app/' . $path));
-    }
-
-    public function cancelInscription(FormationInscription $inscription)
-    {
-        // Vérifier que l'utilisateur actuel est bien le propriétaire de l'inscription
-        if ($inscription->user_id !== auth()->id()) {
-            abort(403);
-        }
-
-        // Mettre à jour le statut
-        $inscription->update([
-            'statut' => FormationInscription::STATUT_ANNULEE
-        ]);
-
-        // Notifier les administrateurs
-        User::where('role', 'admin')->get()->each(function($admin) use ($inscription) {
-            $admin->notify(new FormationInscriptionCanceled($inscription));
-        });
-
-        return redirect()->route('formations.mes-inscriptions')
-            ->with('success', 'Votre inscription a été annulée avec succès.');
-    }
+        return response()->download(storage_path('app/' . $path));}
 }

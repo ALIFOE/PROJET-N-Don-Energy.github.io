@@ -21,12 +21,7 @@ class DemandeService extends Model
     protected $fillable = [
         'user_id',
         'service_id',
-        'nom',
-        'email',
-        'telephone',
-        'description',
         'details',
-        'champs_specifiques',
         'statut'
     ];
 

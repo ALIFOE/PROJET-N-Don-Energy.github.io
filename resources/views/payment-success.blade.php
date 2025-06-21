@@ -7,7 +7,7 @@
                         <div class="mb-4">
                             <i class="fas fa-check-circle text-green-500 text-6xl"></i>
                         </div>
-                        <h1 class="text-3xl font-bold mb-4">Commande Envoyée !</h1>
+                        <h1 class="text-3xl font-bold mb-4">Commande confirmée !</h1>
                         <p class="text-xl mb-4">Votre commande #{{ $order->id }} a été enregistrée avec succès.</p>
                         <p class="mb-4">Un email de confirmation a été envoyé à {{ $order->customer_email }}</p>
                         

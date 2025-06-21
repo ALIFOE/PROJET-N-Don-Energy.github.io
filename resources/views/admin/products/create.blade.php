@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="flex justify-between items-center mb-6">
+    <div class="flex justify-between items-center mb-6 pt-16">
         <h2 class="text-2xl font-semibold text-gray-800">
             {{ __('Ajouter un produit') }}
         </h2>

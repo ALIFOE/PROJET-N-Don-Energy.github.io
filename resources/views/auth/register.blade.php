@@ -1,7 +1,8 @@
 <x-guest-layout>
     <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100">
-        <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg">            <div class="flex items-center justify-center mb-6">
-                <a href="{{ route('home') }}" class="flex items-center hover:opacity-80 transition-opacity">
+        <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg">
+            <div class="flex items-center justify-center mb-6">
+                <a href="{{ route('home') }}" class="flex items-center">
                     <i class="fas fa-solar-panel text-blue-600 text-4xl mr-2"></i>
                     <span class="text-2xl font-bold text-gray-800">CREFER</span>
                 </a>

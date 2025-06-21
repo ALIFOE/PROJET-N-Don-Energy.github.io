@@ -110,7 +110,7 @@
 
         <!-- Section Avantages -->
         <div class="mt-24">
-            <h2 class="text-3xl font-bold text-center mb-12">Pourquoi choisir CREFER ?</h2>
+            <h2 class="text-3xl font-bold text-center mb-12">Pourquoi choisir N'Don Energy ?</h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div class="bg-white p-6 rounded-xl shadow-md">
                     <i class="fas fa-medal text-4xl text-blue-600 mb-4"></i>

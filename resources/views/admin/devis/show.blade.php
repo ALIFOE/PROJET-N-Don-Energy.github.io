@@ -223,9 +223,9 @@
                         <form action="{{ url('/admin/devis/'.$devis->id) }}" method="POST" class="inline-block">
                             @csrf
                             @method('DELETE')
-                            {{-- <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce devis ?')">
+                            <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce devis ?')">
                                 <i class="fas fa-trash mr-2"></i> Supprimer
-                            </button> --}}
+                            </button>
                         </form>
                     </div>
                 </div>

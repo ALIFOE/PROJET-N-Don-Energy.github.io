@@ -86,10 +86,6 @@
         </style>
     </head>    <div class="container mx-auto px-6 py-6">
         <div class="flex justify-between items-center">
-            <!-- Bouton Menu Mobile -->
-            <button @click="mobileMenu = !mobileMenu" class="md:hidden text-gray-500 hover:text-gray-600">
-                <i class="fas fa-bars text-2xl"></i>
-            </button>
             <!-- Logo et Nom -->
             <div class="flex items-center">
                 <a href="{{ route('home') }}" class="flex items-center">
@@ -97,56 +93,45 @@
                 </a>
             </div>
             <!-- Navigation Links -->
-            @if(auth()->check())
-                @if(auth()->user()->isAdmin())
-                    @include('layouts.admin-navigation')
-                @elseif(auth()->user()->role === 'technician')
-                    @include('layouts.technician-navigation')
-                @else
-                    <!-- Menu Client -->                    <div class="hidden md:flex space-x-10">
-                        <a href="{{ route('home') }}" class="navbar-link {{ request()->routeIs('home') ? 'active' : '' }}">Accueil</a>                        <a href="{{ route('fonctionnalite') }}" class="navbar-link {{ request()->routeIs('fonctionnalite') ? 'active' : '' }}">Fonctionnalités</a>
-                        <div class="relative" x-data="{ open: false }">
-                            <button @click="open = !open" class="navbar-link inline-flex items-center {{ request()->routeIs('services.*') || request()->routeIs('client.demandes-services.*') ? 'active' : '' }}">
-                                Services
-                                <i class="fas fa-chevron-down ml-2 text-sm"></i>
-                            </button>
-                            <div x-show="open" @click.away="open = false" class="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
-                                <a href="{{ route('services.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Nos services</a>
-                                <a href="{{ route('client.demandes-services.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Mes demandes</a>
-                                <a href="{{ route('ia-services') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                    <i class="fas fa-robot mr-2"></i>Services IA
-                                </a>
-                            </div>
-                        </div>                        <div class="relative" x-data="{ open: false }">
-                            <button @click="open = !open" class="navbar-link inline-flex items-center {{ request()->routeIs('formation*') ? 'active' : '' }}">
-                                Formations
-                                <i class="fas fa-chevron-down ml-2 text-sm"></i>
-                            </button>
-                            <div x-show="open" @click.away="open = false" class="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
-                                <a href="{{ route('formation') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Formations à CREFER</a>
-                                <a href="{{ route('formations.mes-inscriptions') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Mes inscriptions</a>
-                            </div>                        </div>                        <a href="{{ route('installation') }}" class="navbar-link {{ request()->routeIs('installation') ? 'active' : '' }}">Devis</a>
-                        <div class="relative" x-data="{ open: false }">
-                            <button @click="open = !open" class="navbar-link inline-flex items-center {{ request()->routeIs('marketplace') || request()->routeIs('mes-commandes') ? 'active' : '' }}">
-                                Boutique EGENT
-                                <i class="fas fa-chevron-down ml-2 text-sm"></i>
-                            </button>
-                            <div x-show="open" @click.away="open = false" class="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
-                                <a href="{{ route('marketplace') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Catalogue</a>
-                                <a href="{{ route('mes-commandes') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Mes commandes</a>
-                            </div>
-                        </div>
-                        <a href="{{ route('contact') }}" class="navbar-link {{ request()->routeIs('contact') ? 'active' : '' }}">Contact</a>
+            <div class="hidden md:flex space-x-10">
+                <a href="{{ route('home') }}" class="navbar-link {{ request()->routeIs('home') ? 'active' : '' }}">Accueil</a>
+                <a href="{{ route('fonctionnalite') }}" class="navbar-link {{ request()->routeIs('fonctionnalite') ? 'active' : '' }}">Fonctionnalités</a>
+                <div class="relative" x-data="{ open: false }">
+                    <button @click="open = !open" class="navbar-link inline-flex items-center {{ request()->routeIs('services.*') || request()->routeIs('client.demandes-services.*') ? 'active' : '' }}">
+                        Services
+                        <i class="fas fa-chevron-down ml-2 text-sm"></i>
+                    </button>
+                    <div x-show="open" @click.away="open = false" class="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
+                        <a href="{{ route('services.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Nos services</a>
+                        <a href="{{ route('client.demandes-services.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Mes demandes</a>
+                        <a href="{{ route('ia-services') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                            <i class="fas fa-robot mr-2"></i>Services IA
+                        </a>
                     </div>
-                @endif
-            @else
-                <!-- Menu Visiteur -->
-                <div class="hidden md:flex space-x-10">
-                    <a href="{{ route('home') }}" class="navbar-link {{ request()->routeIs('home') ? 'active' : '' }}">Accueil</a>                    <a href="{{ route('fonctionnalite') }}" class="navbar-link {{ request()->routeIs('fonctionnalite') ? 'active' : '' }}">Fonctionnalités</a>
-                    <a href="{{ route('formation') }}" class="navbar-link {{ request()->routeIs('formation') ? 'active' : '' }}">Formations à CREFER</a>
-                    <a href="{{ route('marketplace') }}" class="navbar-link {{ request()->routeIs('marketplace') ? 'active' : '' }}">Boutique EGENT</a>
                 </div>
-            @endif
+                <div class="relative" x-data="{ open: false }">
+                    <button @click="open = !open" class="navbar-link inline-flex items-center {{ request()->routeIs('formation*') ? 'active' : '' }}">
+                        Formations
+                        <i class="fas fa-chevron-down ml-2 text-sm"></i>
+                    </button>
+                    <div x-show="open" @click.away="open = false" class="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
+                        <a href="{{ route('formation') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Formations à CREFER</a>
+                        <a href="{{ route('formations.mes-inscriptions') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Mes inscriptions</a>
+                    </div>
+                </div>
+                <a href="{{ route('installation') }}" class="navbar-link {{ request()->routeIs('installation') ? 'active' : '' }}">Devis</a>
+                <div class="relative" x-data="{ open: false }">
+                    <button @click="open = !open" class="navbar-link inline-flex items-center {{ request()->routeIs('marketplace') || request()->routeIs('mes-commandes') ? 'active' : '' }}">
+                        Boutique EGENT
+                        <i class="fas fa-chevron-down ml-2 text-sm"></i>
+                    </button>
+                    <div x-show="open" @click.away="open = false" class="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
+                        <a href="{{ route('marketplace') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Catalogue</a>
+                        <a href="@auth{{ route('mes-commandes') }}@else{{ route('login') }}@endauth" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Mes commandes</a>
+                    </div>
+                </div>
+                <a href="{{ route('contact') }}" class="navbar-link {{ request()->routeIs('contact') ? 'active' : '' }}">Contact</a>
+            </div>
 
             <!-- User Menu -->
             <div class="flex items-center">
@@ -230,81 +215,20 @@
                         <a href="{{ route('formation') }}" class="navbar-link">Formations à CREFER</a>
                         <a href="{{ route('installation') }}" class="navbar-link">Devis</a>
                         <a href="{{ route('marketplace') }}" class="navbar-link">Boutique EGENT</a>
+                        <a href="@auth{{ route('mes-commandes') }}@else{{ route('login') }}@endauth" class="navbar-link">Mes commandes</a>
                         <a href="{{ route('contact') }}" class="navbar-link">Contact</a>
                     @endif
                 @else
                     <a href="{{ route('home') }}" class="navbar-link">Accueil</a>
-                    <a href="{{ route('fonctionnalite') }}" class="navbar-link">Fonctionnalités</a>                    <a href="{{ route('formation') }}" class="navbar-link">Formations à CREFER</a>
+                    <a href="{{ route('fonctionnalite') }}" class="navbar-link">Fonctionnalités</a>
+                    <a href="{{ route('services.index') }}" class="navbar-link">Services</a>
+                    <a href="{{ route('formation') }}" class="navbar-link">Formations à CREFER</a>
                     <a href="{{ route('installation') }}" class="navbar-link">Devis</a>
                     <a href="{{ route('marketplace') }}" class="navbar-link">Boutique EGENT</a>
+                    <!-- Pas de lien Mes commandes si non connecté -->
                     <a href="{{ route('contact') }}" class="navbar-link">Contact</a>
                 @endif
             </div>
-        </div>
-    </div>
-
-    <!-- Menu Mobile -->
-    <div x-show="mobileMenu" 
-         x-transition:enter="transition ease-out duration-200"
-         x-transition:enter-start="opacity-0 transform -translate-y-full"
-         x-transition:enter-end="opacity-100 transform translate-y-0"
-         x-transition:leave="transition ease-in duration-200"
-         x-transition:leave-start="opacity-100 transform translate-y-0"
-         x-transition:leave-end="opacity-0 transform -translate-y-full"
-         class="md:hidden bg-white border-t border-gray-200">
-        <div class="px-6 py-4">
-            <!-- Logo dans le menu mobile -->
-            <div class="flex items-center justify-center mb-6">
-                <a href="{{ route('home') }}" class="flex items-center">
-                    <i class="fas fa-solar-panel nav-icon text-3xl mr-2"></i>
-                    <span class="text-2xl font-bold nav-brand">CREFER</span>
-                </a>
-            </div>
-
-            <!-- Liens de navigation mobile -->
-            @if(auth()->check())
-                @if(auth()->user()->isAdmin())
-                    <!-- Menu Admin Mobile -->
-                    <div class="space-y-4">
-                        <a href="{{ route('admin.dashboard') }}" class="block py-2 text-base">
-                            <i class="fas fa-chart-line mr-2"></i>Tableau de bord
-                        </a>
-                        <a href="{{ route('admin.notifications.index') }}" class="block py-2 text-base">
-                            <i class="fas fa-bell mr-2"></i>Notifications
-                        </a>
-                    </div>
-                @elseif(auth()->user()->role === 'technician')
-                    <!-- Menu Technicien Mobile -->
-                    <div class="space-y-4">
-                        <a href="{{ route('technician.installations') }}" class="block py-2 text-base">Installations</a>
-                        <a href="{{ route('technician.maintenance') }}" class="block py-2 text-base">Maintenance</a>
-                    </div>
-                @else                    <!-- Menu Client Mobile -->
-                    <div class="space-y-4">
-                        <a href="{{ route('home') }}" class="block py-2 text-base">Accueil</a>
-                        <a href="{{ route('fonctionnalite') }}" class="block py-2 text-base">Fonctionnalités</a>                        <a href="{{ route('services.index') }}" class="block py-2 text-base">Services</a>
-                        <a href="{{ route('formation') }}" class="block py-2 text-base">Formations</a>                        <a href="{{ route('installation') }}" class="block py-2 text-base">Devis</a>
-                        <div class="relative" x-data="{ open: false }">
-                            <button @click="open = !open" class="flex items-center w-full py-2 text-left">
-                                Boutique EGENT
-                                <i class="fas fa-chevron-down ml-2 text-sm"></i>
-                            </button>
-                            <div x-show="open" class="pl-4">
-                                <a href="{{ route('marketplace') }}" class="block py-2 text-base">Catalogue</a>
-                                <a href="{{ route('mes-commandes') }}" class="block py-2 text-base">Mes commandes</a>
-                            </div>
-                        </div>
-                        <a href="{{ route('contact') }}" class="block py-2 text-base">Contact</a>
-                    </div>
-                @endif
-            @else
-                <!-- Menu Visiteur Mobile -->                    <div class="space-y-4">
-                        <a href="{{ route('home') }}" class="block py-2 text-base">Accueil</a>
-                        <a href="{{ route('fonctionnalite') }}" class="block py-2 text-base">Fonctionnalités</a>
-                        <a href="{{ route('formation') }}" class="block py-2 text-base">Formations</a>
-                        <a href="{{ route('marketplace') }}" class="block py-2 text-base">Boutique EGENT</a>
-                </div>
-            @endif
         </div>
     </div>
 </nav>

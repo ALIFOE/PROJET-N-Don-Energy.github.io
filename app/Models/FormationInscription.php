@@ -9,8 +9,6 @@ class FormationInscription extends Model
 {
     use LogsActivity;
 
-    public const STATUT_ANNULEE = 'annulee';
-
     protected $fillable = [
         'formation_id',
         'user_id',
@@ -21,7 +19,7 @@ class FormationInscription extends Model
         'cni_path',
         'diplome_path',
         'autres_documents_paths',
-        'statut',
+        'statut'
     ];
 
     protected $casts = [

@@ -4,15 +4,11 @@
 <div class="container mx-auto px-4 py-8">
     <div class="flex justify-between items-center mb-6">
         <h1 class="text-2xl font-bold text-gray-800">Gestion des Devis</h1>
-    </div>    @if(session('success'))
+    </div>
+
+    @if(session('success'))
         <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
             <span class="block sm:inline">{{ session('success') }}</span>
-        </div>
-    @endif
-
-    @if(session('error'))
-        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
-            <span class="block sm:inline">{{ session('error') }}</span>
         </div>
     @endif
 
@@ -67,8 +63,9 @@
                         <div class="flex space-x-3">
                             <a href="{{ route('admin.devis.show', $item) }}" class="text-blue-600 hover:text-blue-900">
                                 <i class="fas fa-eye"></i> Voir
-                            </a>                            <form action="{{ route('admin.devis.supprimer', ['devis' => $item]) }}" method="POST" class="inline-block">
+                            </a>                            <form action="{{ route('admin.devis.destroy', ['devi' => $item]) }}" method="POST" class="inline-block">
                                 @csrf
+                                @method('DELETE')
                                 <button type="submit" class="text-red-600 hover:text-red-900" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce devis ?')">
                                     <i class="fas fa-trash"></i> Supprimer
                                 </button>

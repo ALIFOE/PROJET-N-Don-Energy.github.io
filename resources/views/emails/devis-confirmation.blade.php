@@ -1,46 +1,21 @@
-@extends('emails.layouts.devis-mail')
+<x-mail::message>
+# Confirmation de votre demande de devis
 
-@section('content')
-<h1>Confirmation de votre demande de devis - CREFER</h1>
+Bonjour {{ $devis->nom }} {{ $devis->prenom }},
 
-<p>Cher(e) {{ $devis->nom }} {{ $devis->prenom }},</p>
+Nous avons bien reçu votre demande de devis et nous vous en remercions.
 
-<p>Nous avons bien reçu votre demande de devis pour une installation solaire photovoltaïque. Nous vous remercions de votre confiance.</p>
+## Récapitulatif de votre demande :
+- Type de bâtiment : {{ $devis->type_batiment }}
+- Consommation annuelle : {{ $devis->consommation_annuelle }} kWh
+- Type de toiture : {{ $devis->type_toiture }}
+- Orientation : {{ $devis->orientation }}
 
-<h2>Détails de votre demande :</h2>
-<ul>
-    <li><strong>Type de bâtiment :</strong> {{ $devis->type_batiment }}</li>
-    <li><strong>Consommation annuelle :</strong> {{ $devis->consommation_annuelle }} kWh</li>
-    <li><strong>Type de toiture :</strong> {{ $devis->type_toiture }}</li>
-    <li><strong>Orientation :</strong> {{ $devis->orientation }}</li>
-</ul>
+Notre équipe va étudier votre demande dans les plus brefs délais et vous recontactera avec un devis détaillé.
 
-@if($devis->objectifs && count($devis->objectifs) > 0)
-<h2>Vos objectifs :</h2>
-<ul>
-    @foreach($devis->objectifs as $objectif)
-    <li>{{ $objectif }}</li>
-    @endforeach
-</ul>
-@endif
+Si vous avez des questions entre-temps, n'hésitez pas à nous contacter.
 
-<p>Nous allons étudier votre demande dans les plus brefs délais et nous vous contacterons pour vous présenter notre proposition détaillée.</p>
+Cordialement,
+L'équipe CREFER
 
-@if($devis->message)
-<h2>Votre message :</h2>
-<p>{{ $devis->message }}</p>
-@endif
-
-<p>
-    <a href="{{ route('devis.resultats', $devis->id) }}" class="btn-primary">
-        Voir les résultats de l'analyse
-    </a>
-</p>
-
-<p>Pour toute question, n'hésitez pas à nous contacter.</p>
-
-<p>
-    Cordialement,<br>
-    L'équipe CREFER
-</p>
-@endsection
+</x-mail::message>

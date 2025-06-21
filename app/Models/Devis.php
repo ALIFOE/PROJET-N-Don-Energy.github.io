@@ -7,7 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Devis extends Model
 {
-    use HasFactory;    protected $fillable = [
+    use HasFactory;
+
+    protected $fillable = [
         'nom',
         'prenom',
         'email',
@@ -21,8 +23,7 @@ class Devis extends Model
         'objectifs',
         'message',
         'analyse_technique',
-        'statut',
-        'status'
+        'statut'
     ];
 
     protected $casts = [
@@ -30,33 +31,26 @@ class Devis extends Model
         'analyse_technique' => 'array',
         'facture_mensuelle' => 'decimal:2',
         'consommation_annuelle' => 'decimal:2'
-    ];    public function getStatusLabelAttribute()
+    ];
+
+    public function getStatusLabelAttribute()
     {
-        $status = $this->status ?? $this->statut;
         return [
             'en_attente' => 'En attente',
-            'pending' => 'En attente',
             'en_cours' => 'En cours',
-            'in_progress' => 'En cours',
             'accepte' => 'Accepté',
-            'accepted' => 'Accepté',
-            'refuse' => 'Refusé',
-            'rejected' => 'Refusé'
-        ][$status] ?? 'Inconnu';
+            'refuse' => 'Refusé'
+        ][$this->statut] ?? 'Inconnu';
     }
 
     public function getStatusColorAttribute()
     {
-        $status = $this->status ?? $this->statut;
         return [
             'en_attente' => 'yellow',
-            'pending' => 'yellow',
             'en_cours' => 'blue',
-            'in_progress' => 'blue',
             'accepte' => 'green',
-            'accepted' => 'green',            'refuse' => 'red',
-            'rejected' => 'red'
-        ][$status] ?? 'gray';
+            'refuse' => 'red'
+        ][$this->statut] ?? 'gray';
     }
 
     public function getNomCompletAttribute()

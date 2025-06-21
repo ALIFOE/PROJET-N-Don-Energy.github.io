@@ -14,13 +14,12 @@
     
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <!-- ChartJS -->
+      <!-- ChartJS -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <!-- Styles -->
+    <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    @livewireStyles
-
+    
     <!-- Styles supplémentaires -->
     @stack('styles')
 
@@ -142,9 +141,7 @@
                         <ul class="space-y-2">
                             <li class="flex items-start">
                                 <i class="fas fa-map-marker-alt mt-1 mr-2 footer-icon"></i>
-                                <span class="footer-link">Lomé-TOGO,
-Siège Social situé à Lomé-TOGO quartier Totsi Gblenkomé près de la salle de réunion des témoins de Jéhovah
-Annexe au bord des pavés de Totsi non loin de l'agence TogoCom</span>
+                                <span class="footer-link">Rue KOPEGA 56.GB Lomé, Togo</span>
                             </li>
                             <li class="flex items-center">
                                 <i class="fas fa-phone mt-1 mr-2 footer-icon"></i>
@@ -224,6 +221,5 @@ Annexe au bord des pavés de Totsi non loin de l'agence TogoCom</span>
 
     <!-- Scripts supplémentaires -->
     @stack('scripts')
-    @livewireScripts
 </body>
 </html>

@@ -5,14 +5,12 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
-use App\Mail\VerificationCodeMail;
+use App\Services\EmailValidationService;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Str;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
 
@@ -33,37 +31,41 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        $emailValidator = new EmailValidationService();
+
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => [
                 'required', 
                 'string', 
-                'email',
+                'email:rfc,dns',
                 'max:255', 
                 'unique:'.User::class,
+                function ($attribute, $value, $fail) use ($emailValidator) {
+                    if (!$emailValidator->isAllowedDomain($value)) {
+                        $fail('Seules les adresses email de Google (Gmail), Microsoft (Outlook, Hotmail, Live) ou Yahoo sont acceptées.');
+                        return;
+                    }
+
+                    if (!$emailValidator->verifyEmailExists($value)) {
+                        $fail("Cette adresse email n'existe pas. Veuillez fournir une adresse email valide et active.");
+                    }
+                },
             ],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
-
-        // Génération du code de vérification
-        $verificationCode = Str::random(6);
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => 'client',
-            'verification_code' => $verificationCode,
-            'is_verified' => false,
+            'role' => 'client', // Attribution explicite du rôle client
         ]);
 
         event(new Registered($user));
 
-        // Envoi du code par email
-        Mail::to($user->email)->send(new VerificationCodeMail($user->name, $verificationCode));
-
         Auth::login($user);
 
-        return redirect()->route('verification.notice');
+        return redirect(RouteServiceProvider::HOME);
     }
 }

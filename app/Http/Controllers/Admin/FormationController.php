@@ -5,21 +5,17 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Formation;
 use App\Models\FormationInscription;
-use App\Traits\NotificationMarkable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class FormationController extends Controller
 {
-    use NotificationMarkable;
-    
     public function __construct()
     {
         $this->middleware('auth');
         $this->middleware('admin');
     }    public function index()
     {
-        $this->markNotificationsAsRead('App\Notifications\NewFormationInscriptionNotification');
         $formations = Formation::withCount('inscriptions')
             ->latest()
             ->paginate(10);

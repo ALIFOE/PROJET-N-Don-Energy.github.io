@@ -4,7 +4,7 @@
 ini_set('post_max_size', '128M');
 ini_set('upload_max_filesize', '128M');
 ini_set('memory_limit', '512M');
-ini_set('max_execution_time', '1800');
+ini_set('max_execution_time', '900');
 ini_set('max_input_time', '300');
 
 use Illuminate\Contracts\Http\Kernel;
