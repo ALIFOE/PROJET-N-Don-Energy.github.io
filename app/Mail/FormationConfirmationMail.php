@@ -26,7 +26,7 @@ class FormationConfirmationMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Confirmation de votre inscription à la formation - Né Don Energy',
+            subject: 'Confirmation de votre inscription à la formation - Né CREFER',
         );
     }
 

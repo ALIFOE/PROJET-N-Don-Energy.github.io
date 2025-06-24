@@ -67,4 +67,9 @@ class User extends Authenticatable
     {
         return $this->role === 'admin';
     }
+
+    public static function getAdminEmails(): array
+    {
+        return self::where('role', 'admin')->pluck('email')->toArray();
+    }
 }

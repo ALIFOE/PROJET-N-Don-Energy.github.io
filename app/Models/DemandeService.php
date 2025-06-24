@@ -39,22 +39,6 @@ class DemandeService extends Model
         };
     }
 
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::saving(function ($demandeService) {
-            if (!in_array($demandeService->statut, [
-                self::STATUT_EN_ATTENTE,
-                self::STATUT_EN_COURS,
-                self::STATUT_ACCEPTE,
-                self::STATUT_REFUSE
-            ])) {
-                $demandeService->statut = self::STATUT_EN_ATTENTE;
-            }
-        });
-    }
-
     public function user()
     {
         return $this->belongsTo(User::class);

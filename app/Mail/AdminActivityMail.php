@@ -12,9 +12,7 @@ class AdminActivityMail extends Mailable
 {
     use Queueable, SerializesModels;    public static function getAdminEmails()
     {
-        // Utiliser directement l'email admin configuré
-        $adminEmail = env('MAIL_ADMIN_EMAIL', 'alifoebaudoin228@gmail.com');
-        return [$adminEmail];
+        return User::getAdminEmails();
     }
 
     public $activityData;

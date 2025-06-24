@@ -27,7 +27,7 @@ class NotifyAdminOfClientActivity
                 $actionText,
                 $event->data
             );// Envoyer un email à tous les administrateurs
-            Mail::to(AdminActivityMail::getAdminEmails())
+            Mail::to(User::getAdminEmails())
                 ->queue(new AdminActivityMail($event->type, $event->data));
         } catch (\Exception $e) {
             Log::error('Erreur lors de la notification des administrateurs', [

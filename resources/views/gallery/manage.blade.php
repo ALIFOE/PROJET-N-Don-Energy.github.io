@@ -26,12 +26,17 @@
                                 <h3 class="text-lg font-semibold text-gray-800">{{ $item->title }}</h3>
                                 <p class="text-sm text-gray-600">{{ $item->description }}</p>
                                 <div class="mt-4 flex justify-between items-center">
-                                    <form action="{{ route('admin.gallery.toggle-featured', $item) }}" method="POST">
+                                    {{-- Bouton Mettre en avant désactivé car la route n'existe pas --}}
+                                    {{--
+                                    <form action="#" method="POST">
                                         @csrf
-                                        <button type="submit" class="text-{{ $item->is_featured ? 'yellow' : 'gray' }}-500 hover:text-yellow-600">
+                                        <button type="button" class="text-{{ $item->is_featured ? 'yellow' : 'gray' }}-500 cursor-not-allowed" disabled>
                                             <i class="fas fa-star"></i>
                                         </button>
                                     </form>
+                                    --}}
+                                    {{-- Formulaire de suppression désactivé car la route n'existe pas --}}
+                                    {{--
                                     <form action="{{ route('admin.gallery.destroy', $item) }}" method="POST" 
                                           onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce média ?')">
                                         @csrf
@@ -40,6 +45,7 @@
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </form>
+                                    --}}
                                 </div>
                             </div>
                         </div>

@@ -69,14 +69,22 @@
                         </div>
                         <!-- Services -->
                         <div class="relative" x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false">
-                            <button @click.prevent.stop="open = !open" class="navbar-link flex items-center px-3 py-2 rounded-md text-gray-700 hover:bg-yellow-100 transition">
+                            <button @click.prevent.stop="open = !open" class="navbar-link flex items-center px-3 py-2 rounded-md text-gray-700 hover:bg-yellow-100 transition relative">
                                 <i class="fas fa-concierge-bell mr-2"></i> Services
+                                @if(isset($servicesRequestsCount) && $servicesRequestsCount > 0)
+                                    <span class="ml-2 inline-flex items-center justify-center px-2 py-0.5 text-xs font-bold leading-none text-white bg-red-600 rounded-full">{{ $servicesRequestsCount }}</span>
+                                @endif
                                 <i class="fas fa-chevron-down ml-1 text-xs"></i>
                             </button>
                             <div x-show="open" @click.away="open = false" x-transition class="absolute left-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
                                 <a href="{{ route('admin.services.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50"><i class="fas fa-list mr-2"></i>Liste des services</a>
                                 <a href="{{ route('admin.services.create') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50"><i class="fas fa-plus mr-2"></i>Nouveau service</a>
-                                <a href="{{ route('admin.services.requests') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50"><i class="fas fa-inbox mr-2"></i>Demandes de services</a>
+                                <a href="{{ route('admin.services.requests') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50 flex items-center">
+                                    <i class="fas fa-inbox mr-2"></i>Demandes de services
+                                    @if(isset($servicesRequestsCount) && $servicesRequestsCount > 0)
+                                        <span class="ml-2 inline-flex items-center justify-center px-2 py-0.5 text-xs font-bold leading-none text-white bg-red-600 rounded-full">{{ $servicesRequestsCount }}</span>
+                                    @endif
+                                </a>
                                 <a href="{{ route('admin.services.status') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-yellow-50"><i class="fas fa-tachometer-alt mr-2"></i>État des services IA</a>
                             </div>
                         </div>

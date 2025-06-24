@@ -3,6 +3,7 @@
 namespace App\Mail;
 
 use App\Models\FormationInscription;
+use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
@@ -31,7 +32,8 @@ class AdminNotification extends Mailable
      */
     public function build()
     {
-        return $this->subject('Nouvelle Inscription à une Formation')
+        return $this->to(User::getAdminEmails())
+                    ->subject('Nouvelle Inscription à une Formation')
                     ->view('emails.admin_notification')
                     ->with(['inscription' => $this->inscription]);
     }

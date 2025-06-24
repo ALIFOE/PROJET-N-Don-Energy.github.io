@@ -39,6 +39,7 @@
                                     <ul class="mt-2 space-y-2 text-blue-800">
                                         <li>Puissance totale : {{ $analyseData['dimensionnement']['puissance_kwc'] }} kWc</li>
                                         <li>Nombre de panneaux : {{ $analyseData['dimensionnement']['nombre_panneaux'] }}</li>
+                                        <li>Nombre de batteries recommandé : {{ $analyseData['dimensionnement']['nombre_batteries'] }}</li>
                                         <li>Surface nécessaire : {{ $analyseData['dimensionnement']['surface_necessaire'] }} m²</li>
                                         <li>Production estimée : {{ number_format($analyseData['dimensionnement']['production_estimee'], 0) }} kWh/an</li>
                                     </ul>
@@ -53,14 +54,14 @@
                                 <div class="bg-yellow-50 p-4 rounded-lg">
                                     <h3 class="font-medium text-yellow-900">Investissement</h3>
                                     <ul class="mt-2 space-y-2 text-yellow-800">
-                                        <li>Coût estimé : {{ number_format($analyseData['analyse_financiere']['cout_installation'], 0) }} €</li>
-                                        <li>Économies annuelles : {{ number_format($analyseData['analyse_financiere']['economies_annuelles'], 0) }} €</li>
+                                        <li>Coût estimé : {{ number_format($analyseData['analyse_financiere']['cout_installation'] * 655, 0, ',', ' ') }} FCFA</li>
+                                        <li>Économies annuelles : {{ number_format($analyseData['analyse_financiere']['economies_annuelles'] * 655, 0, ',', ' ') }} FCFA</li>
                                         <li>Retour sur investissement : {{ $analyseData['analyse_financiere']['retour_investissement_annees'] }} ans</li>
                                     </ul>
                                 </div>
                                 <div class="bg-yellow-50 p-4 rounded-lg">
                                     <h3 class="font-medium text-yellow-900">Rentabilité à 20 ans</h3>
-                                    <p class="mt-2 text-yellow-800">{{ number_format($analyseData['analyse_financiere']['rentabilite_20_ans'], 0) }} €</p>
+                                    <p class="mt-2 text-yellow-800">{{ number_format($analyseData['analyse_financiere']['rentabilite_20_ans'] * 655, 0, ',', ' ') }} FCFA</p>
                                 </div>
                             </div>
                         </div>

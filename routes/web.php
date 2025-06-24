@@ -277,6 +277,9 @@ Route::prefix('services')->group(function () {
     Route::post('/{service}/demande', [ServiceController::class, 'submitRequest'])
         ->middleware(['auth'])
         ->name('services.request.submit');
+    Route::get('/services/{service}/demande/{serviceRequest}', [ServiceController::class, 'showRequest'])
+    ->middleware(['auth'])
+    ->name('services.request.show');
 });
 
 // Routes pour les demandes de services client
@@ -306,6 +309,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 // Routes Galerie (admin)
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/gallery/manage', [GalleryController::class, 'manage'])->name('admin.gallery.manage');
+    Route::post('/admin/gallery/store', [GalleryController::class, 'store'])->name('admin.gallery.store');
     // Vous pouvez ajouter ici d'autres routes admin pour la galerie si besoin (store, destroy, etc.)
 });
 

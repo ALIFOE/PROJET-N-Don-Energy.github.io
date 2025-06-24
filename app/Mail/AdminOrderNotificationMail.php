@@ -3,6 +3,7 @@
 namespace App\Mail;
 
 use App\Models\Order;
+use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
@@ -16,14 +17,14 @@ class AdminOrderNotificationMail extends Mailable
 
     public function __construct(public Order $order)
     {
-        $this->to(config('mail.admin_email'));
-        Log::info('Préparation de l\'e-mail pour l\'administrateur', ['order_id' => $this->order->id]);
+        $this->to(User::getAdminEmails());
+        Log::info('Préparation de l\'e-mail pour les administrateurs', ['order_id' => $this->order->id]);
     }
 
     public function envelope(): Envelope
     {
         return new Envelope(
-            to: [config('mail.admin_email')],
+            to: User::getAdminEmails(),
             subject: 'Nouvelle commande - CREFER',
         );
     }

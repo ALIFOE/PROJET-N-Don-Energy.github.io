@@ -16,6 +16,13 @@
                             }, 10000); // 10 secondes
                         </script>
                     @endif
+
+                    @if (session('error'))
+                        <div class="mb-4 p-4 text-red-800 bg-red-100 border border-red-200 rounded">
+                            {{ session('error') }}
+                        </div>
+                    @endif
+
                     <h1 class="text-2xl font-bold mb-4">{{ __('Demande de devis') }}</h1>
                     <form action="{{ route('devis.store') }}" method="POST">
                         @csrf

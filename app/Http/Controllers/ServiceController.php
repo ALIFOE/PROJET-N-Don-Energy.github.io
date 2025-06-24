@@ -97,8 +97,8 @@ class ServiceController extends Controller
             $admin->notify(new NewServiceRequestNotification($serviceRequest));
         });
 
-        return redirect()->route('services.show', $service)
-            ->with('success', 'Votre demande a été envoyée avec succès. Nous vous contacterons prochainement.');
+        // Rediriger vers la même page avec un message de succès
+        return redirect()->back()->with('success', 'Votre demande a été envoyée avec succès. Nous vous contacterons prochainement.');
     }
 
     public function requestDetails(DemandeService $request)
@@ -188,12 +188,15 @@ class ServiceController extends Controller
             ->with('success', 'Service mis à jour avec succès');
     }
 
-    public function deleteRequest(DemandeService $request)
+    public function deleteRequest($id)
     {
+        $request = \App\Models\DemandeService::find($id);
+        if (!$request) {
+            return back()->with('error', 'Demande introuvable.');
+        }
         if (!in_array($request->statut, ['accepte', 'refuse'])) {
             return back()->with('error', 'Seules les demandes acceptées ou refusées peuvent être supprimées.');
         }
-
         $request->delete();
         return back()->with('success', 'Demande supprimée avec succès.');
     }
@@ -205,15 +208,21 @@ class ServiceController extends Controller
         return view('admin.services.requests', compact('requests', 'services'));
     }
 
-    public function updateRequestStatus(Request $request, DemandeService $serviceRequest)
+    public function updateRequestStatus(Request $request, $id)
     {
+        $serviceRequest = \App\Models\DemandeService::find($id);
+        if (!$serviceRequest) {
+            return back()->with('error', 'Demande introuvable.');
+        }
         $validated = $request->validate([
             'statut' => ['required', 'in:en_attente,en_cours,accepte,refuse']
         ]);
 
+        \Log::info('Statut reçu:', ['statut' => $validated['statut']]);
         $serviceRequest->update([
             'statut' => $validated['statut']
         ]);
+        \Log::info('Statut après update:', ['statut' => $serviceRequest->fresh()->statut]);
 
         // Envoyer une notification au client si le statut a changé
         if ($serviceRequest->user) {
@@ -237,5 +246,13 @@ class ServiceController extends Controller
             return redirect()->route('admin.services.index')
                 ->with('error', 'Impossible de supprimer ce service. Il est peut-être lié à des demandes existantes.');
         }
+    }
+
+    /**
+     * Affiche une demande de service précise pour un service donné
+     */
+    public function showRequest(Service $service, \App\Models\DemandeService $serviceRequest)
+    {
+        return view('services.request-show', compact('service', 'serviceRequest'));
     }
 }

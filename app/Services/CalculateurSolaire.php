@@ -62,11 +62,15 @@ class CalculateurSolaire
         $puissanceNecessaire = $this->calculerPuissanceNecessaire($consommationAnnuelle, $objectifs);
         
         // Nombre de panneaux nécessaires (en kWc)
-        $nombrePanneaux = ceil($puissanceNecessaire / ($panneau->capacite_wc / 1000));
-        
+        $nombrePanneaux = max(1, min(20, floor($puissanceNecessaire / ($panneau->capacite_wc / 1000))));
         // Surface nécessaire
         $surfaceNecessaire = $nombrePanneaux * $panneau->surface;
-        
+
+        // Calcul du nombre de batteries (exemple : 1 batterie 12V/200Ah ≈ 2,4 kWh)
+        $energieStockage = $puissanceNecessaire * 1000 * 1; // 1h d'autonomie, à adapter selon besoin
+        $capaciteBatterieKwh = 2.4; // 12V * 200Ah * 1/1000
+        $nombreBatteries = max(1, ceil($energieStockage / ($capaciteBatterieKwh * 1000)));
+
         return [
             'puissance_kwc' => $puissanceNecessaire,
             'nombre_panneaux' => $nombrePanneaux,
@@ -77,7 +81,8 @@ class CalculateurSolaire
             'rendement_panneau' => $panneau->rendement,
             'fabricant' => $panneau->fabricant,
             'modele' => $panneau->modele,
-            'garantie_annees' => $panneau->garantie_annees
+            'garantie_annees' => $panneau->garantie_annees,
+            'nombre_batteries' => $nombreBatteries
         ];
     }
 

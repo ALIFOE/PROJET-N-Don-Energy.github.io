@@ -5,6 +5,11 @@
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
             <div class="p-6">
+                @if(session('success'))
+                    <div class="mb-6 p-4 rounded bg-green-100 text-green-800 border border-green-300">
+                        {{ session('success') }}
+                    </div>
+                @endif
                 <h2 class="text-2xl font-semibold text-gray-800 mb-6">{{ $service->nom }}</h2>
 
                 <form action="{{ route('services.request.submit', $service) }}" method="POST" class="space-y-6">

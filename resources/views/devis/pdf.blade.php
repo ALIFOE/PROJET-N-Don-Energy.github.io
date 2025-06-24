@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Résultats de l'analyse - Don Energy</title>    <style>
+    <title>Résultats de l'analyse - CREFER</title>    <style>
         :root {
             --primary-color: #008037;
             --secondary-color: #4CAF50;
@@ -170,19 +170,13 @@
     </style>
 </head>
 <body>
-    <div class="header">
-        <div class="company-info">
-            <div class="logo">
-                <i class="fas fa-solar-panel"></i> CREFER
+    <div class="header" style="background:linear-gradient(90deg,#008037 0%,#4CAF50 100%);color:#fff;padding:30px 25px 20px 25px;border-radius:12px 12px 0 0;box-shadow:0 4px 6px rgba(0,0,0,0.08);margin-bottom:40px;">
+        <div class="company-info" style="display:flex;justify-content:space-between;align-items:flex-start;">
+            <div class="logo" style="font-size:32px;font-weight:bold;color:#FFC107;display:flex;align-items:center;gap:10px;">
+                <span style="font-size:36px;">☀️</span> CREFER
             </div>
-            <div class="contact-info">
-                <p>Lomé-TOGO,
-Siège Social situé à Lomé-TOGO quartier Totsi Gblenkomé près de la salle de réunion des témoins de Jéhovah
-Annexe au bord des pavés de Totsi non loin de l'agence TogoCom<br>
-                Lomé, Togo<br>
-                Tél: (+228)91 20 43 73<br>
-                     (+228)92 53 14 55<br>
-                Email: contact@crefer.com</p>
+            <div class="contact-info" style="text-align:right;font-size:14px;line-height:1.8;background:rgba(255,255,255,0.12);padding:15px 20px;border-radius:8px;border-left:4px solid #FFC107;box-shadow:0 2px 8px #eee;">
+                <p style="margin:0;">Lomé-TOGO,<br>Siège Social situé à Lomé-TOGO quartier Totsi Gblenkomé près de la salle de réunion des témoins de Jéhovah<br>Annexe au bord des pavés de Totsi non loin de l'agence TogoCom<br>Lomé, Togo<br>Tél: (+228)91 20 43 73 / (+228)92 53 14 55<br>Email: contact@crefer.com</p>
             </div>
         </div>
     </div>
@@ -213,6 +207,7 @@ Annexe au bord des pavés de Totsi non loin de l'agence TogoCom<br>
                     <li>Rendement : {{ number_format($analyseData['dimensionnement']['rendement_panneau'] * 100, 1) }}%</li>
                     <li>Garantie : {{ $analyseData['dimensionnement']['garantie_annees'] }} ans</li>
                     <li>Nombre de panneaux : {{ $analyseData['dimensionnement']['nombre_panneaux'] }}</li>
+                    <li>Nombre de batteries recommandé : {{ $analyseData['dimensionnement']['nombre_batteries'] }}</li>
                     <li>Surface nécessaire : {{ $analyseData['dimensionnement']['surface_necessaire'] }} m²</li>
                 </ul>
             </div>
@@ -227,13 +222,13 @@ Annexe au bord des pavés de Totsi non loin de l'agence TogoCom<br>
             <div class="section-title">Analyse financière</div>
             <div class="info-box">                <h3>Investissement</h3>
                 <ul>
-                    <li>Coût estimé : {{ number_format($analyseData['analyse_financiere']['cout_installation'], 0) }} XOF</li>
-                    <li>Économies annuelles : {{ number_format($analyseData['analyse_financiere']['economies_annuelles'], 0) }} XOF</li>
+                    <li>Coût estimé : <span style="color:#008037;font-weight:bold">{{ number_format($analyseData['analyse_financiere']['cout_installation'] * 655, 0, ',', ' ') }} FCFA</span></li>
+                    <li>Économies annuelles : <span style="color:#008037;font-weight:bold">{{ number_format($analyseData['analyse_financiere']['economies_annuelles'] * 655, 0, ',', ' ') }} FCFA</span></li>
                     <li>Retour sur investissement : {{ $analyseData['analyse_financiere']['retour_investissement_annees'] }} ans</li>
                 </ul>
             </div>
             <div class="info-box">                <h3>Rentabilité à 20 ans</h3>
-                <p>{{ number_format($analyseData['analyse_financiere']['rentabilite_20_ans'], 0) }} XOF</p>
+                <p style="color:#008037;font-weight:bold">{{ number_format($analyseData['analyse_financiere']['rentabilite_20_ans'] * 655, 0, ',', ' ') }} FCFA</p>
             </div>
         </div>
 

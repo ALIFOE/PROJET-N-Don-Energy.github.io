@@ -10,6 +10,7 @@ use App\Mail\AdminActivityMail;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Mail;
+use App\Models\User;
 
 class SendAdminAlert implements ShouldQueue
 {
@@ -24,8 +25,8 @@ class SendAdminAlert implements ShouldQueue
     {
         try {
             $inscription = $event->inscription;            try {
-                // Envoi de l'e-mail à l'administrateur
-                Mail::to(AdminActivityMail::getAdminEmails())
+                // Envoi de l'e-mail à tous les administrateurs
+                Mail::to(User::getAdminEmails())
                     ->send(new AdminNotification($inscription));
 
                 // Envoi de l'e-mail de confirmation au participant

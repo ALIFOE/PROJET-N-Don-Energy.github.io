@@ -24,6 +24,6 @@ Vous pouvez suivre l'état de votre inscription dans votre espace personnel.
 Si vous avez des questions entre-temps, n'hésitez pas à nous contacter.
 
 Cordialement,<br>
-L'équipe Né Don Energy
+L'équipe Né CREFER
 
 </x-mail::message>
