@@ -104,4 +104,9 @@ class Installation extends Model
     {
         return $this->utilisateur->email;
     }
+
+    public function user()
+    {
+        return $this->belongsTo(\App\Models\User::class, 'user_id');
+    }
 }

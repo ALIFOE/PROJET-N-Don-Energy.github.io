@@ -70,7 +70,7 @@
             <li>Veuillez effectuer le paiement de votre commande dans les 48 heures suivant la réception de cet e-mail.</li>
             <li>Les détails de paiement sont les suivants :</li>
             <ul style="list-style: none; padding: 0;">
-                <li><strong>Nom du bénéficiaire :</strong> CREFER</li>
+                <li><strong>Nom du bénéficiaire :</strong> EGENT TOGO</li>
                 <li><strong>Numéro de compte :</strong> 1234567890</li>
                 <li><strong>Banque :</strong> Banque XYZ</li>
                 <li><strong>BIC :</strong> XYZ123456</li>
@@ -80,12 +80,12 @@
                 <h3 style="display: block; color: #333; margin-top: 20px;">Instructions de paiement par Mobile Money:</h3>
                 <li>Les détails de paiement sont les suivants :</li>
                 <ul style="list-style: none; padding: 0;">
-                    <li><strong>Nom du bénéficiaire :</strong> CREFER</li>
+                    <li><strong>Nom du bénéficiaire :</strong> EGENT TOGO</li>
                     <li><strong>Numéro de téléphone :</strong> +228 97 73 43 81</li>
                     <li><strong>Opérateur :</strong> Moov Africa</li>
                 </ul>
                  <ul style="list-style: none; padding: 0;">
-                    <li><strong>Nom du bénéficiaire :</strong> CREFER</li>
+                    <li><strong>Nom du bénéficiaire :</strong> EGENT TOGO</li>
                     <li><strong>Numéro de téléphone :</strong> +228 90 37 95 56</li>
                     <li><strong>Opérateur :</strong> Mix By Yas</li>
                 </ul>
@@ -99,7 +99,7 @@
 
         <p style="margin-top: 20px;">Nous vous tiendrons informé de l'avancement de votre commande.</p>
         
-        <p>Cordialement,<br>L'équipe CREFER</p>
+        <p>Cordialement,<br>L'équipe EGENT TOGO</p>
     </div>
 </body>
 </html> 

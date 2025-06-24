@@ -26,7 +26,7 @@ class DashboardController extends Controller
         // Statistiques globales
         $totalUsers = \App\Models\User::count();
         $pendingQuotes = Devis::where('statut', 'en_attente')->count();
-        $activeInstallations = Installation::where('status', 'active')->count();
+        $activeInstallations = Installation::where('statut', 'active')->count();
 
         // Activités récentes
         $recentActivities = \App\Models\LogActivite::latest()
@@ -62,7 +62,7 @@ class DashboardController extends Controller
                 return (object)[
                     'client_name' => $installation->user->name,
                     'type' => $installation->type,
-                    'status' => $installation->status
+                    'status' => $installation->statut
                 ];
             });
 

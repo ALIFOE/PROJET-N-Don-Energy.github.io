@@ -6,6 +6,8 @@ use App\Models\Formation;
 use App\Models\FormationInscription;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 use App\Events\FormationInscriptionCreated;
 
 class FormationController extends Controller
@@ -33,12 +35,34 @@ class FormationController extends Controller
 
     public function mesInscriptions()
     {
-        $inscriptions = FormationInscription::with('formation')
+            $inscriptionsEloquent = FormationInscription::with('formation')
             ->where('user_id', auth()->id())
             ->latest()
             ->get();
 
-        return view('formations.mes-inscriptions', compact('inscriptions'));
+        $inscriptions = [];
+        foreach ($inscriptionsEloquent as $inscription) {
+            $documents_optionnels = [];
+            if (is_array($inscription->autres_documents_paths) && count($inscription->autres_documents_paths) > 0) {
+                foreach ($inscription->autres_documents_paths as $i => $path) {
+                    $documents_optionnels[] = [
+                        'nom' => 'Document optionnel '.($i+1),
+                        'path' => $path
+                    ];
+                }
+            }
+            $inscriptions[] = [
+                'id' => $inscription->id,
+                'formation' => $inscription->formation,
+                'statut' => $inscription->statut,
+                'acte_naissance_path' => $inscription->acte_naissance_path,
+                'cni_path' => $inscription->cni_path,
+                'diplome_path' => $inscription->diplome_path,
+                'documents_optionnels' => $documents_optionnels
+            ];
+        }
+
+        return view('formations.mes-inscriptions', ['inscriptions' => $inscriptions]);
     }
 
     public function inscription(Request $request)
@@ -81,6 +105,28 @@ class FormationController extends Controller
         // Déclencher l'événement
         event(new FormationInscriptionCreated($inscription));
 
+        // Envoi direct du mail de confirmation à l'utilisateur
+        try {
+            \Mail::to($inscription->email)->send(new \App\Mail\FormationConfirmationMail($inscription));
+        } catch (\Exception $e) {
+            \Log::error('Erreur envoi mail confirmation formation : ' . $e->getMessage());
+        }
+
+        // Envoi du mail de confirmation d'inscription (template simple)
+        try {
+            $details = [
+                'nom' => $inscription->nom,
+                'email' => $inscription->email,
+                'telephone' => $inscription->telephone,
+                'formation' => $inscription->formation->titre,
+                'id' => $inscription->id,
+                'message' => $request->message ?? null,
+            ];
+            Mail::to($inscription->email)->send(new \App\Mail\ConfirmationInscription($details));
+        } catch (\Exception $e) {
+            \Log::error('Erreur envoi mail confirmation inscription : ' . $e->getMessage());
+        }
+
         return redirect()->back()->with('success', 'Votre inscription a été enregistrée avec succès. Nous vous contacterons pour la suite du processus.');
     }    public function downloadFlyer(Formation $formation)
     {
@@ -111,5 +157,17 @@ class FormationController extends Controller
         }
 
         // Retourner le fichier
-        return response()->download(storage_path('app/' . $path));}
+        return response()->download(storage_path('app/' . $path));
+    }    public function downloadAutreDocument(FormationInscription $inscription, $index)
+    {
+        $autres = $inscription->autres_documents_paths ?? [];
+        if (!isset($autres[$index])) {
+            abort(404, 'Document optionnel non trouvé');
+        }
+        $path = $autres[$index];
+        if (!\Storage::exists($path)) {
+            abort(404, 'Document non trouvé');
+        }
+        return response()->download(storage_path('app/' . $path));
+    }
 }

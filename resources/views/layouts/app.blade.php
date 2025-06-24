@@ -58,7 +58,11 @@
 </head>
 <body class="font-sans antialiased">
     <div class="min-h-screen bg-gray-100">
-        @include('layouts.navigation')
+        @if(auth()->check() && auth()->user()->is_admin)
+            @include('layouts.admin-navigation')
+        @elseif(!auth()->check() || !auth()->user()->is_admin)
+            @include('layouts.navigation')
+        @endif
 
         <!-- Système de notification -->
         <div id="notification" class="fixed top-4 right-4 z-50 transform transition-transform duration-300 ease-in-out translate-x-full">

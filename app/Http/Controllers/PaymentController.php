@@ -48,7 +48,7 @@ class PaymentController extends Controller
                 'quantity' => $validated['quantity'],
                 'total_price' => $validated['total_amount'],
                 'payment_method' => $validated['payment_method'],
-                'status' => 'completed',
+                'status' => 'pending', // statut par défaut
                 'customer_name' => $validated['name'],
                 'customer_email' => $validated['email'],
                 'customer_phone' => $validated['phone'],

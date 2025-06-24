@@ -184,9 +184,10 @@
 
         <!-- Mobile Menu -->
         <div :class="{'block': open, 'hidden': !open}" class="hidden md:hidden mt-4">
-            <div class="flex flex-col space-y-3">                <!-- Contenu mobile en fonction du rôle -->
+            <div class="flex flex-col space-y-3">
+                <!-- Contenu mobile en fonction du rôle -->
                 @if(auth()->check())
-                    @if(auth()->user()->isAdmin())
+                    @if(auth()->user()->is_admin)
                         <a href="{{ route('admin.notifications.index') }}" class="navbar-link">Notifications</a>
                         <a href="{{ route('admin.formations.index') }}" class="navbar-link">Gérer les Formations</a>
                         <a href="{{ route('admin.installations.index') }}" class="navbar-link">Gérer les Devis</a>
@@ -196,7 +197,8 @@
                         <a href="{{ route('formation') }}" class="navbar-link">Formations à CREFER</a>
                         <a href="{{ route('installation') }}" class="navbar-link">Devis</a>
                         <a href="{{ route('technician.installations') }}" class="navbar-link">Installations</a>
-                        <a href="{{ route('technician.maintenance') }}" class="navbar-link">Maintenance</a>                    @elseif (auth()->user()->role === 'client')
+                        <a href="{{ route('technician.maintenance') }}" class="navbar-link">Maintenance</a>
+                    @elseif(auth()->user()->role === 'client')
                         <a href="{{ route('home') }}" class="navbar-link">Accueil</a>
                         <a href="{{ route('fonctionnalite') }}" class="navbar-link">Fonctionnalités</a>
                         <div class="relative" x-data="{ open: false }">

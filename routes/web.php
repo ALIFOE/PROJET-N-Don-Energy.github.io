@@ -37,6 +37,7 @@ use App\Http\Controllers\RapportsController;
 use App\Http\Controllers\Admin\ServiceRequestController;
 use App\Http\Controllers\CommandeController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
+use App\Http\Controllers\GalleryController;
 
 // Routes publiques
 Route::get('/', function () {
@@ -62,6 +63,9 @@ Route::prefix('formation')->group(function () {
         ->name('formation.document.download');
     Route::get('/{formation}/flyer', [FormationController::class, 'downloadFlyer'])->name('formation.flyer.download');
 });
+
+// Route publique pour la galerie
+Route::get('/gallery', [GalleryController::class, 'index'])->name('gallery');
 
 // Routes d'administration
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
@@ -129,18 +133,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/performances-regionales', [RegionalPerformanceController::class, 'index'])->name('performances.regionales');
     Route::get('/api/performances-regionales/data', [RegionalPerformanceController::class, 'getData'])->name('performances.regionales.data');
 
-    // Routes pour la galerie
-Route::get('/gallery', [App\Http\Controllers\GalleryController::class, 'index'])->name('gallery');
-
-// Routes admin pour la galerie
-Route::middleware(['auth', 'admin'])->group(function () {
-    Route::get('/admin/gallery', [App\Http\Controllers\Admin\GalleryController::class, 'manage'])->name('admin.gallery.manage');
-    Route::post('/admin/gallery', [App\Http\Controllers\Admin\GalleryController::class, 'store'])->name('admin.gallery.store');
-    Route::delete('/admin/gallery/{media}', [App\Http\Controllers\Admin\GalleryController::class, 'destroy'])->name('admin.gallery.destroy');
-    Route::post('/admin/gallery/{media}/toggle-featured', [App\Http\Controllers\Admin\GalleryController::class, 'toggleFeatured'])->name('admin.gallery.toggle-featured');
-});
-
-// Routes pour onduleurs
+    // Routes pour onduleurs
     Route::get('/onduleurs', [OnduleurController::class, 'index'])->name('onduleurs.index');
     Route::get('/onduleurs/create', [OnduleurController::class, 'create'])->name('onduleurs.create');
     Route::post('/onduleurs', [OnduleurController::class, 'store'])->name('onduleurs.store');
@@ -157,7 +150,8 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // Routes pour les activités    Route::get('/activites', [LogActiviteController::class, 'index'])->name('activites.index');    
+    // Routes pour les activités
+    Route::get('/activites', [LogActiviteController::class, 'index'])->name('activites.index');
     
     // Routes pour la maintenance
     Route::prefix('maintenance')->group(function () {
@@ -309,6 +303,12 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     });
 });
 
+// Routes Galerie (admin)
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('/admin/gallery/manage', [GalleryController::class, 'manage'])->name('admin.gallery.manage');
+    // Vous pouvez ajouter ici d'autres routes admin pour la galerie si besoin (store, destroy, etc.)
+});
+
 Route::get('/ia-services', function () {
     return view('ia-services');
 })->name('ia-services');
@@ -319,3 +319,6 @@ Route::get('/healthz', function() {
 });
 
 require __DIR__.'/auth.php';
+
+// Téléchargement des documents optionnels d'inscription formation
+Route::get('/admin/formations/inscriptions/{inscription}/autre-document/{index}', [App\Http\Controllers\FormationController::class, 'downloadAutreDocument'])->name('admin.formations.inscriptions.autre-document.download');

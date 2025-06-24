@@ -81,7 +81,8 @@
                                 <p class="text-gray-600 whitespace-no-wrap">{{ $inscription->telephone }}</p>
                             </td>
                             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                <div class="flex flex-col space-y-1">                                    @if($inscription->acte_naissance_path)
+                                <div class="flex flex-col space-y-1">
+                                    @if($inscription->acte_naissance_path)
                                         <a href="{{ route('admin.formations.inscriptions.document.download', ['inscription' => $inscription, 'type' => 'acte_naissance']) }}" 
                                            class="document-link text-blue-600 hover:text-blue-800">
                                             <i class="fas fa-file-alt mr-2"></i>Acte de naissance
@@ -98,6 +99,13 @@
                                            class="document-link text-blue-600 hover:text-blue-800">
                                             <i class="fas fa-graduation-cap mr-2"></i>Diplôme
                                         </a>
+                                    @endif
+                                    @if(!empty($inscription->autres_documents_paths))
+                                        @foreach($inscription->autres_documents_paths as $idx => $autreDoc)
+                                            <a href="{{ route('admin.formations.inscriptions.autre-document.download', ['inscription' => $inscription->id, 'index' => $idx]) }}" class="document-link text-blue-600 hover:text-blue-800">
+                                                <i class="fas fa-paperclip mr-2"></i>Document optionnel {{ $idx + 1 }} (Optionnel)
+                                            </a>
+                                        @endforeach
                                     @endif
                                 </div>
                             </td>

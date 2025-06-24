@@ -5,6 +5,14 @@
         </h2>
     </x-slot>
 
+    @php
+        // Si l'utilisateur connecté consulte son propre profil admin, on redirige vers la page d'édition du profil client
+        if (auth()->id() === $user->id) {
+            header('Location: ' . route('profile.edit'));
+            exit;
+        }
+    @endphp
+
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
@@ -21,7 +29,7 @@
                     <div class="mb-6">
                         <h3 class="text-lg font-medium text-gray-900">Commandes</h3>
                         <div class="mt-4">
-                            @if($user->orders->count() > 0)
+                            @if(!empty($user->orders) && $user->orders->count() > 0)
                                 <div class="overflow-x-auto">
                                     <table class="min-w-full divide-y divide-gray-200">
                                         <thead class="bg-gray-50">
@@ -34,7 +42,7 @@
                                             </tr>
                                         </thead>
                                         <tbody class="bg-white divide-y divide-gray-200">
-                                            @foreach($user->orders as $order)
+                                            @foreach($user->orders ?? [] as $order)
                                                 <tr>
                                                     <td class="px-6 py-4 whitespace-nowrap">{{ $order->id }}</td>
                                                     <td class="px-6 py-4 whitespace-nowrap">{{ $order->created_at->format('d/m/Y') }}</td>
@@ -63,7 +71,7 @@
                     <div class="mb-6">
                         <h3 class="text-lg font-medium text-gray-900">Dimensionnements</h3>
                         <div class="mt-4">
-                            @if($user->dimensionnements->count() > 0)
+                            @if(!empty($user->dimensionnements) && $user->dimensionnements->count() > 0)
                                 <div class="overflow-x-auto">
                                     <table class="min-w-full divide-y divide-gray-200">
                                         <thead class="bg-gray-50">
@@ -74,7 +82,7 @@
                                             </tr>
                                         </thead>
                                         <tbody class="bg-white divide-y divide-gray-200">
-                                            @foreach($user->dimensionnements as $dimensionnement)
+                                            @foreach($user->dimensionnements ?? [] as $dimensionnement)
                                                 <tr>
                                                     <td class="px-6 py-4 whitespace-nowrap">{{ $dimensionnement->created_at->format('d/m/Y') }}</td>
                                                     <td class="px-6 py-4 whitespace-nowrap">

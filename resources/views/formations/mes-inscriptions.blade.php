@@ -5,7 +5,7 @@
     <div class="bg-white rounded-lg shadow-lg p-6">
         <h1 class="text-2xl font-bold text-gray-900 mb-6">Mes Inscriptions aux Formations</h1>
 
-        @if($inscriptions->isEmpty())
+        @if(empty($inscriptions))
             <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6">
                 <div class="flex">
                     <div class="flex-shrink-0">
@@ -46,35 +46,45 @@
                             <tr>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="text-sm font-medium text-gray-900">
-                                        {{ $inscription->formation->titre }}
+                                        {{ $inscription['formation']['titre'] }}
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="text-sm text-gray-900">
-                                        {{ $inscription->formation->date_debut->format('d/m/Y') }}
+                                        {{ \Carbon\Carbon::parse($inscription['formation']['date_debut'])->format('d/m/Y') }}
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                        @if($inscription->statut === 'validee') bg-green-100 text-green-800 
-                                        @elseif($inscription->statut === 'refusee') bg-red-100 text-red-800
+                                        @if($inscription['statut'] === 'validee') bg-green-100 text-green-800 
+                                        @elseif($inscription['statut'] === 'refusee') bg-red-100 text-red-800
                                         @else bg-yellow-100 text-yellow-800 @endif">
-                                        {{ ucfirst($inscription->statut) }}
+                                        {{ ucfirst($inscription['statut']) }}
                                     </span>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">                                    <div class="space-x-2">
-                                        <a href="{{ route('formation.document.download', ['inscription' => $inscription->id, 'type' => 'acte_naissance']) }}" 
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    <div class="space-x-2">
+                                        <a href="{{ route('formation.document.download', ['inscription' => $inscription['id'], 'type' => 'acte_naissance']) }}" 
                                            class="text-indigo-600 hover:text-indigo-900">
                                             Acte de naissance
                                         </a>
-                                        <a href="{{ route('formation.document.download', ['inscription' => $inscription->id, 'type' => 'cni']) }}" 
+                                        <a href="{{ route('formation.document.download', ['inscription' => $inscription['id'], 'type' => 'cni']) }}" 
                                            class="text-indigo-600 hover:text-indigo-900">
                                             CNI
                                         </a>
-                                        <a href="{{ route('formation.document.download', ['inscription' => $inscription->id, 'type' => 'diplome']) }}" 
+                                        <a href="{{ route('formation.document.download', ['inscription' => $inscription['id'], 'type' => 'diplome']) }}" 
                                            class="text-indigo-600 hover:text-indigo-900">
                                             Diplôme
                                         </a>
+                                        {{-- Documents optionnels --}}
+                                        @if(!empty($inscription['documents_optionnels']) && is_array($inscription['documents_optionnels']))
+                                            @foreach($inscription['documents_optionnels'] as $index => $doc)
+                                                <a href="{{ route('formation.document.download', ['inscription' => $inscription['id'], 'type' => 'optionnel', 'index' => $index]) }}"
+                                                   class="text-blue-600 hover:text-blue-900">
+                                                    {{ $doc['nom'] ?? 'Document optionnel '.($index+1) }}
+                                                </a>
+                                            @endforeach
+                                        @endif
                                     </div>
                                 </td>
                             </tr>

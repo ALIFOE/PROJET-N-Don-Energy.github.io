@@ -83,4 +83,9 @@ class UserController extends Controller
         return redirect()->route('admin.users.index')
             ->with('success', 'Utilisateur supprimé avec succès.');
     }
+
+    public function show(User $user)
+    {
+        return view('admin.users.show', compact('user'));
+    }
 }

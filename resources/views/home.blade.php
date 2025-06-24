@@ -350,13 +350,12 @@
                         </div>
                     @endif
                 @else
-                    <p class="mt-4 text-xl text-gray-600">Connectez-vous pour découvrir nos réalisations en images et en vidéos</p>
-                    <div class="mt-8">
-                        <a href="{{ route('login') }}" class="bg-orange-500 text-white py-3 px-8 rounded-md text-lg font-medium hover:bg-orange-600 transition duration-300 inline-flex items-center">
-                            <i class="fas fa-sign-in-alt mr-2"></i>
-                            Se connecter pour voir la galerie
-                        </a>
-                    </div>
+                    <p class="mt-4 text-xl text-gray-600">Découvrez nos réalisations en images, accessibles à tous !</p>
+                    <p class="text-gray-500 mb-4">Parcourez notre galerie pour explorer les projets et installations réalisés par notre équipe.</p>
+                    <a href="{{ route('gallery') }}" class="bg-orange-500 text-white py-3 px-8 rounded-md text-lg font-medium hover:bg-orange-600 transition duration-300 inline-flex items-center">
+                        <i class="fas fa-images mr-2"></i>
+                        Voir la galerie
+                    </a>
                 @endauth
             </div>
         </div>

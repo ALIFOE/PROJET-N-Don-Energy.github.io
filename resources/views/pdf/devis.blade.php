@@ -157,7 +157,7 @@
 
     <div class="footer">
         <p>N'Don Energy - Solutions d'énergie solaire</p>
-        <p>Tel: +XXX XXX XXX - Email: contact@ndonenergy.com</p>
+        <p>Tel: +XXX XXX XXX - Email: contact@nCREFER.com</p>
     </div>
 </body>
 </html>

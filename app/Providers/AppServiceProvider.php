@@ -36,5 +36,7 @@ class AppServiceProvider extends ServiceProvider
         Blade::component('admin.stats-card', StatsCard::class);
         Blade::component('admin.action-card', ActionCard::class);
         Blade::component('logout-form', \App\View\Components\LogoutForm::class);
+
+        $this->app->register(\App\Providers\AdminNavigationComposer::class);
     }
 }
