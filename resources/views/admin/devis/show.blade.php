@@ -277,11 +277,11 @@
 @push('scripts')
 <script>
 function updateStatus(select) {
-    fetch(`/admin/devis/{{ $devis->id }}/status`, {
+    fetch("/admin/devis/{{ $devis->id }}/status", {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            'X-CSRF-TOKEN': document.querySelector('meta[name=\'csrf-token\']').getAttribute('content')
         },
         body: JSON.stringify({
             status: select.value
@@ -293,7 +293,6 @@ function updateStatus(select) {
             const badge = document.getElementById('status-badge');
             badge.className = `px-2 py-1 text-sm rounded-full bg-${data.status_color}-100 text-${data.status_color}-800`;
             badge.textContent = data.status_label;
-            
             // Afficher un message de succès
             const toast = document.createElement('div');
             toast.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg';
